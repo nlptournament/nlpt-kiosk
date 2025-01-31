@@ -1,0 +1,17 @@
+<div class="mx-auto max-h-screen overflow-hidden w-fill flex flex-col gap-6">
+    <div class="mx-auto w-fill flex items-center justify-center">
+        <div class="text-7xl text-text bg-card rounded-b-lg p-7">
+            Gameserver Player Counts
+        </div>
+    </div>
+
+    <div class="mx-auto w-fill flex flex-wrap items-center justify-center gap-x-4 gap-y-4">
+        @for (count of counts; track count.game) {
+            <div class="p-4 w-1/6 bg-card rounded-xl shadow-md flex flex-col items-center gap-x-4 text-center">
+                <div class="text-5xl text-text">{{ count.game }}</div>
+                <div class="text-9xl text-highlight font-semibold">{{ count.count }}</div>
+                <div class="text-4xl text-text">{{ count.name }}</div>
+            </div>
+        }
+    </div>
+</div>
