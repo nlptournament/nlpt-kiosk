@@ -1,0 +1,22 @@
+<div class="mx-auto max-h-screen overflow-hidden w-fill h-screen flex items-center justify-center">
+    <div class="bg-card rounded-lg p-5 pr-10 pl-10 flex items-center justify-center flex-col">
+        @if (title) {
+            <div class="text-text text-7xl text-center pb-10 pt-5">
+                {{ title }}
+            </div>
+            <div class="text-13xl text-highlight">
+                {{ countdown_h }}:{{ countdown_m }}:{{ countdown_s }}
+            </div>
+        }
+        @else {
+            <div class="text-13xl text-highlight pt-14">
+                {{ countdown_h }}:{{ countdown_m }}:{{ countdown_s }}
+            </div>
+        }
+        @if (subtitle) {
+            <div class="text-text text-7xl text-center">
+                {{ subtitle }}
+            </div>
+        }
+    </div>
+</div>
