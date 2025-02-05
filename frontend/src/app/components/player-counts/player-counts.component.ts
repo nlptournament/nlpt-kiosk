@@ -14,9 +14,9 @@ export class PlayerCountsComponent implements OnInit {
         this.counts.push({'name': 'Server2', 'count': 2, 'game': 'UT2k4'});
         this.counts.push({'name': 'Server1', 'count': 2, 'game': 'UT2k4'});
         this.counts.push({'name': 'Server1', 'count': 3, 'game': 'UT3'});
+        this.counts.push({'name': 'Server4', 'count': 0, 'game': 'UT3'});
         this.counts.push({'name': 'Server2', 'count': 3, 'game': 'UT3'});
         this.counts.push({'name': 'Server3', 'count': 3, 'game': 'UT3'});
-        this.counts.push({'name': 'Server4', 'count': 0, 'game': 'UT3'});
         this.counts.push({'name': 'Server3', 'count': 2, 'game': 'Battlefield2'});
         this.counts.push({'name': 'Server2', 'count': 3, 'game': 'Battlefield2'});
         this.counts.push({'name': 'Server1', 'count': 1, 'game': 'Battlefield2'});
@@ -28,5 +28,7 @@ export class PlayerCountsComponent implements OnInit {
         this.counts.push({'name': 'Server1', 'count': 2, 'game': 'CoD2'});
         this.counts.push({'name': 'Server2', 'count': 2, 'game': 'CoD2'});
         this.counts.push({'name': 'Server3', 'count': 2, 'game': 'CoD2'});
+
+        this.counts = this.counts.sort((a, b) => (a.game > b.game ? 1 : (a.game < b.game ? -1 : (a.name > b.name ? 1 : (a.name < b.name ? -1 : 0)))));
     }
 }
