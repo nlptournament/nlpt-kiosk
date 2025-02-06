@@ -2,3 +2,13 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+    @font-face {
+      font-family: 'Orbitron';
+      font-style: normal;
+      font-weight: 125 950;
+      font-display: swap;
+      src: url(/Orbitron-VariableFont_wght.woff2) format('woff2-variations');
+    }
+  }
