@@ -15,7 +15,10 @@ module.exports = {
             'text': '#ffffe1',
             'highlight': '#6ab63c',
             'red': '#ff0000',
-            'green': '#00ff00'
+            'green': '#00ff00',
+            'anno-ffa': '#666666',
+            'anno-default': '#111111',
+            'anno-danger': '#7f1d1d',
         },
         fontSize: {
             '1xl': ['0.625vw', '0.938vw'],
@@ -55,7 +58,8 @@ module.exports = {
             '20': '3.125vw',
             '24': '3.75vw',
             '28': '4.375vw',
-            '32': '5vw'
+            '32': '5vw',
+            'anno-img': '9vw'
         },
     }
   },
