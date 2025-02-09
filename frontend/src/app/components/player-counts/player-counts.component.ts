@@ -28,6 +28,8 @@ export class PlayerCountsComponent implements OnInit {
         this.counts.push({'name': 'Server1', 'count': 2, 'game': 'CoD2'});
         this.counts.push({'name': 'Server2', 'count': 2, 'game': 'CoD2'});
         this.counts.push({'name': 'Server3', 'count': 2, 'game': 'CoD2'});
+        this.counts.push({'name': 'NLPT', 'count': 69, 'game': 'Mordhau'});
+        this.counts.push({'name': 'Geheimbasis', 'count': 3, 'game': 'Left4Dead2'});
 
         this.counts = this.counts.sort((a, b) => (a.game > b.game ? 1 : (a.game < b.game ? -1 : (a.name > b.name ? 1 : (a.name < b.name ? -1 : 0)))));
     }
