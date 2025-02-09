@@ -34,7 +34,8 @@ export class TasComponent implements OnInit {
         this.global_ranks.push({'rank': 13, 'player': 'PlayerName13', 'points': 4});
         this.global_ranks.push({'rank': 14, 'player': 'PlayerName14', 'points': 3});
         this.global_ranks.push({'rank': 15, 'player': 'PlayerName15', 'points': 2});
-        this.global_ranks.push({'rank': 17, 'player': 'PlayerName3', 'points': 0});
-        this.global_ranks.push({'rank': 17, 'player': 'PlayerName4', 'points': 0});
+        this.global_ranks.push({'rank': 16, 'player': 'PlayerName16', 'points': 1});
+        this.global_ranks.push({'rank': 18, 'player': 'PlayerName3', 'points': 0});
+        this.global_ranks.push({'rank': 18, 'player': 'PlayerName4', 'points': 0});
     }
 }
