@@ -1,0 +1,4 @@
+cherrypy
+cherrypy-cors
+pymongo
+requests
