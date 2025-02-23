@@ -3,6 +3,7 @@ import cherrypy_cors
 from noapi import docDB, ElementEndpointBase
 from noapi.endpoints import SettingEndpointBase, LoginEndpointBase
 from elements import Setting, Session, User
+from helpers.versioning import run as versioning_run
 
 
 class API():
@@ -15,7 +16,7 @@ class API():
 class SettingEndpoint(SettingEndpointBase):
     _setting_cls = Setting
     _session_cls = Session
-    user_readable = ['server_port']
+    user_readable = ['version']
     admin_writeable = ['server_port']
 
 
@@ -40,8 +41,5 @@ if __name__ == '__main__':
         'tools.response_headers.headers': [('Access-Control-Allow-Origin', 'http://localhost:4200/'), ('Access-Control-Allow-Credentials', 'true')]})
 
     docDB.wait_for_connection()
-    if User.count() == 0:
-        u = User({'login': 'admin', 'pw': 'password', 'admin': True})
-        u.save()
-        print('No user detected, therefore created a default admin user')
+    versioning_run()
     cherrypy.quickstart(API(), '/', conf)

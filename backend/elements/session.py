@@ -3,5 +3,5 @@ from .user import User
 
 
 class Session(SessionBase):
-    cookie_name = 'NLPTkiosk'
+    cookie_name = 'NLPT-Kiosk-Controller'
     _user_cls = User
