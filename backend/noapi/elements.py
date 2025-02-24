@@ -233,7 +233,7 @@ class SettingBase(ElementBase):
     def validate(self):
         errors = dict()
         if self['type'] not in self._valid_types.keys():
-            errors['type'] = {'code': 100, 'desc': f'needs to be one of: {list(self._valid_types.keys())}'}
+            errors['type'] = {'code': 5, 'desc': f'needs to be one of: {list(self._valid_types.keys())}'}
         elif not isinstance(self['value'], self._valid_types[self['type']]) and self['value'] is not None:
             errors['value'] = {'code': 3, 'desc': f"needs to be of type {self._valid_types[self['type']]} or None"}
         return errors
@@ -275,13 +275,13 @@ class SessionBase(ElementBase):
     def validate(self):
         errors = dict()
         if not docDB.exists(self._user_cls.__name__, self[self.__userid_field]):
-            errors[self.__userid_field] = {'code': 80, 'desc': f"There is no {self._user_cls.__name__} with id '{self[self.__userid_field]}'"}
+            errors[self.__userid_field] = {'code': 4, 'desc': f"There is no {self._user_cls.__name__} with id '{self[self.__userid_field]}'"}
         if self['till'] <= int(datetime.now().timestamp()):
-            errors['till'] = {'code': 81, 'desc': 'needs to be in the future'}
+            errors['till'] = {'code': 10, 'desc': 'needs to be in the future'}
             self.delete()
         if cherrypy.request:
             if not self['ip'] == get_client_ip():
-                errors['ip'] = {'code': 82, 'desc': 'does not match with the IP of request'}
+                errors['ip'] = {'code': 11, 'desc': 'does not match with the IP of request'}
                 self.delete()
         return errors
 
