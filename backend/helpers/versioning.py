@@ -161,3 +161,17 @@ def db_defaults():
         u = User({'login': 'admin', 'pw': 'password', 'admin': True})
         u.save()
         print('Versioning detected no user, therefore created a default admin user')
+
+
+def system_screentemplates():
+    from elements import ScreenTemplate
+    if ScreenTemplate.count({'name': 'Countdown'}) == 0:
+        vardef = dict({
+            'time': {'type': 'int', 'desc': 'timestamp of the target time, the Countdown ticks towards'},
+            'text_above': {'type': 'str', 'default': '', 'desc': 'Text displayed above the Countdown'},
+            'text_below': {'type': 'str', 'default': '', 'desc': 'Text displayed below the Countdown'}
+        })
+        ScreenTemplate({
+            'key': 'timer', 'name': 'Countdown',
+            'desc': 'Counts down the seconds to a target time',
+            'endless': False, 'duration': None, 'variables_def': vardef}).save()

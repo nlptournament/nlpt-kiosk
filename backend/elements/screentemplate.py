@@ -2,6 +2,30 @@ from noapi import ElementBase
 
 
 class ScreenTemplate(ElementBase):
+    """
+Defines a template for a Screen, all Screens have to relate to a ScreenTemplate
+
+key : str
+    this string is used by the Frontend to load the corresponding View to be displayed
+name : str
+    descriptive name auf this template
+desc : str
+    some helpful description
+endless : bool
+    wether the Screen(Template) does have a defined end or the displyed information can be displayed endless
+duraion : int|None
+    in seconds, how long the content of the Screen is "playing". if this value is None the duraion is unknown or even endless
+variables_def : dict
+    dictionary of variables definitions, that can (or have to) be filled by a Screen instance
+    key of an element is the later variable name, value is a dictionary it-self with the following keys:
+        type : str (required)
+            defines the type of this variable; following values are possible: str, int, float, bool
+        default : instance of the previously set type
+            if a default value is defined the variable can be ommited in Screen instance otherwise the Screen has to set a value
+        desc : str
+            an optional description for this variable, or some hint what is expected to be filled
+    """
+
     _attrdef = dict(
         key=ElementBase.addAttr(type=str, default='', notnone=True),
         desc=ElementBase.addAttr(type=str, default='', notnone=True),
