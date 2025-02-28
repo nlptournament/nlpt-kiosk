@@ -1,4 +1,4 @@
-from noapi import ElementBase
+from noapi import ElementBase, docDB
 
 
 class ScreenTemplate(ElementBase):
@@ -24,10 +24,13 @@ variables_def : dict
             if a default value is defined the variable can be ommited in Screen instance otherwise the Screen has to set a value
         desc : str
             an optional description for this variable, or some hint what is expected to be filled
+        ro : bool
+            an optional flag to indicate this variable is not changeable by a Screen (variable needs default in this case)
     """
 
     _attrdef = dict(
         key=ElementBase.addAttr(type=str, default='', notnone=True),
+        name=ElementBase.addAttr(type=str, notnone=True, unique=True),
         desc=ElementBase.addAttr(type=str, default='', notnone=True),
         endless=ElementBase.addAttr(type=bool, default=True, notnone=True),
         duration=ElementBase.addAttr(type=int, default=None),
@@ -56,4 +59,17 @@ variables_def : dict
                 errors['variables_def'] = {'code': 5, 'desc': f"parameter 'type' in definition of '{k}' needs to be one of: {self._valid_types.keys()}"}
             elif 'default' in v and not isinstance(v['default'], self._valid_types[v['type']]):
                 errors['variables_def'] = {'code': 41, 'desc': f"default value in definition of '{k}' is not of type '{v['type']}'"}
+            elif 'ro' in v and v['ro'] and 'default' not in v:
+                errors['variables_def'] = {'code': 42, 'desc': f"'{k}' is defined to be readonly, but default value is missing"}
         return errors
+
+    def delete_pre(self):
+        from elements import Screen
+        for s in [Screen(s) for s in docDB.search_many('Screen', {'template_id': self['_id']})]:
+            if s.locked():
+                return {'error': {'code': 1, 'desc': 'at least one locked Screen is using this ScreenTemplate'}}
+
+    def delete_post(self):
+        from elements import Screen
+        for s in [Screen(s) for s in docDB.search_many('Screen', {'template_id': self['_id']})]:
+            s.delete()

@@ -101,6 +101,9 @@ class ElementBase(object):
                     continue
             if not isinstance(self[attr], opt['type']) and self[attr] is not None:
                 errors[attr] = {'code': 3, 'desc': f"needs to be of type {opt['type']}{' or None' if not opt['notnone'] else ''}"}
+            if opt['fk'] is not None and self[attr] is not None:
+                if not docDB.exists(opt['fk'], self[attr]):
+                    errors[attr] = {'code': 4, 'desc': f"there is no {opt['fk']} with id '{self[attr]}'"}
         if len(errors) == 0:
             errors = self.validate()
         return errors
@@ -274,8 +277,6 @@ class SessionBase(ElementBase):
 
     def validate(self):
         errors = dict()
-        if not docDB.exists(self._user_cls.__name__, self[self.__userid_field]):
-            errors[self.__userid_field] = {'code': 4, 'desc': f"There is no {self._user_cls.__name__} with id '{self[self.__userid_field]}'"}
         if self['till'] <= int(datetime.now().timestamp()):
             errors['till'] = {'code': 10, 'desc': 'needs to be in the future'}
             self.delete()
