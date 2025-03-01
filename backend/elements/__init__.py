@@ -4,3 +4,5 @@ from .user import User
 from .screentemplate import ScreenTemplate
 from .screen import Screen
 from .timelinetemplate import TimelineTemplate
+from .timeline import Timeline
+from .kiosk import Kiosk

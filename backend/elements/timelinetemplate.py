@@ -1,4 +1,4 @@
-from noapi import ElementBase
+from noapi import ElementBase, docDB
 
 
 class TimelineTemplate(ElementBase):
@@ -21,5 +21,17 @@ update_timelines()
         screen_ids=ElementBase.addAttr(type=list, default=list(), notnone=True, fk='Screen')
     )
 
+    def delete_post(self):
+        from elements import Timeline
+        for t in [Timeline(t) for t in docDB.search_many('Timeline', {'template_id': self['_id']})]:
+            t['template_id'] = None
+            t.save()
+
     def update_timelines(self):
-        raise NotImplementedError
+        from elements import Timeline
+        for t in [Timeline(t) for t in docDB.search_many('Timeline', {'template_id': self['_id']})]:
+            if not t.locked():
+                t['screen_ids'] = list()
+                for s in self['screen_ids']:
+                    t['screen_ids'].append(s)
+                t.save()

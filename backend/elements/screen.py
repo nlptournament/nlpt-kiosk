@@ -13,7 +13,7 @@ user_id : str
     creator/owner of a Screen
 duration : int | None
     how long the Screen is displayed on Timeline (in seconds). needs to be bigger than 0 or None.
-    can only be changed if template is endless, otherwise cpoied from template
+    can only be changed if template is endless, otherwise copied from template
 repeat : int (default: 0)
     number of times to repeat Screen. 0 means show once then go on. needs to be 0 or bigger.
     only possible to change if template is not endless, otherwise set to 0
@@ -21,7 +21,7 @@ loop : bool (default: False)
     like repeat but infinite. only possible to change if template is not endless, otherwise set to False
 variables : dict
     variables content passed to the frontend. only variables defined in Template are allowed (saved).
-    key is the vartiable name and value the value to pass over. type of variable needs to match the one define in Template.
+    key is the variable name and value the value to pass over. type of variable needs to match the one define in Template.
     if variables (with default value in Template) are missing on saving, the are pulled over from Template.
 
 locked() : bool
@@ -79,14 +79,25 @@ key() : str
             for k in variables_to_remove:
                 self['variables'].pop(k, None)
 
+    def delete_pre(self):
+        if self.locked():
+            return {'error': {'code': 2, 'desc': "can't be deleted as it is locked"}}
+
     def delete_post(self):
-        from elements import TimelineTemplate
+        from elements import TimelineTemplate, Timeline
         for t in [TimelineTemplate(t) for t in docDB.search_many('TimelineTemplate', {'screen_ids': self['_id']})]:
+            t['screen_ids'].remove(self['_id'])
+            t.save()
+        for t in [Timeline(t) for t in docDB.search_many('Timeline', {'screen_ids': self['_id']})]:
             t['screen_ids'].remove(self['_id'])
             t.save()
 
     def locked(self):
-        raise NotImplementedError()
+        from elements import Timeline
+        for t in [Timeline(t) for t in docDB.search_many('Timeline', {'screen_ids': self['_id']})]:
+            if t.locked():
+                return True
+        return False
 
     def key(self):
         return self.template()['key']

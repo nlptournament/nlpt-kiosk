@@ -50,6 +50,19 @@
   * **50**: *(_id)* Screen can't be changed, as it is used in a locked Timeline
   * **51**: *(variables)* missing the variables: <list-of-variables-names\>
 
+## TimelineTemplate
+
+*reserved range **6x** for individual errors*
+
+## Timeline
+
+*reserved range **7x** for individual errors*
+
+  * **7**: *(start_pos)* needs to be 0 or bigger
+  * **7**: *(current_pos)* needs to be 0 or bigger
+  * **70**: *(_id)* Timeline can't be changed, as it is locked
+
 # element delete error-codes
 
   * **1**: at least one locked Screen is using this <element-name\>
+  * **2**: can't be deleted as it is locked
