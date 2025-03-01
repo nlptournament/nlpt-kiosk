@@ -36,7 +36,7 @@ class ElementBase(object):
 
         for name, attrdef in self.__class__._attrdef.items():
             self._attr[name] = attrdef['default']
-            if attrdef['fk'] is not None:
+            if attrdef['fk'] is not None and attrdef['type'] is str:
                 func = make_func(attrdef['fk'], name)
                 setattr(self.__class__, name.rstrip('_id'), func)
 
@@ -102,8 +102,14 @@ class ElementBase(object):
             if not isinstance(self[attr], opt['type']) and self[attr] is not None:
                 errors[attr] = {'code': 3, 'desc': f"needs to be of type {opt['type']}{' or None' if not opt['notnone'] else ''}"}
             if opt['fk'] is not None and self[attr] is not None:
-                if not docDB.exists(opt['fk'], self[attr]):
-                    errors[attr] = {'code': 4, 'desc': f"there is no {opt['fk']} with id '{self[attr]}'"}
+                if opt['type'] is str:
+                    if not docDB.exists(opt['fk'], self[attr]):
+                        errors[attr] = {'code': 4, 'desc': f"there is no {opt['fk']} with id '{self[attr]}'"}
+                elif opt['type'] is list:
+                    for element_id in self[attr]:
+                        if not docDB.exists(opt['fk'], element_id):
+                            errors[attr] = {'code': 4, 'desc': f"there is no {opt['fk']} with id '{element_id}'"}
+                            break
         if len(errors) == 0:
             errors = self.validate()
         return errors

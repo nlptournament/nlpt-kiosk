@@ -1,14 +1,16 @@
-from noapi import ElementBase
+from noapi import ElementBase, docDB
 
 
 class Screen(ElementBase):
     """
 Screens are the element placed on Timelines and define what is displayed on a kiosk and how
 
+desc : str
+    some helpful description
 template_id : str
-    the parent template a Screen inherits from (can't be None)
+    the parent template a Screen inherits from
 user_id : str
-    creator/owner of a Screen (can't be None)
+    creator/owner of a Screen
 duration : int | None
     how long the Screen is displayed on Timeline (in seconds). needs to be bigger than 0 or None.
     can only be changed if template is endless, otherwise cpoied from template
@@ -21,6 +23,12 @@ variables : dict
     variables content passed to the frontend. only variables defined in Template are allowed (saved).
     key is the vartiable name and value the value to pass over. type of variable needs to match the one define in Template.
     if variables (with default value in Template) are missing on saving, the are pulled over from Template.
+
+locked() : bool
+    if True, it's not allowed to change Screen, as it is used bei locked Timelines.
+    gets True if Screen is part of at least one locked Timeline
+key() : str
+    shortcut to ScreenTemplate's key
     """
     _attrdef = dict(
         desc=ElementBase.addAttr(type=str, default='', notnone=True),
@@ -70,6 +78,12 @@ variables : dict
                     variables_to_remove.append(k)
             for k in variables_to_remove:
                 self['variables'].pop(k, None)
+
+    def delete_post(self):
+        from elements import TimelineTemplate
+        for t in [TimelineTemplate(t) for t in docDB.search_many('TimelineTemplate', {'screen_ids': self['_id']})]:
+            t['screen_ids'].remove(self['_id'])
+            t.save()
 
     def locked(self):
         raise NotImplementedError()

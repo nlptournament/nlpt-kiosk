@@ -52,4 +52,4 @@
 
 # element delete error-codes
 
-  * **1**: at least one locked Screen is using this ScreenTemplate
+  * **1**: at least one locked Screen is using this <element-name\>
