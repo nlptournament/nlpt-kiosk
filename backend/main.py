@@ -16,8 +16,8 @@ class API():
 class SettingEndpoint(SettingEndpointBase):
     _setting_cls = Setting
     _session_cls = Session
-    user_readable = ['version']
-    admin_writeable = ['server_port']
+    _all_readable = ['version']
+    _admin_writeable = ['server_port']
 
 
 class LoginEndpoint(LoginEndpointBase):
