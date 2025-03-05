@@ -114,7 +114,7 @@ _ro_attr: list
         if is_authorized and not is_admin and self._owner_attr is not None and element is not None:
             if element[self._owner_attr] is not None and element[self._owner_attr] == session[session.__userid_field]:
                 is_owner = True
-        if is_authorized and not is_admin and not is_owner and (self._other_attr is None or element[self._other_attr]):
+        if is_authorized and not is_admin and not is_owner and (element is None or self._other_attr is None or element[self._other_attr]):
             is_other = True
 
         # GET

@@ -101,3 +101,8 @@ key() : str
 
     def key(self):
         return self.template()['key']
+
+    def json(self):
+        result = super().json()
+        result['locked'] = self.locked()
+        result['key'] = self.key()

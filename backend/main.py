@@ -2,7 +2,7 @@ import cherrypy
 import cherrypy_cors
 from noapi import docDB, ElementEndpointBase
 from noapi.endpoints import SettingEndpointBase, LoginEndpointBase
-from elements import Setting, Session, User
+from elements import Setting, Session, User, ScreenTemplate, Screen, TimelineTemplate
 from helpers.versioning import run as versioning_run
 
 
@@ -11,6 +11,8 @@ class API():
         self.setting = SettingEndpoint()
         self.login = LoginEndpoint()
         self.user = UserEndpoint()
+        self.screentemplate = ScreenTemplateEndpoint()
+        self.screen = ScreenEndpoint()
 
 
 class SettingEndpoint(SettingEndpointBase):
@@ -27,6 +29,28 @@ class LoginEndpoint(LoginEndpointBase):
 class UserEndpoint(ElementEndpointBase):
     _session_cls = Session
     _element = User
+
+
+class ScreenTemplateEndpoint(ElementEndpointBase):
+    _session_cls = Session
+    _element = ScreenTemplate
+    _other_readable = list(['id', 'key', 'name', 'desc', 'endless', 'duration', 'variables_def'])
+    _ro_attr = list(['key', 'name', 'desc', 'endless', 'duration', 'variables_def'])
+
+
+class ScreenEndpoint(ElementEndpointBase):
+    _session_cls = Session
+    _element = Screen
+    _owner_attr = 'user_id'
+    _other_readable = list(['id', 'desc', 'template_id', 'user_id', 'duration', 'repeat', 'loop', 'variables', 'locked', 'key'])
+    _all_readable = list(['id', 'duration', 'repeat', 'loop', 'variables', 'key'])
+
+
+class TimelineTemplateEndpoint(ElementEndpointBase):
+    _session_cls = Session
+    _element = TimelineTemplate
+    _owner_attr = 'user_id'
+    _other_readable = list(['id', 'desc', 'user_id', 'screen_ids'])
 
 
 if __name__ == '__main__':
