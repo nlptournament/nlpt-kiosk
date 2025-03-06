@@ -23,14 +23,22 @@ _other_attr : str | None
     If this variable is None the other rules (see below) are applied for all other Users.
 _other_readable : list | None
     list of attr-names which are readable for other Users. If None, Endpoint is not available for other Users reads.
-_other_writeable : list | None
-    list of attr-names which are writeable for other Users. If None, Endpoint is not available for other Users writes.
+_other_createable : list | None
+    list of attr-names which are writeable for other Users, when creating an Element.
+    If None, Endpoint is not available for other Users to create an Element.
+_other_updateable : list | None
+    list of attr-names which are writeable for other Users, when updating an Element.
+    If None, Endpoint is not available for other Users to update an Element.
 _other_delete : bool
     if set to True other Users are allowed to delete Elements on Endpoint (by default only admins and owners are allowed to delete)
 _all_readable : list | None
     list of attr-names which are readable for all (unauthorized) Users. If None, Endpoint is not available for unauthorized reads.
-_all_writeable : list | None
-    list of attr-names which are writeable for all (unauthorized) Users. If None, Endpoint is not available for unauthorized writes.
+_all_createable : list | None
+    list of attr-names which are writeable for all (unauthorized) Users, when creating an Element.
+    If None, Endpoint is not available for unauthorized Element creations.
+_all_updateable : list | None
+    list of attr-names which are writeable for all (unauthorized) Users, when updating an Element.
+    If None, Endpoint is not available for unauthorized Element updates.
 _all_delete : bool
     if set to True all (unauthorized) Users are allowed to delete Elements on Endpoint (by default only admins and owners are allowed to delete)
 _ro_attr: list
@@ -41,10 +49,12 @@ _ro_attr: list
     _owner_attr = None
     _other_attr = None
     _other_readable = None
-    _other_writeable = None
+    _other_createable = None
+    _other_updateable = None
     _other_delete = False
     _all_readable = None
-    _all_writeable = None
+    _all_createable = None
+    _all_updateable = None
     _all_delete = False
     _ro_attr = list()
 
@@ -60,17 +70,32 @@ _ro_attr: list
             attr.pop(k, None)
         return attr
 
-    def _filter_attrs4write(self, attr, is_other=False, is_owner=False, is_admin=False):
+    def _filter_attrs4create(self, attr, is_other=False, is_owner=False, is_admin=False):
         attr.pop('_id', None)
         for ro in self._ro_attr:
             attr.pop(ro, None)
         if is_owner or is_admin:
             return attr
         allowed_attr = list()
-        if self._all_writeable is not None:
-            allowed_attr += self._all_writeable
-        if is_other and self._other_writeable is not None:
-            allowed_attr += self._other_writeable
+        if self._all_createable is not None:
+            allowed_attr += self._all_createable
+        if is_other and self._other_createable is not None:
+            allowed_attr += self._other_createable
+        for k in list([k for k in attr.keys() if k not in allowed_attr]):
+            attr.pop(k, None)
+        return attr
+
+    def _filter_attrs4update(self, attr, is_other=False, is_owner=False, is_admin=False):
+        attr.pop('_id', None)
+        for ro in self._ro_attr:
+            attr.pop(ro, None)
+        if is_owner or is_admin:
+            return attr
+        allowed_attr = list()
+        if self._all_updateable is not None:
+            allowed_attr += self._all_updateable
+        if is_other and self._other_updateable is not None:
+            allowed_attr += self._other_updateable
         for k in list([k for k in attr.keys() if k not in allowed_attr]):
             attr.pop(k, None)
         return attr
@@ -108,7 +133,7 @@ _ro_attr: list
             is_authorized = True
             is_admin = session.admin()
 
-        if not is_authorized and self._all_readable is None and self._all_writeable is None and not self._all_delete:
+        if not is_authorized and self._all_readable is None and self._all_createable is None and self._all_updateable is None and not self._all_delete:
             cherrypy.response.status = 401
             return {'error': 'not authorized'}
         if is_authorized and not is_admin and self._owner_attr is not None and element is not None:
@@ -135,7 +160,7 @@ _ro_attr: list
 
         # POST
         elif cherrypy.request.method == 'POST':
-            if self._all_writeable is None and (not is_authorized or (is_other and self._other_writeable is None)):
+            if self._all_createable is None and (not is_authorized or (is_other and self._other_createable is None)):
                 cherrypy.response.status = 403
                 return {'error': 'access not allowed'}
             if element is not None:
@@ -151,7 +176,7 @@ _ro_attr: list
                     cherrypy.response.status = 400
                     return {'error': 'data is needed to be submitted'}
 
-                element = self._element(self._filter_attrs4write(attr, is_other, is_owner, is_admin))
+                element = self._element(self._filter_attrs4create(attr, is_other, is_owner, is_admin))
                 result = element.save()
                 if 'errors' in result:
                     cherrypy.response.status = 400
@@ -161,7 +186,7 @@ _ro_attr: list
 
         # PATCH
         elif cherrypy.request.method == 'PATCH':
-            if self._all_writeable is None and (not is_authorized or (is_other and self._other_writeable is None)):
+            if self._all_updateable is None and (not is_authorized or (is_other and self._other_updateable is None)):
                 cherrypy.response.status = 403
                 return {'error': 'access not allowed'}
             if element is None:
@@ -177,7 +202,7 @@ _ro_attr: list
                     cherrypy.response.status = 400
                     return {'error': 'Submitted data need to be of type dict'}
 
-                for k, v in self._filter_attrs4write(attr, is_other, is_owner, is_admin).items():
+                for k, v in self._filter_attrs4update(attr, is_other, is_owner, is_admin).items():
                     element[k] = v
                 result = element.save()
                 if 'errors' in result:

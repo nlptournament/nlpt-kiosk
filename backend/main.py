@@ -43,6 +43,7 @@ class ScreenEndpoint(ElementEndpointBase):
     _element = Screen
     _owner_attr = 'user_id'
     _other_readable = list(['id', 'desc', 'template_id', 'user_id', 'duration', 'repeat', 'loop', 'variables', 'locked', 'key'])
+    _other_createable = list(['desc', 'template_id', 'user_id', 'duration', 'repeat', 'loop', 'variables'])
     _all_readable = list(['id', 'duration', 'repeat', 'loop', 'variables', 'key'])
 
 
@@ -51,6 +52,7 @@ class TimelineTemplateEndpoint(ElementEndpointBase):
     _element = TimelineTemplate
     _owner_attr = 'user_id'
     _other_readable = list(['id', 'desc', 'user_id', 'screen_ids'])
+    _other_createable = list(['desc', 'user_id', 'screen_ids'])
 
 
 if __name__ == '__main__':
