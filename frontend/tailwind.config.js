@@ -1,9 +1,10 @@
+import PrimeUI from 'tailwindcss-primeui';
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
     "./src/**/*.{html,ts}",
   ],
-  darkMode: 'media',
+  darkMode: ['selector', '[class~="my-app-dark"]'],
   theme: {
     extend: {
         fontFamily: {
@@ -63,6 +64,5 @@ module.exports = {
         },
     }
   },
-  plugins: [],
+  plugins: [PrimeUI],
 }
-

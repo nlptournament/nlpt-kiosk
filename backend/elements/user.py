@@ -11,7 +11,7 @@ class User(UserBase):
 
     def delete_post(self):
         from elements import Session, TimelineTemplate, Screen, Kiosk, Preset
-        for s in [Session(s) for s in docDB.search_many('Session', {Session.__userid_field: self['_id']})]:
+        for s in [Session(s) for s in docDB.search_many('Session', {Session._userid_field: self['_id']})]:
             s.delete()
         for p in [Preset(p) for p in docDB.search_many('Preset', {'user_id': self['_id']})]:
             p.delete()

@@ -1,0 +1,21 @@
+<div class="mx-auto max-h-screen overflow-hidden w-fill h-screen flex items-center justify-center">
+    <div class="bg-card rounded-lg p-3 flex justify-stretch flex-col">
+        <div class="text-3xl text-left">
+            Login
+        </div>
+        <div class="text-1xl text-left mb-4">
+            with yout User credentials
+        </div>
+        <p-iftalabel class="mb-1">
+            <input pInputText id="username" [(ngModel)]="username" autocomplete="off" />
+            <label for="username">Username</label>
+        </p-iftalabel>
+        <p-iftalabel class="mb-1">
+            <p-password [(ngModel)]="password" inputId="password" [feedback]="false" />
+            <label for="password">Password</label>
+        </p-iftalabel>
+        <div class="text-right mt-2">
+            <p-button label="Submit" (onClick)="sendLogin()" />
+        </div>
+    </div>
+</div>

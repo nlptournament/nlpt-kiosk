@@ -272,14 +272,14 @@ class UserBase(ElementBase):
 class SessionBase(ElementBase):
     cookie_name = 'noAPI'  # Set this in your deriveing class to a desired name, used for storing the session-cookie, in browsers
     _user_cls = UserBase  # Set this to a child-class of UserBase in your deriveing class
-    __userid_field = f'{_user_cls.__name__.lower()}_id'
+    _userid_field = f'{_user_cls.__name__.lower()}_id'
 
     _attrdef = dict(
         till=ElementBase.addAttr(type=int, notnone=True),
         ip=ElementBase.addAttr(type=str, default=None, notnone=True),
         complete=ElementBase.addAttr(type=bool, default=False)
     )
-    _attrdef[__userid_field] = ElementBase.addAttr(notnone=True, fk=_user_cls.__name__)
+    _attrdef[_userid_field] = ElementBase.addAttr(notnone=True, fk=_user_cls.__name__)
 
     def validate(self):
         errors = dict()
@@ -293,12 +293,12 @@ class SessionBase(ElementBase):
         return errors
 
     def delete_others(self):
-        for sd in docDB.search_many(self.__class__.__name__, {self.__userid_field: self[self.__userid_field], '_id': {'$ne': self['_id']}}):
+        for sd in docDB.search_many(self.__class__.__name__, {self._userid_field: self[self._userid_field], '_id': {'$ne': self['_id']}}):
             s = self.__class__(sd)
             s.delete()
 
     def admin(self):
-        p = docDB.get(self._user_cls.__name__, self[self.__userid_field])
+        p = docDB.get(self._user_cls.__name__, self[self._userid_field])
         if p is not None:
             return p.get('admin', False)
         return False
