@@ -49,8 +49,21 @@ preset() : bool
         if self.locked():
             return {'error': {'code': 2, 'desc': "can't be deleted as it is locked"}}
 
+    def delete_post(self):
+        from elements import Preset
+        for p in [Preset(p) for p in docDB.search_many('Preset', {'template_ids': self['_id']})]:
+            p['template_ids'].remove(self['_id'])
+            p.save()
+
     def locked(self):
-        return (docDB.count('Kiosk', {'timeline_id': self['_id']}) > 0)
+        from elements import Kiosk
+        return (Kiosk.count({'timeline_id': self['_id']}) > 0)
 
     def preset(self):
-        raise NotImplementedError
+        from elements import Preset
+        return (Preset.count({'timeline_ids': self['_id']}) > 0)
+
+    def json(self):
+        result = super().json()
+        result['locked'] = self.locked()
+        result['preset'] = self.preset()

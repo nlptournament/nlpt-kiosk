@@ -2,7 +2,7 @@ import cherrypy
 import cherrypy_cors
 from noapi import docDB, ElementEndpointBase
 from noapi.endpoints import SettingEndpointBase, LoginEndpointBase
-from elements import Setting, Session, User, ScreenTemplate, Screen, TimelineTemplate
+from elements import Setting, Session, User, ScreenTemplate, Screen, TimelineTemplate, Timeline, Kiosk, Preset
 from helpers.versioning import run as versioning_run
 
 
@@ -13,6 +13,10 @@ class API():
         self.user = UserEndpoint()
         self.screentemplate = ScreenTemplateEndpoint()
         self.screen = ScreenEndpoint()
+        self.timelinetemplate = TimelineTemplateEndpoint()
+        self.timeline = TimelineEndpoint()
+        self.kiosk = KioskEndpoint()
+        self.preset = PresetEndpoint()
 
 
 class SettingEndpoint(SettingEndpointBase):
@@ -53,6 +57,39 @@ class TimelineTemplateEndpoint(ElementEndpointBase):
     _owner_attr = 'user_id'
     _other_readable = list(['id', 'desc', 'user_id', 'screen_ids'])
     _other_createable = list(['desc', 'user_id', 'screen_ids'])
+
+
+class TimelineEndpoint(ElementEndpointBase):
+    _session_cls = Session
+    _element = Timeline
+    _other_readable = list(['id', 'template_id', 'kiosk_id', 'screen_ids', 'start_pos', 'current_pos', 'locked', 'preset'])
+    _other_createable = list(['template_id', 'kiosk_id', 'start_pos'])
+    _other_updateable = list(['start_pos'])
+    _other_delete = True
+    _all_readable = list(['id', 'screen_ids', 'start_pos', 'current_pos'])
+    _all_updateable = list(['current_pos'])
+    _ro_attr = list(['screen_ids'])
+
+
+class KioskEndpoint(ElementEndpointBase):
+    _session_cls = Session
+    _element = Kiosk
+    _owner_attr = 'added_by_id'
+    _other_attr = 'common'
+    _other_readable = list(['id', 'name', 'desc', 'added_by_id', 'common', 'timeline_id'])
+    _other_createable = list(['name', 'desc', 'added_by_id', 'common', 'timeline_id'])
+    _other_updateable = list(['timeline_id'])
+    _all_readable = list(['id', 'name', 'timeline_id'])
+    _all_createable = list(['name'])
+
+
+class PresetEndpoint(ElementEndpointBase):
+    _session_cls = Session
+    _element = Preset
+    _owner_attr = 'user_id'
+    _other_attr = 'common'
+    _other_readable = list(['id', 'desc', 'timeline_ids', 'user_id', 'common'])
+    _other_createable = list(['desc', 'timeline_ids', 'user_id', 'common'])
 
 
 if __name__ == '__main__':

@@ -155,7 +155,13 @@ _ro_attr: list
             else:
                 result = list()
                 for el in self._element.all():
-                    result.append(self._filter_attrs4read(el.json(), is_other, is_owner, is_admin))
+                    is_owner = False
+                    if is_authorized and not is_admin and self._owner_attr is not None:
+                        if el[self._owner_attr] is not None and el[self._owner_attr] == session[session.__userid_field]:
+                            is_owner = True
+                    r = self._filter_attrs4read(el.json(), is_other, is_owner, is_admin)
+                    if len(r) > 0:
+                        result.append(r)
                 return result
 
         # POST

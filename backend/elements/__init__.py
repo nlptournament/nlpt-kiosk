@@ -6,3 +6,4 @@ from .screen import Screen
 from .timelinetemplate import TimelineTemplate
 from .timeline import Timeline
 from .kiosk import Kiosk
+from .preset import Preset
