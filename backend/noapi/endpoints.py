@@ -137,7 +137,7 @@ _ro_attr: list
             cherrypy.response.status = 401
             return {'error': 'not authorized'}
         if is_authorized and not is_admin and self._owner_attr is not None and element is not None:
-            if element[self._owner_attr] is not None and element[self._owner_attr] == session[session._userid_field]:
+            if element[self._owner_attr] is not None and element[self._owner_attr] == session['user_id']:
                 is_owner = True
         if is_authorized and not is_admin and not is_owner and (element is None or self._other_attr is None or element[self._other_attr]):
             is_other = True
@@ -157,7 +157,7 @@ _ro_attr: list
                 for el in self._element.all():
                     is_owner = False
                     if is_authorized and not is_admin and self._owner_attr is not None:
-                        if el[self._owner_attr] is not None and el[self._owner_attr] == session[session._userid_field]:
+                        if el[self._owner_attr] is not None and el[self._owner_attr] == session['user_id']:
                             is_owner = True
                     r = self._filter_attrs4read(el.json(), is_other, is_owner, is_admin)
                     if len(r) > 0:
@@ -359,7 +359,7 @@ class LoginEndpointBase(object):
             if user is not None:
                 p = self._session_cls._user_cls.get_by_login(user)
                 if p is not None:
-                    s = self._session_cls({self._session_cls._userid_field: p['_id'], 'complete': False, 'ip': get_client_ip()})
+                    s = self._session_cls({'user_id': p['_id'], 'complete': False, 'ip': get_client_ip()})
                     s['till'] = int(datetime.now().timestamp() + 300)
                     cookie = cherrypy.response.cookie
                     cookie[cookie_name] = s.save().get('created')
@@ -403,7 +403,7 @@ class LoginEndpointBase(object):
                 cherrypy.response.status = 400
                 return {'error': 'invalid session'}
             else:
-                p = self._session_cls._user_cls.get(s[self._session_cls._userid_field])
+                p = self._session_cls._user_cls.get(s['user_id'])
                 m = hashlib.md5()
                 m.update(s['_id'].encode('utf-8'))
                 m.update(p['pw'].encode('utf-8'))

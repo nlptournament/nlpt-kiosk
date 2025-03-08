@@ -14,6 +14,7 @@
 
 *reserved range **1x** for individual errors*
 
+  * **4**: *(user_id)* there is no User with id '<element-id\>'
   * **10**: *(till)* needs to be in the future
   * **11**: *(ip)* does not match with the IP of request
 

@@ -8,10 +8,12 @@ import { LogoStarfieldComponent } from './components/logo-starfield/logo-starfie
 import { AnnouncementsComponent } from './components/announcements/announcements.component';
 import { LoginComponent } from './components/admin/login/login.component';
 import { AdminScreenComponent } from './components/admin/admin-screen/admin-screen.component';
+import { LogoutComponent } from './components/admin/logout/logout.component';
 
 export const routes: Routes = [
     { path: 'display', component: DisplayScreenComponent },
     { path: 'login', component: LoginComponent },
+    { path: 'logout', component: LogoutComponent },
     { path: 'admin', component: AdminScreenComponent },
     { path: 'players', component: PlayerCountsComponent },
     { path: 'tas', component: TasComponent },

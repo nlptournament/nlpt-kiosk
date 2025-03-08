@@ -272,33 +272,34 @@ class UserBase(ElementBase):
 class SessionBase(ElementBase):
     cookie_name = 'noAPI'  # Set this in your deriveing class to a desired name, used for storing the session-cookie, in browsers
     _user_cls = UserBase  # Set this to a child-class of UserBase in your deriveing class
-    _userid_field = f'{_user_cls.__name__.lower()}_id'
 
     _attrdef = dict(
         till=ElementBase.addAttr(type=int, notnone=True),
         ip=ElementBase.addAttr(type=str, default=None, notnone=True),
-        complete=ElementBase.addAttr(type=bool, default=False)
+        complete=ElementBase.addAttr(type=bool, default=False),
+        user_id=ElementBase.addAttr(type=str, notnone=True)
     )
-    _attrdef[_userid_field] = ElementBase.addAttr(notnone=True, fk=_user_cls.__name__)
 
     def validate(self):
         errors = dict()
+        if not docDB.exists(self._user_cls.__name__, self['user_id']):
+            errors['user_id'] = {'code': 4, 'desc': f"there is no {self._user_cls.__name__} with id '{self['user_id']}'"}
         if self['till'] <= int(datetime.now().timestamp()):
             errors['till'] = {'code': 10, 'desc': 'needs to be in the future'}
-            self.delete()
         if cherrypy.request:
             if not self['ip'] == get_client_ip():
                 errors['ip'] = {'code': 11, 'desc': 'does not match with the IP of request'}
-                self.delete()
+        if len(errors) > 0:
+            self.delete()
         return errors
 
     def delete_others(self):
-        for sd in docDB.search_many(self.__class__.__name__, {self._userid_field: self[self._userid_field], '_id': {'$ne': self['_id']}}):
+        for sd in docDB.search_many(self.__class__.__name__, {'user_id': self['user_id'], '_id': {'$ne': self['_id']}}):
             s = self.__class__(sd)
             s.delete()
 
     def admin(self):
-        p = docDB.get(self._user_cls.__name__, self[self._userid_field])
-        if p is not None:
-            return p.get('admin', False)
+        u = docDB.get(self._user_cls.__name__, self['user_id'])
+        if u is not None:
+            return u.get('admin', False)
         return False

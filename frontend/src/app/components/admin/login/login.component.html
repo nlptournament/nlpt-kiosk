@@ -7,11 +7,11 @@
             with yout User credentials
         </div>
         <p-iftalabel class="mb-1">
-            <input pInputText id="username" [(ngModel)]="username" autocomplete="off" />
+            <input pInputText id="username" [(ngModel)]="username" autocomplete="off" autofocus />
             <label for="username">Username</label>
         </p-iftalabel>
         <p-iftalabel class="mb-1">
-            <p-password [(ngModel)]="password" inputId="password" [feedback]="false" />
+            <p-password [(ngModel)]="password" inputId="password" [feedback]="false" (keyup.enter)="sendLogin()" />
             <label for="password">Password</label>
         </p-iftalabel>
         <div class="text-right mt-2">

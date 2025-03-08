@@ -33,6 +33,8 @@ class LoginEndpoint(LoginEndpointBase):
 class UserEndpoint(ElementEndpointBase):
     _session_cls = Session
     _element = User
+    _owner_attr = 'user_id'
+    _other_readable = list(['id', 'login', 'admin'])
 
 
 class ScreenTemplateEndpoint(ElementEndpointBase):
