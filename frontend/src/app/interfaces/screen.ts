@@ -1,5 +1,5 @@
 export interface Screen {
-    id: string;
+    id?: string | null;
     desc?: string;
     template_id?: string;
     user_id?: string;
@@ -8,5 +8,5 @@ export interface Screen {
     loop: boolean;
     variables: any;
     locked?: boolean;
-    key: string;
+    key?: string;
 }
