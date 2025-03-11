@@ -8,7 +8,8 @@ module.exports = {
   theme: {
     extend: {
         fontFamily: {
-            sans: ['Orbitron'],
+            sans: ['Nunito'],
+            orbitron: ['Orbitron'],
         },
         colors: {
             'background': '#000000',
