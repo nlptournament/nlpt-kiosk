@@ -50,7 +50,7 @@ key() : str
             errors['repeat'] = {'code': 7, 'desc': 'needs to be 0 or bigger'}
         # variables validation
         missing_variables = list()
-        for k, v in self.template()['variables_dev'].items():
+        for k, v in self.template()['variables_def'].items():
             if k not in self['variables']:
                 if 'default' in v:
                     self['variables'][k] = v['default']
@@ -106,3 +106,4 @@ key() : str
         result = super().json()
         result['locked'] = self.locked()
         result['key'] = self.key()
+        return result

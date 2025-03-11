@@ -60,7 +60,8 @@ module.exports = {
             '24': '3.75vw',
             '28': '4.375vw',
             '32': '5vw',
-            'anno-img': '9vw'
+            'anno-img': '9vw',
+            '10%': '10vw'
         },
     }
   },

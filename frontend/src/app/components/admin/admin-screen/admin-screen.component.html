@@ -1,6 +1,8 @@
 <p>admin-screen works!<br />Hello: {{ currentUser.login }}</p>
 
-<element-screen [screen]="testscreen" [screenTemplates]="screenTemplates" [users]="users"></element-screen>
+@for (screen of screens.values(); track screen.id) {
+<element-screen [screen]="screen" [screenTemplates]="screenTemplates" [users]="users"></element-screen>
+}
 
 
 <p-speedDial [model]="menuItems" direction="left" mask [tooltipOptions]="{ tooltipPosition: 'top' }" buttonClassName="p-button-outlined"></p-speedDial>

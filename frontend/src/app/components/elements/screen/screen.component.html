@@ -1,3 +1,29 @@
-<div class="p-4 w-1/6 bg-card rounded-xl shadow-md flex flex-col items-center gap-x-4 text-center">
-    {{ screen().desc }}
+<div class="p-4 w-10% bg-card rounded-xl shadow-md flex flex-col items-center text-center text-1xl">
+    <div class="flex flex-row">
+        <div>{{ screen().desc }}</div>
+    </div>
+    <div class="flex flex-row gap-x-2">
+        <div>Template:</div>
+        <div>{{ screenTemplates().get(screen().template_id!)!.name }}</div>
+    </div>
+    <div class="flex flex-row gap-x-2">
+        <div>Owner:</div>
+        <div>{{ users().get(screen().user_id!)!.login }}</div>
+    </div>
+    <div class="flex flex-row gap-x-2">
+        <div>Duration:</div>
+        <div>{{ screen().duration }}</div>
+    </div>
+    <div class="flex flex-row gap-x-2">
+        <div>Repeat:</div>
+        <div>{{ screen().repeat }}</div>
+    </div>
+    <div class="flex flex-row gap-x-2">
+        <div>Loop:</div>
+        <div>{{ screen().loop }}</div>
+    </div>
+    <div class="flex flex-row gap-x-2">
+        <div>Variables:</div>
+        <div>{{ screen().variables }}</div>
+    </div>
 </div>

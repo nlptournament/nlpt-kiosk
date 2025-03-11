@@ -67,3 +67,4 @@ preset() : bool
         result = super().json()
         result['locked'] = self.locked()
         result['preset'] = self.preset()
+        return result
