@@ -1,5 +1,5 @@
 <div class="mx-auto max-h-screen overflow-hidden w-fill flex flex-col gap-6">
-    <div class="mx-auto w-fill flex items-center justify-center">
+    <div class="mx-auto w-fill font-orbitron flex items-center justify-center">
         <div class="text-7xl text-text bg-card rounded-b-lg p-7">
             Ankündigungen
         </div>
@@ -9,7 +9,7 @@
         @for (anno of announce; track anno.title) {
             <div class="w-screen flex flex-row items-center justify-between p-10 bg-anno-{{anno.layout}}">
                 <div class="flex flex-col text-text">
-                    <div class="text-8xl mb-4">{{ anno.title }}</div>
+                    <div class="text-8xl font-orbitron mb-4">{{ anno.title }}</div>
                     <div class="text-6xl mb-1" *ngIf="anno.msg">{{ anno.msg }}</div>
                     <div class="text-6xl" *ngIf="anno.time">Start in: {{ anno.time }}</div>
                 </div>
