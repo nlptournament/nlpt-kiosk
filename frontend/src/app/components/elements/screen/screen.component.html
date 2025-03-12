@@ -1,29 +1,44 @@
-<div class="p-4 w-10% bg-card rounded-xl shadow-md flex flex-col items-center text-center text-1xl">
-    <div class="flex flex-row">
+<div class="p-4 pt-1 pb-1 w-10% bg-card rounded-xl shadow-md flex flex-col items-center text-center text-1xl">
+    <div class="flex flex-row w-10% justify-between pr-2 pl-2 mb-1">
+        <div class="flex flex-row gap-2">
+            <div class="flex flex-row gap-1">
+                <i class="pi pi-clock !text-1xl"></i>
+                {{ screen().duration ? screen().duration + 's' : '?' }}
+            </div>
+            <div class="flex flex-row gap-1">
+                <i class="pi pi-replay !text-1xl"></i>
+                {{ screen().loop ? '&infin;' : screen().repeat }}
+            </div>
+        </div>
+        <div class="flex flex-row gap-2">
+            <i class="pi pi-pencil !text-1xl" *ngIf="!screen().locked && (currentUser().admin || screen().user_id == currentUser().id)"></i>
+            <i class="pi pi-lock !text-1xl text-danger" *ngIf="screen().locked"></i>
+            <i class="pi pi-search !text-1xl hover:cursor-pointer hover:text-highlight" (click)="toggleOverrideDetails()" *ngIf="!showDetails()"></i>
+        </div>
+    </div>
+
+    <div class="flex flex-row text-highlight">
         <div>{{ screen().desc }}</div>
     </div>
-    <div class="flex flex-row gap-x-2">
-        <div>Template:</div>
+
+    <div class="flex flex-row gap-1">
+        <i class="pi pi-receipt !text-1xl"></i>
         <div>{{ screenTemplates().get(screen().template_id!)!.name }}</div>
     </div>
-    <div class="flex flex-row gap-x-2">
-        <div>Owner:</div>
-        <div>{{ users().get(screen().user_id!)!.login }}</div>
+
+    <div class="flex flex-col" *ngIf="(overrideDetails || showDetails()) && variables.size > 0">
+        <div class="flex flex-row gap-1" *ngFor="let v of variables | keyvalue">
+            <i class="pi pi-sliders-h !text-1xl"></i>
+            <div>{{ v.key }}</div>
+            <div>{{ v.value.type == 'str' && v.value.val == '' ? '---' : v.value.val }}</div>
+        </div>
     </div>
-    <div class="flex flex-row gap-x-2">
-        <div>Duration:</div>
-        <div>{{ screen().duration }}</div>
-    </div>
-    <div class="flex flex-row gap-x-2">
-        <div>Repeat:</div>
-        <div>{{ screen().repeat }}</div>
-    </div>
-    <div class="flex flex-row gap-x-2">
-        <div>Loop:</div>
-        <div>{{ screen().loop }}</div>
-    </div>
-    <div class="flex flex-row gap-x-2">
-        <div>Variables:</div>
-        <div>{{ screen().variables }}</div>
+
+    <div class="flex flex-row w-10% justify-between pr-2 pl-2 mt-1" *ngIf="(overrideDetails || showDetails())">
+        <div></div>
+        <div class="flex flex-row gap-1">
+            <i class="pi pi-user !text-1xl"></i>
+            <div>{{ users().get(screen().user_id!)!.login }}</div>
+        </div>
     </div>
 </div>
