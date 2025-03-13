@@ -108,4 +108,19 @@ export class AdminScreenComponent implements OnInit {
             });
     }
 
+    screenEdited(event: string|null|undefined) {
+        if (event) {
+            this.screenService
+                .getScreen(event)
+                .subscribe({
+                    next: (screen: Screen) => {
+                        if (screen.id) this.screens.set(screen.id, screen);
+                    },
+                    error: (err: HttpErrorResponse) => {
+                        this.errorHandler.handleError(err);
+                    }
+                });
+        }
+    }
+
 }

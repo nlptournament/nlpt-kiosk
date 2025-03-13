@@ -1,7 +1,7 @@
 <p>admin-screen works!<br />Hello: {{ currentUser.login }}</p>
 
 @for (screen of screens.values(); track screen.id) {
-<element-screen [screen]="screen" [screenTemplates]="screenTemplates" [users]="users" [currentUser]="currentUser"></element-screen>
+<element-screen [screen]="screen" [screenTemplates]="screenTemplates" [users]="users" [currentUser]="currentUser" (editResult)="screenEdited($event)"></element-screen>
 }
 
 

@@ -1,8 +1,14 @@
-import { booleanAttribute, Component, input, OnInit } from '@angular/core';
+import { booleanAttribute, Component, input, OnInit, output } from '@angular/core';
 import { Screen } from '../../../interfaces/screen';
 import { ScreenTemplate } from '../../../interfaces/screen-template';
 import { User } from '../../../interfaces/user';
 import { CommonModule } from '@angular/common';
+import { Dialog } from 'primeng/dialog';
+import { FormsModule } from '@angular/forms';
+import { InputTextModule } from 'primeng/inputtext';
+import { IftaLabelModule } from 'primeng/iftalabel';
+import { ButtonModule } from 'primeng/button';
+import { ScreenService } from '../../../services/screen.service';
 
 interface variable_def {
     val: any;
@@ -12,7 +18,7 @@ interface variable_def {
 
 @Component({
   selector: 'element-screen',
-  imports: [CommonModule],
+  imports: [CommonModule, Dialog, FormsModule, InputTextModule, IftaLabelModule, ButtonModule],
   templateUrl: './screen.component.html',
   styleUrl: './screen.component.scss'
 })
@@ -22,8 +28,15 @@ export class ScreenComponent implements OnInit {
     users = input.required<Map<string, User>>();
     currentUser = input.required<User>();
     showDetails = input(false, {transform: booleanAttribute});
+    editMode = input(false, {transform: booleanAttribute});
+    editResult = output<string|null|undefined>();
     overrideDetails: boolean = false;
+    editActive: boolean = false;
     variables: Map<string, variable_def> = new Map<string, variable_def>;
+
+    constructor(
+        private screenService: ScreenService
+    ) { }
 
     ngOnInit(): void {
         this.extractVariables();
@@ -49,5 +62,24 @@ export class ScreenComponent implements OnInit {
 
     toggleOverrideDetails() {
         this.overrideDetails = !this.overrideDetails;
+    }
+
+    editClose() {
+        if (this.editMode())
+            this.editResult.emit(this.screen().id);
+    }
+
+    editClosed(event: string|null|undefined) {
+        if (event) this.editResult.emit(event);
+        this.editActive = false;
+    }
+
+    saveScreen() {
+        if (this.editMode())
+            this.screenService
+                .updateScreen(this.screen())
+                .subscribe((result: any) => {
+                    next: this.editClose();
+                });
     }
 }

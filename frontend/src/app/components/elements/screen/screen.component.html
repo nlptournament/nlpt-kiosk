@@ -1,4 +1,4 @@
-<div class="p-4 pt-1 pb-1 w-10% bg-card rounded-xl shadow-md flex flex-col items-center text-center text-1xl">
+<div class="p-4 pt-1 pb-1 w-10% bg-card rounded-xl shadow-md flex flex-col items-center text-center text-1xl" *ngIf="!editMode()">
     <div class="flex flex-row w-10% justify-between pr-2 pl-2 mb-1">
         <div class="flex flex-row gap-2">
             <div class="flex flex-row gap-1">
@@ -11,7 +11,7 @@
             </div>
         </div>
         <div class="flex flex-row gap-2">
-            <i class="pi pi-pencil !text-1xl" *ngIf="!screen().locked && (currentUser().admin || screen().user_id == currentUser().id)"></i>
+            <i class="pi pi-pencil !text-1xl hover:cursor-pointer hover:text-highlight" (click)="editActive = true" *ngIf="!screen().locked && (currentUser().admin || screen().user_id == currentUser().id)"></i>
             <i class="pi pi-lock !text-1xl text-danger" *ngIf="screen().locked"></i>
             <i class="pi pi-search !text-1xl hover:cursor-pointer hover:text-highlight" (click)="toggleOverrideDetails()" *ngIf="!showDetails()"></i>
         </div>
@@ -42,3 +42,28 @@
         </div>
     </div>
 </div>
+
+<div class="p-4 pt-1 pb-1 bg-card rounded-xl shadow-md flex flex-col items-center text-center text-1xl" *ngIf="editMode()">
+    <div class="flex flex-row justify-between pr-2 pl-2 mb-1">
+        <div class="flex flex-row gap-2">
+        </div>
+        <div class="flex flex-row gap-2">
+            <i class="pi pi-times !text-1xl hover:cursor-pointer hover:text-danger" (click)="editClose()"></i>
+        </div>
+    </div>
+
+    <p-iftalabel class="mb-1">
+        <input pInputText id="desc" [(ngModel)]="screen().desc" autocomplete="off" autofocus />
+        <label for="desc">Description</label>
+    </p-iftalabel>
+
+    <div class="text-right mt-2">
+        <p-button label="Save" (onClick)="saveScreen()" />
+    </div>
+</div>
+
+<p-dialog [modal]="true" [(visible)]="editActive">
+    <ng-template #headless>
+        <element-screen [screen]="screen()" [screenTemplates]="screenTemplates()" [users]="users()" [currentUser]="currentUser()" [editMode]="true" (editResult)="editClosed($event)" *ngIf="editActive"></element-screen>
+    </ng-template>
+</p-dialog>

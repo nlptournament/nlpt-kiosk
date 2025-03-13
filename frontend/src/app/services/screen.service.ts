@@ -21,4 +21,8 @@ export class ScreenService {
     public getScreens(): Observable<Screen[]> {
         return this.http.get<Screen[]>(this.screenUrl, {withCredentials:true});
     }
+
+    public updateScreen(screen: Screen): Observable<any> {
+        return this.http.patch<any>(this.screenUrl + screen.id + '/', screen, {withCredentials:true});
+    }
 }
