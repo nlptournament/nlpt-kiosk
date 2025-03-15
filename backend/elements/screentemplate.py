@@ -19,7 +19,7 @@ variables_def : dict
     dictionary of variables definitions, that can (or have to) be filled by a Screen instance
     key of an element is the later variable name, value is a dictionary it-self with the following keys:
         type : str (required)
-            defines the type of this variable; following values are possible: str, int, float, bool
+            defines the type of this variable; following values are possible: str, int, float, bool, ts (int timestamp)
         default : instance of the previously set type
             if a default value is defined the variable can be ommited in Screen instance otherwise the Screen has to set a value
         desc : str
@@ -40,6 +40,7 @@ variables_def : dict
     _valid_types = {
         'str': str,
         'int': int,
+        'ts': int,
         'float': float,
         'bool': bool
     }

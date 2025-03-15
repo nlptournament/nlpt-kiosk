@@ -1,3 +1,4 @@
+<!-- READ MODE -->
 <div class="p-4 pt-1 pb-1 w-10% bg-card rounded-xl shadow-md flex flex-col items-center text-center text-1xl" *ngIf="!editMode()">
     <div class="flex flex-row w-10% justify-between pr-2 pl-2 mb-1">
         <div class="flex flex-row gap-2">
@@ -30,7 +31,8 @@
         <div class="flex flex-row gap-1" *ngFor="let v of variables | keyvalue">
             <i class="pi pi-sliders-h !text-1xl"></i>
             <div>{{ v.key }}</div>
-            <div>{{ v.value.type == 'str' && v.value.val == '' ? '---' : v.value.val }}</div>
+            <div *ngIf="v.value.type == 'ts'">{{ v.value.val | date:'dd.MM.yy HH:mm:ss' }}</div>
+            <div *ngIf="v.value.type != 'ts'">{{ v.value.type == 'str' && v.value.val == '' ? '---' : v.value.val }}</div>
         </div>
     </div>
 
@@ -43,25 +45,58 @@
     </div>
 </div>
 
-<div class="p-4 pt-1 pb-1 bg-card rounded-xl shadow-md flex flex-col items-center text-center text-1xl" *ngIf="editMode()">
-    <div class="flex flex-row justify-between pr-2 pl-2 mb-1">
-        <div class="flex flex-row gap-2">
-        </div>
-        <div class="flex flex-row gap-2">
-            <i class="pi pi-times !text-1xl hover:cursor-pointer hover:text-danger" (click)="editClose()"></i>
-        </div>
+<!-- EDIT MODE -->
+<div class="p-4 pt-2 pb-2 bg-card rounded-xl shadow-md flex flex-col items-left" *ngIf="editMode()">
+    <div class="w-full text-right mb-1">
+        <i class="pi pi-times hover:cursor-pointer hover:text-danger" (click)="editClose()"></i>
     </div>
 
-    <p-iftalabel class="mb-1">
+    <p-iftalabel class="w-full mb-2">
         <input pInputText id="desc" [(ngModel)]="screen().desc" autocomplete="off" autofocus />
         <label for="desc">Description</label>
     </p-iftalabel>
 
-    <div class="text-right mt-2">
+    <p-iftalabel class="w-full mb-2">
+        <p-select [(ngModel)]="screen().template_id" (onChange)="templateChanged()" inputId="template_id" [options]="selectableTemplates" optionValue="code" optionLabel="name" styleClass="w-full">
+            <ng-template let-temp #item>
+                <div pTooltip="{{ temp.desc }}" tooltipPosition="left" showDelay="10" positionLeft="-15" class="w-full">{{ temp.name }}</div>
+            </ng-template>
+        </p-select>
+        <label for="template_id">Template</label>
+    </p-iftalabel>
+
+    <p-iftalabel class="w-full mb-2">
+        <p-select [(ngModel)]="screen().user_id" inputId="user_id" [options]="selectableUsers" optionValue="code" optionLabel="name" styleClass="w-full" [disabled]="!currentUser().admin" />
+        <label for="user_id">Owner</label>
+    </p-iftalabel>
+
+    <p-iftalabel class="w-full mb-2">
+        <p-inputnumber [(ngModel)]="screen().duration" inputId="duration" mode="decimal" [min]="1" suffix="s" locale="de-DE" [disabled]="!screenTemplates().get(screen().template_id!)!.endless" />
+        <label for="duration">Duration</label>
+    </p-iftalabel>
+
+    <p-selectbutton [options]="selectableLoops" inputId="loop" [(ngModel)]="screen().loop" optionLabel="name" optionValue="code" [disabled]="screenTemplates().get(screen().template_id!)!.endless" class="mb-2" />
+
+    <p-iftalabel class="w-full mb-2">
+        <p-inputnumber [(ngModel)]="screen().repeat" inputId="repeat" mode="decimal" [showButtons]="true" [min]="0" suffix=" times" locale="de-DE" [disabled]="screenTemplates().get(screen().template_id!)!.endless || screen().loop" />
+        <label for="repeat">Repeat</label>
+    </p-iftalabel>
+
+    <p-iftalabel class="w-full mb-2" *ngFor="let v of variables | keyvalue">
+        <input pInputText id="{{v.key}}" [(ngModel)]="v.value.val" autocomplete="off" *ngIf="v.value.type == 'str'" />
+        <p-inputnumber [(ngModel)]="v.value.val" inputId="{{v.key}}" mode="decimal" locale="de-DE" *ngIf="v.value.type == 'int'" />
+        <p-datepicker [(ngModel)]="v.value.val" inputId="{{v.key}}" dateFormat="dd.mm.yy" [showTime]="true" [showSeconds]="true" *ngIf="v.value.type == 'ts'" />
+        <p-inputnumber [(ngModel)]="v.value.val" inputId="{{v.key}}" mode="decimal" [minFractionDigits]="2" [maxFractionDigits]="5" locale="de-DE" *ngIf="v.value.type == 'float'" />
+        <p-toggleswitch [(ngModel)]="v.value.val" inputId="{{v.key}}" *ngIf="v.value.type == 'bool'" />
+        <label for="{{v.key}}">{{v.key}}</label>
+    </p-iftalabel>
+
+    <div class="w-full text-right">
         <p-button label="Save" (onClick)="saveScreen()" />
     </div>
 </div>
 
+<!-- EDIT MODAL -->
 <p-dialog [modal]="true" [(visible)]="editActive">
     <ng-template #headless>
         <element-screen [screen]="screen()" [screenTemplates]="screenTemplates()" [users]="users()" [currentUser]="currentUser()" [editMode]="true" (editResult)="editClosed($event)" *ngIf="editActive"></element-screen>

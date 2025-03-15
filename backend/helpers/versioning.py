@@ -169,7 +169,7 @@ def system_screentemplates():
     # Countdown
     if ScreenTemplate.count({'name': 'Countdown'}) == 0:
         vardef = dict({
-            'time': {'type': 'int', 'desc': 'timestamp of the target time, the Countdown ticks towards'},
+            'time': {'type': 'ts', 'desc': 'timestamp of the target time, the Countdown ticks towards'},
             'text_above': {'type': 'str', 'default': '', 'desc': 'Text displayed above the Countdown'},
             'text_below': {'type': 'str', 'default': '', 'desc': 'Text displayed below the Countdown'}
         })
