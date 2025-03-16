@@ -25,4 +25,12 @@ export class ScreenService {
     public updateScreen(screen: Screen): Observable<any> {
         return this.http.patch<any>(this.screenUrl + screen.id + '/', screen, {withCredentials:true});
     }
+
+    public createScreen(screen: Screen): Observable<any> {
+        return this.http.post<any>(this.screenUrl, screen, {withCredentials:true});
+    }
+
+    public deleteScreen(id: string): Observable<any> {
+        return this.http.delete<any>(this.screenUrl + id + '/', {withCredentials:true});
+    }
 }

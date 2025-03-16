@@ -147,11 +147,32 @@ export class ScreenComponent implements OnInit, OnChanges {
                 else nv = { ...nv, [k]: this.variables.get(k)!.val};
             }
             this.screen().variables = nv;
+            if (this.screen().id)
+                this.screenService
+                    .updateScreen(this.screen())
+                    .subscribe((result: any) => {
+                        next: this.editClose();
+                    });
+            else
+                this.screenService
+                    .createScreen(this.screen())
+                    .subscribe((result: any) => {
+                        next: {
+                            if (Object.keys(result).includes('created'))
+                                this.screen().id = result['created'];
+                            this.editClose();
+                        }
+                    });
+        }
+    }
+
+    deleteScreen() {
+        if (this.editMode() && this.screen().id)
             this.screenService
-                .updateScreen(this.screen())
+                .deleteScreen(this.screen().id!)
                 .subscribe((result: any) => {
                     next: this.editClose();
                 });
-        }
+        else this.editClose();
     }
 }

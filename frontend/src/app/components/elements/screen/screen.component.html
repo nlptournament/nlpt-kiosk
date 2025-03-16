@@ -46,7 +46,7 @@
 </div>
 
 <!-- EDIT MODE -->
-<div class="p-4 pt-2 pb-2 bg-card rounded-xl shadow-md flex flex-col items-left" *ngIf="editMode()">
+<div class="p-4 pt-2 pb-3 bg-card rounded-xl shadow-md flex flex-col items-left" *ngIf="editMode()">
     <div class="w-full text-right mb-1">
         <i class="pi pi-times hover:cursor-pointer hover:text-danger" (click)="editClose()"></i>
     </div>
@@ -91,7 +91,8 @@
         <label for="{{v.key}}">{{v.key}}</label>
     </p-iftalabel>
 
-    <div class="w-full text-right">
+    <div class="w-full flex justify-between">
+        <p-button label="Delete" severity="danger" (onClick)="deleteScreen()" />
         <p-button label="Save" (onClick)="saveScreen()" />
     </div>
 </div>

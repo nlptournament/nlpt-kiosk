@@ -11,10 +11,12 @@ import { Screen } from '../../../interfaces/screen';
 import { ScreenTemplateService } from '../../../services/screen-template.service';
 import { ScreenService } from '../../../services/screen.service';
 import { ScreenComponent } from '../../elements/screen/screen.component';
+import { Dialog } from 'primeng/dialog';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-admin-screen',
-  imports: [SpeedDial, ScreenComponent],
+  imports: [CommonModule, SpeedDial, ScreenComponent, Dialog],
   templateUrl: './admin-screen.component.html',
   styleUrl: './admin-screen.component.scss'
 })
@@ -24,7 +26,9 @@ export class AdminScreenComponent implements OnInit {
     users: Map<string, User> = new Map<string, User>;
     screenTemplates: Map<string, ScreenTemplate> = new Map<string, ScreenTemplate>;
     screens: Map<string, Screen> = new Map<string, Screen>;
-    testscreen: Screen = <Screen>{desc: 'Hallo'};
+
+    createScreenActive: boolean = false;
+    createScreenDummy: Screen = <Screen>{};
 
     constructor(
         private errorHandler: ErrorHandlerService,
@@ -48,6 +52,14 @@ export class AdminScreenComponent implements OnInit {
                 icon: 'pi pi-sign-out',
                 command: () => {
                     this.router.navigate(['/logout']);
+                }
+            },
+            {
+                label: 'Create Screen',
+                icon: 'pi pi-file',
+                command: () => {
+                    this.createScreenDummy = <Screen>{desc: '', user_id: this.currentUser.id, duration: null, repeat: 0, loop: false, variables: {}};
+                    this.createScreenActive = true;
                 }
             }
         ]
@@ -109,6 +121,7 @@ export class AdminScreenComponent implements OnInit {
     }
 
     screenEdited(event: string|null|undefined) {
+        this.createScreenActive = false;
         if (event) {
             this.screenService
                 .getScreen(event)
@@ -117,7 +130,10 @@ export class AdminScreenComponent implements OnInit {
                         if (screen.id) this.screens.set(screen.id, screen);
                     },
                     error: (err: HttpErrorResponse) => {
-                        this.errorHandler.handleError(err);
+                        if (err.status == 404 && this.screens.has(event))
+                            this.screens.delete(event)
+                        else
+                            this.errorHandler.handleError(err);
                     }
                 });
         }

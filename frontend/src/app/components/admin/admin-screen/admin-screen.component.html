@@ -4,5 +4,11 @@
 <element-screen [screen]="screen" [screenTemplates]="screenTemplates" [users]="users" [currentUser]="currentUser" (editResult)="screenEdited($event)"></element-screen>
 }
 
+<!-- CREATE SCREEN MODAL -->
+<p-dialog [modal]="true" [(visible)]="createScreenActive">
+    <ng-template #headless>
+        <element-screen [screen]="createScreenDummy" [screenTemplates]="screenTemplates" [users]="users" [currentUser]="currentUser" [editMode]="true" (editResult)="screenEdited($event)" *ngIf="createScreenActive"></element-screen>
+    </ng-template>
+</p-dialog>
 
 <p-speedDial [model]="menuItems" direction="left" mask [tooltipOptions]="{ tooltipPosition: 'top' }" buttonClassName="p-button-outlined"></p-speedDial>

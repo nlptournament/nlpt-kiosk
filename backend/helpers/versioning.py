@@ -207,4 +207,4 @@ def system_screentemplates():
         ScreenTemplate({
             'key': 'logo-starfield', 'name': 'Starfield Logo',
             'desc': 'NLPT logo with animated starfield around',
-            'endless': False, 'duration': None, 'variables_def': vardef}).save()
+            'endless': True, 'duration': None, 'variables_def': vardef}).save()
