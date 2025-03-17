@@ -1,0 +1,40 @@
+<div class="w-fit p-2 pt-1 bg-timeline-card rounded-xl shadow-md flex flex-col text-1xl">
+    <div class="flex flex-row justify-between items-start gap-5 mb-1">
+        <div class="flex flex-row items-center gap-1 mt-1 ml-1">
+            <div class="text-highlight" *ngIf="!editActive">{{ timelineTemplate().desc }}</div>
+            <input pInputText id="desc" [(ngModel)]="timelineTemplate().desc" autocomplete="off" *ngIf="editActive" />
+        </div>
+        <div class="flex flex-row items-center gap-1 mt-1">
+            <i class="pi pi-user !text-1xl"></i>
+            <div *ngIf="!editActive">{{ users().get(timelineTemplate().user_id!)!.login }}</div>
+            <p-select [(ngModel)]="timelineTemplate().user_id" inputId="user_id" [options]="selectableUsers" optionValue="code" optionLabel="name" [disabled]="!currentUser().admin" *ngIf="editActive" />
+        </div>
+        <div class="flex flex-row gap-2">
+            <i class="pi pi-clone !text-1xl hover:cursor-pointer hover:text-highlight" (click)="duplicateTimelineTemplate()" *ngIf="!editActive"></i>
+            <i class="pi pi-pencil !text-1xl hover:cursor-pointer hover:text-highlight" (click)="editActivate()" *ngIf="!editActive && (currentUser().admin || timelineTemplate().user_id == currentUser().id)"></i>
+            <i class="pi pi-trash !text-1xl hover:cursor-pointer hover:text-danger" *ngIf="editActive && !editMode()" (click)="deleteTimelineTemplate()"></i>
+            <i class="pi pi-save !text-1xl hover:cursor-pointer hover:text-highlight" *ngIf="editActive" (click)="saveTimelineTemplate()"></i>
+            <i class="pi pi-times !text-1xl hover:cursor-pointer hover:text-danger" *ngIf="editActive" (click)="editClose()"></i>
+        </div>
+    </div>
+    <div class="flex flex-row gap-2">
+        @for (sid of timelineTemplate().screen_ids; track sid) {
+        <element-screen [screen]="screens().get(sid)!" [screenTemplates]="screenTemplates()" [users]="users()" [currentUser]="currentUser()" (editResult)="screenEdited.emit($event)"></element-screen>
+        }
+        <div class="w-10% rounded-xl shadow-md flex items-center justify-center" *ngIf="editActive">
+            <i class="pi pi-plus-circle !text-3xl hover:cursor-pointer hover:text-highlight" *ngIf="!addScreenActive" (click)="addScreenActivate()"></i>
+            <div class="w-full pl-2 pr-2" *ngIf="addScreenActive">
+                <p-listbox [options]="selectableScreens" [(ngModel)]="selectedScreen" optionValue="code" optionLabel="name" (onChange)="screenAdd()" [virtualScroll]="true" [virtualScrollItemSize]="24" scrollHeight="3vw" class="w-full !text-1xl" />
+            </div>
+        </div>
+    </div>
+    <div class="flex flex-row gap-2 justify-left mt-1" *ngIf="editActive">
+        @for (sid of timelineTemplate().screen_ids; track sid; let first = $first, last = $last, index = $index) {
+        <div class="w-10% flex flex-row justify-center gap-2">
+            <i class="pi pi-arrow-left !text-2xl hover:cursor-pointer hover:text-highlight" (click)="screenMoveLeft(index)" *ngIf="!first"></i>
+            <i class="pi pi-times !text-2xl hover:cursor-pointer hover:text-danger" (click)="screenRemove(index)"></i>
+            <i class="pi pi-arrow-right !text-2xl hover:cursor-pointer hover:text-highlight" (click)="screenMoveRight(index)" *ngIf="!last"></i>
+        </div>
+        }
+    </div>
+</div>

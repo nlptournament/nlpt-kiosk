@@ -22,6 +22,8 @@ module.exports = {
             'anno-default': '#111111',
             'anno-danger': '#7f1d1d',
             'danger': '#7f1d1d',
+            'screen-card': '#777777',
+            'timeline-card': '#666666'
         },
         fontSize: {
             '1xl': ['0.625vw', '0.938vw'],

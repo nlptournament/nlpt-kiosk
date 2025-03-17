@@ -13,10 +13,13 @@ import { ScreenService } from '../../../services/screen.service';
 import { ScreenComponent } from '../../elements/screen/screen.component';
 import { Dialog } from 'primeng/dialog';
 import { CommonModule } from '@angular/common';
+import { TimelineTemplateService } from '../../../services/timeline-template.service';
+import { TimelineTemplate } from '../../../interfaces/timeline-template';
+import { TimelineTemplateComponent } from '../../elements/timeline-template/timeline-template.component';
 
 @Component({
   selector: 'app-admin-screen',
-  imports: [CommonModule, SpeedDial, ScreenComponent, Dialog],
+  imports: [CommonModule, SpeedDial, Dialog, ScreenComponent, TimelineTemplateComponent],
   templateUrl: './admin-screen.component.html',
   styleUrl: './admin-screen.component.scss'
 })
@@ -26,16 +29,20 @@ export class AdminScreenComponent implements OnInit {
     users: Map<string, User> = new Map<string, User>;
     screenTemplates: Map<string, ScreenTemplate> = new Map<string, ScreenTemplate>;
     screens: Map<string, Screen> = new Map<string, Screen>;
+    timelineTemplates: Map<string, TimelineTemplate> = new Map<string, TimelineTemplate>;
 
     createScreenActive: boolean = false;
     createScreenDummy: Screen = <Screen>{};
+    createTimelineTemplateActive: boolean = false;
+    createTimelineTemplateDummy: TimelineTemplate = <TimelineTemplate>{};
 
     constructor(
         private errorHandler: ErrorHandlerService,
         private router: Router,
         private userService: UserService,
         private screenTemplateService: ScreenTemplateService,
-        private screenService: ScreenService
+        private screenService: ScreenService,
+        private timelinetemplateService: TimelineTemplateService
     ) { }
 
     ngOnInit(): void {
@@ -43,6 +50,7 @@ export class AdminScreenComponent implements OnInit {
         this.refreshUsers();
         this.refreshScreenTemplates();
         this.refreshScreens();
+        this.refreshTimelineTemplates();
     }
 
     populateMenu() {
@@ -60,6 +68,14 @@ export class AdminScreenComponent implements OnInit {
                 command: () => {
                     this.createScreenDummy = <Screen>{desc: '', user_id: this.currentUser.id, duration: null, repeat: 0, loop: false, variables: {}};
                     this.createScreenActive = true;
+                }
+            },
+            {
+                label: 'Create Timeline',
+                icon: 'pi pi-folder',
+                command: () => {
+                    this.createTimelineTemplateDummy = <TimelineTemplate>{desc: '', user_id: this.currentUser.id, screen_ids: <string[]>[]};
+                    this.createTimelineTemplateActive = true;
                 }
             }
         ]
@@ -120,6 +136,21 @@ export class AdminScreenComponent implements OnInit {
             });
     }
 
+    refreshTimelineTemplates() {
+        this.timelinetemplateService
+            .getTimelineTemplates()
+            .subscribe({
+                next: (tts: TimelineTemplate[]) => {
+                    let ttl: Map<string, TimelineTemplate> = new Map<string, TimelineTemplate>;
+                    for (let tt of tts) if (tt.id) ttl.set(tt.id, tt);
+                    this.timelineTemplates = ttl;
+                },
+                error: (err: HttpErrorResponse) => {
+                    this.errorHandler.handleError(err);
+                }
+            });
+    }
+
     screenEdited(event: string|null|undefined) {
         this.createScreenActive = false;
         if (event) {
@@ -132,6 +163,25 @@ export class AdminScreenComponent implements OnInit {
                     error: (err: HttpErrorResponse) => {
                         if (err.status == 404 && this.screens.has(event))
                             this.screens.delete(event)
+                        else
+                            this.errorHandler.handleError(err);
+                    }
+                });
+        }
+    }
+
+    timelineTemplateEdited(event: string|null|undefined) {
+        this.createTimelineTemplateActive = false;
+        if (event) {
+            this.timelinetemplateService
+                .getTimelineTemplate(event)
+                .subscribe({
+                    next: (tt: TimelineTemplate) => {
+                        if (tt.id) this.timelineTemplates.set(tt.id, tt);
+                    },
+                    error: (err: HttpErrorResponse) => {
+                        if (err.status == 404 && this.timelineTemplates.has(event))
+                            this.timelineTemplates.delete(event)
                         else
                             this.errorHandler.handleError(err);
                     }
