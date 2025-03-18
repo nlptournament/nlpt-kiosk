@@ -23,7 +23,8 @@ module.exports = {
             'anno-danger': '#7f1d1d',
             'danger': '#7f1d1d',
             'screen-card': '#777777',
-            'timeline-card': '#666666'
+            'timeline-card': '#666666',
+            'add-card': '#444444'
         },
         fontSize: {
             '1xl': ['0.625vw', '0.938vw'],
@@ -65,8 +66,12 @@ module.exports = {
             '28': '4.375vw',
             '32': '5vw',
             'anno-img': '9vw',
-            '10%': '10vw'
+            '10%': '10vw',
+            '52%': '52vw'
         },
+        height: {
+            '50%': '50vh'
+        }
     }
   },
   plugins: [PrimeUI],

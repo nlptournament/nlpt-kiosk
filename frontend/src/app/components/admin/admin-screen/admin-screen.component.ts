@@ -1,25 +1,29 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { MenuItem } from 'primeng/api';
-import { SpeedDial } from 'primeng/speeddial';
-import { UserService } from '../../../services/user.service';
-import { ErrorHandlerService } from '../../../services/error-handler.service';
-import { User } from '../../../interfaces/user';
 import { HttpErrorResponse } from '@angular/common/http';
+import { CommonModule } from '@angular/common';
+
+import { User } from '../../../interfaces/user';
 import { ScreenTemplate } from '../../../interfaces/screen-template';
 import { Screen } from '../../../interfaces/screen';
+import { TimelineTemplate } from '../../../interfaces/timeline-template';
+
+import { UserService } from '../../../services/user.service';
 import { ScreenTemplateService } from '../../../services/screen-template.service';
 import { ScreenService } from '../../../services/screen.service';
-import { ScreenComponent } from '../../elements/screen/screen.component';
-import { Dialog } from 'primeng/dialog';
-import { CommonModule } from '@angular/common';
 import { TimelineTemplateService } from '../../../services/timeline-template.service';
-import { TimelineTemplate } from '../../../interfaces/timeline-template';
+import { ErrorHandlerService } from '../../../services/error-handler.service';
+
 import { TimelineTemplateComponent } from '../../elements/timeline-template/timeline-template.component';
+import { ScreensPanelComponent } from '../screens-panel/screens-panel.component';
+
+import { MenuItem } from 'primeng/api';
+import { SpeedDial } from 'primeng/speeddial';
+import { Dialog } from 'primeng/dialog';
 
 @Component({
   selector: 'app-admin-screen',
-  imports: [CommonModule, SpeedDial, Dialog, ScreenComponent, TimelineTemplateComponent],
+  imports: [CommonModule, SpeedDial, Dialog, TimelineTemplateComponent, ScreensPanelComponent],
   templateUrl: './admin-screen.component.html',
   styleUrl: './admin-screen.component.scss'
 })
@@ -31,10 +35,9 @@ export class AdminScreenComponent implements OnInit {
     screens: Map<string, Screen> = new Map<string, Screen>;
     timelineTemplates: Map<string, TimelineTemplate> = new Map<string, TimelineTemplate>;
 
-    createScreenActive: boolean = false;
-    createScreenDummy: Screen = <Screen>{};
     createTimelineTemplateActive: boolean = false;
     createTimelineTemplateDummy: TimelineTemplate = <TimelineTemplate>{};
+    panelScreenActive: boolean = true;
 
     constructor(
         private errorHandler: ErrorHandlerService,
@@ -63,11 +66,10 @@ export class AdminScreenComponent implements OnInit {
                 }
             },
             {
-                label: 'Create Screen',
+                label: 'Manage Screens',
                 icon: 'pi pi-file',
                 command: () => {
-                    this.createScreenDummy = <Screen>{desc: '', user_id: this.currentUser.id, duration: null, repeat: 0, loop: false, variables: {}};
-                    this.createScreenActive = true;
+                    this.panelScreenActive = true;
                 }
             },
             {
@@ -152,7 +154,6 @@ export class AdminScreenComponent implements OnInit {
     }
 
     screenEdited(event: string|null|undefined) {
-        this.createScreenActive = false;
         if (event) {
             this.screenService
                 .getScreen(event)
@@ -161,8 +162,10 @@ export class AdminScreenComponent implements OnInit {
                         if (screen.id) this.screens.set(screen.id, screen);
                     },
                     error: (err: HttpErrorResponse) => {
-                        if (err.status == 404 && this.screens.has(event))
-                            this.screens.delete(event)
+                        if (err.status == 404 && this.screens.has(event)) {
+                            this.refreshTimelineTemplates();
+                            this.screens.delete(event);
+                        }
                         else
                             this.errorHandler.handleError(err);
                     }

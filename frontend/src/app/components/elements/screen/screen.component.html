@@ -98,7 +98,7 @@
 </div>
 
 <!-- EDIT MODAL -->
-<p-dialog [modal]="true" [(visible)]="editActive">
+<p-dialog [modal]="true" appendTo="body" [(visible)]="editActive">
     <ng-template #headless>
         <element-screen [screen]="screen()" [screenTemplates]="screenTemplates()" [users]="users()" [currentUser]="currentUser()" [editMode]="true" (editResult)="editClosed($event)" *ngIf="editActive"></element-screen>
     </ng-template>

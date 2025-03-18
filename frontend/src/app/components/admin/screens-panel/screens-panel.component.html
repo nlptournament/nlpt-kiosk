@@ -1,0 +1,24 @@
+<p-dialog [modal]="true" appendTo="body" [visible]="isActive()">
+    <ng-template #headless>
+        <div class="max-w-52% max-h-50% p-2 pt-1">
+            <div class="w-fill flex flex-row justify-end items-start gap-5 mb-1">
+                <i class="pi pi-times !text-1xl hover:cursor-pointer hover:text-danger" (click)="isActive.set(false)"></i>
+            </div>
+            <div class="flex flex-wrap gap-2">
+                @for (screen of screens().values(); track screen.id) {
+                <element-screen [screen]="screen" [screenTemplates]="screenTemplates()" [users]="users()" [currentUser]="currentUser()" (editResult)="screenEdited.emit($event)"></element-screen>
+                }
+                <div class="w-10% bg-add-card rounded-xl shadow-md flex items-center justify-center p-5">
+                    <i class="pi pi-plus-circle !text-3xl hover:cursor-pointer hover:text-highlight" (click)="createScreen()"></i>
+                </div>
+            </div>
+        </div>
+    </ng-template>
+</p-dialog>
+
+<!-- CREATE SCREEN MODAL -->
+<p-dialog [modal]="true" appendTo="body" [(visible)]="createScreenActive">
+    <ng-template #headless>
+        <element-screen [screen]="createScreenDummy" [screenTemplates]="screenTemplates()" [users]="users()" [currentUser]="currentUser()" [editMode]="true" (editResult)="screenCreated($event)" *ngIf="createScreenActive"></element-screen>
+    </ng-template>
+</p-dialog>

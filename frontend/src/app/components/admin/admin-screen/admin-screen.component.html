@@ -1,23 +1,14 @@
 <p>admin-screen works!</p>
 
-<div class="flex flex-row gap-2">
-    @for (screen of screens.values(); track screen.id) {
-    <element-screen [screen]="screen" [screenTemplates]="screenTemplates" [users]="users" [currentUser]="currentUser" (editResult)="screenEdited($event)"></element-screen>
-    }
-</div>
 @for (tt of timelineTemplates.values(); track tt.id) {
 <element-timeline-template [timelineTemplate]="tt" [screens]="screens" [screenTemplates]="screenTemplates" [users]="users" [currentUser]="currentUser" (editResult)="timelineTemplateEdited($event)" (screenEdited)="screenEdited($event)"></element-timeline-template>
 }
 
-<!-- CREATE SCREEN MODAL -->
-<p-dialog [modal]="true" [(visible)]="createScreenActive">
-    <ng-template #headless>
-        <element-screen [screen]="createScreenDummy" [screenTemplates]="screenTemplates" [users]="users" [currentUser]="currentUser" [editMode]="true" (editResult)="screenEdited($event)" *ngIf="createScreenActive"></element-screen>
-    </ng-template>
-</p-dialog>
+<!-- SCREENS PANEL MODAL -->
+<panel-screens [screens]="screens" [screenTemplates]="screenTemplates" [users]="users" [currentUser]="currentUser" (screenEdited)="screenEdited($event)" [(isActive)]="panelScreenActive" *ngIf="panelScreenActive"></panel-screens>
 
 <!-- CREATE TIMELINETEMPLATE MODAL -->
-<p-dialog [modal]="true" [(visible)]="createTimelineTemplateActive">
+<p-dialog [modal]="true" appendTo="body" [(visible)]="createTimelineTemplateActive">
     <ng-template #headless>
         <element-timeline-template [timelineTemplate]="createTimelineTemplateDummy" [screens]="screens" [screenTemplates]="screenTemplates" [users]="users" [currentUser]="currentUser" [editMode]="true" (editResult)="timelineTemplateEdited($event)" (screenEdited)="screenEdited($event)" *ngIf="createTimelineTemplateActive"></element-timeline-template>
     </ng-template>
