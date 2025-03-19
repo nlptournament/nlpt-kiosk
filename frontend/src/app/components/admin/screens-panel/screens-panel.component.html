@@ -1,10 +1,12 @@
 <p-dialog [modal]="true" appendTo="body" [visible]="isActive()">
     <ng-template #headless>
-        <div class="max-w-52% max-h-50% p-2 pt-1">
-            <div class="w-fill flex flex-row justify-end items-start gap-5 mb-1">
+        <div class="max-w-52% p-2 pt-1">
+            <div class="w-fill flex flex-row justify-between items-start gap-5 mb-2">
+                <div>&nbsp;</div>
+                <div class="text-2xl">Screen Manager</div>
                 <i class="pi pi-times !text-1xl hover:cursor-pointer hover:text-danger" (click)="isActive.set(false)"></i>
             </div>
-            <div class="flex flex-wrap gap-2">
+            <div class="flex flex-wrap max-h-35% overflow-x-hidden overflow-y-scroll gap-2">
                 @for (screen of screens().values(); track screen.id) {
                 <element-screen [screen]="screen" [screenTemplates]="screenTemplates()" [users]="users()" [currentUser]="currentUser()" (editResult)="screenEdited.emit($event)"></element-screen>
                 }

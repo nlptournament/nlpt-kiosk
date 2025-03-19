@@ -37,7 +37,7 @@ export class AdminScreenComponent implements OnInit {
 
     createTimelineTemplateActive: boolean = false;
     createTimelineTemplateDummy: TimelineTemplate = <TimelineTemplate>{};
-    panelScreenActive: boolean = true;
+    panelScreenActive: boolean = false;
 
     constructor(
         private errorHandler: ErrorHandlerService,

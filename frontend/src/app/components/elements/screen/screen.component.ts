@@ -102,6 +102,18 @@ export class ScreenComponent implements OnInit, OnChanges {
         }
     }
 
+    writeVariables() {
+        let nv = {};
+        for (let k of this.variables.keys()) {
+            if (this.variables.get(k)!.type == 'ts') {
+                let date: Date = this.variables.get(k)!.val;
+                nv = { ...nv, [k]: Math.floor(date.getTime() / 1000)};
+            }
+            else nv = { ...nv, [k]: this.variables.get(k)!.val};
+        }
+        this.screen().variables = nv;
+    }
+
     createSelectableTemplates() {
         let st: selectableTemplate[] = [];
         for (let k of this.screenTemplates().keys()) {
@@ -138,15 +150,7 @@ export class ScreenComponent implements OnInit, OnChanges {
 
     saveScreen() {
         if (this.editMode()) {
-            let nv = {};
-            for (let k of this.variables.keys()) {
-                if (this.variables.get(k)!.type == 'ts') {
-                    let date: Date = this.variables.get(k)!.val;
-                    nv = { ...nv, [k]: Math.floor(date.getTime() / 1000)};
-                }
-                else nv = { ...nv, [k]: this.variables.get(k)!.val};
-            }
-            this.screen().variables = nv;
+            this.writeVariables();
             if (this.screen().id)
                 this.screenService
                     .updateScreen(this.screen())
@@ -164,6 +168,18 @@ export class ScreenComponent implements OnInit, OnChanges {
                         }
                     });
         }
+    }
+
+    duplicateScreen() {
+        let cs: Screen = this.screen();
+        let s: Screen = <Screen>{desc: cs.desc + ' - duplacate', template_id: cs.template_id, user_id: this.currentUser().id, duration: cs.duration, repeat: cs.repeat, loop: cs.loop, variables: cs.variables};
+        this.screenService
+            .createScreen(s)
+            .subscribe((result: any) => {
+                next: {
+                    if (Object.keys(result).includes('created')) this.editResult.emit(result['created']);
+                }
+            });
     }
 
     deleteScreen() {

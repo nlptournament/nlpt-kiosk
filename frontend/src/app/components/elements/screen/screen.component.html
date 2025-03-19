@@ -12,6 +12,7 @@
             </div>
         </div>
         <div class="flex flex-row gap-2">
+            <i class="pi pi-clone !text-1xl hover:cursor-pointer hover:text-highlight" (click)="duplicateScreen()"></i>
             <i class="pi pi-pencil !text-1xl hover:cursor-pointer hover:text-highlight" (click)="editActive = true" *ngIf="!screen().locked && (currentUser().admin || screen().user_id == currentUser().id)"></i>
             <i class="pi pi-lock !text-1xl text-danger" *ngIf="screen().locked"></i>
             <i class="pi pi-search !text-1xl hover:cursor-pointer hover:text-highlight" (click)="toggleOverrideDetails()" *ngIf="!showDetails()"></i>
