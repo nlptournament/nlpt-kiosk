@@ -21,7 +21,7 @@
         @for (sid of timelineTemplate().screen_ids; track sid) {
         <element-screen [screen]="screens().get(sid)!" [screenTemplates]="screenTemplates()" [users]="users()" [currentUser]="currentUser()" (editResult)="screenEdited.emit($event)"></element-screen>
         }
-        <div class="w-10% rounded-xl shadow-md flex items-center justify-center" *ngIf="editActive">
+        <div class="w-10% rounded-xl shadow-md flex items-center justify-center p-5" *ngIf="editActive">
             <i class="pi pi-plus-circle !text-3xl hover:cursor-pointer hover:text-highlight" *ngIf="!addScreenActive" (click)="addScreenActivate()"></i>
             <div class="w-full pl-2 pr-2" *ngIf="addScreenActive">
                 <p-listbox [options]="selectableScreens" [(ngModel)]="selectedScreen" optionValue="code" optionLabel="name" (onChange)="screenAdd()" [virtualScroll]="true" [virtualScrollItemSize]="24" scrollHeight="3vw" class="w-full !text-1xl" />

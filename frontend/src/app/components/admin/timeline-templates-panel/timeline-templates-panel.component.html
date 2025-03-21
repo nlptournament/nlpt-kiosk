@@ -1,0 +1,26 @@
+<p-dialog [modal]="true" appendTo="body" [visible]="isActive()">
+    <ng-template #headless>
+        <div class="p-2 pt-1">
+            <div class="w-fill flex flex-row justify-between items-start gap-5 mb-2">
+                <div>&nbsp;</div>
+                <div class="text-2xl">TimelineTemplates Manager</div>
+                <i class="pi pi-times !text-1xl hover:cursor-pointer hover:text-danger" (click)="isActive.set(false)"></i>
+            </div>
+            <div class="flex flex-col max-w-80%  max-h-35% overflow-scroll gap-2">
+                @for (tt of timelineTemplates().values(); track tt.id) {
+                    <element-timeline-template [timelineTemplate]="tt" [screens]="screens()" [screenTemplates]="screenTemplates()" [users]="users()" [currentUser]="currentUser()" (editResult)="timelineTemplateEdited.emit($event)" (screenEdited)="screenEdited.emit($event)"></element-timeline-template>
+                }
+                <div class="w-35% h-28 bg-add-card rounded-xl shadow-md flex items-center justify-center">
+                    <i class="pi pi-plus-circle !text-3xl hover:cursor-pointer hover:text-highlight" (click)="createTt()"></i>
+                </div>
+            </div>
+        </div>
+    </ng-template>
+</p-dialog>
+
+<!-- CREATE TIMELINETEMPLATE MODAL -->
+<p-dialog [modal]="true" appendTo="body" [(visible)]="createTtActive">
+    <ng-template #headless>
+        <element-timeline-template [timelineTemplate]="createTtDummy" [screens]="screens()" [screenTemplates]="screenTemplates()" [users]="users()" [currentUser]="currentUser()" [editMode]="true" (editResult)="ttCreated($event)" (screenEdited)="screenEdited.emit($event)" *ngIf="createTtActive"></element-timeline-template>
+    </ng-template>
+</p-dialog>

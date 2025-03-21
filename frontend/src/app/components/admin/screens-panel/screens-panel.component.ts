@@ -1,10 +1,12 @@
 import { Component, input, model, output } from '@angular/core';
+
 import { ScreenTemplate } from '../../../interfaces/screen-template';
 import { User } from '../../../interfaces/user';
 import { Screen } from '../../../interfaces/screen';
+
+import { CommonModule } from '@angular/common';
 import { ScreenComponent } from '../../elements/screen/screen.component';
 import { Dialog } from 'primeng/dialog';
-import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'panel-screens',

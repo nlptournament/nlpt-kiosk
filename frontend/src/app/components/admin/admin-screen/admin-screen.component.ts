@@ -16,6 +16,7 @@ import { ErrorHandlerService } from '../../../services/error-handler.service';
 
 import { TimelineTemplateComponent } from '../../elements/timeline-template/timeline-template.component';
 import { ScreensPanelComponent } from '../screens-panel/screens-panel.component';
+import { TimelineTemplatesPanelComponent } from '../timeline-templates-panel/timeline-templates-panel.component';
 
 import { MenuItem } from 'primeng/api';
 import { SpeedDial } from 'primeng/speeddial';
@@ -23,7 +24,7 @@ import { Dialog } from 'primeng/dialog';
 
 @Component({
   selector: 'app-admin-screen',
-  imports: [CommonModule, SpeedDial, Dialog, TimelineTemplateComponent, ScreensPanelComponent],
+  imports: [CommonModule, SpeedDial, Dialog, TimelineTemplateComponent, ScreensPanelComponent, TimelineTemplatesPanelComponent],
   templateUrl: './admin-screen.component.html',
   styleUrl: './admin-screen.component.scss'
 })
@@ -35,9 +36,8 @@ export class AdminScreenComponent implements OnInit {
     screens: Map<string, Screen> = new Map<string, Screen>;
     timelineTemplates: Map<string, TimelineTemplate> = new Map<string, TimelineTemplate>;
 
-    createTimelineTemplateActive: boolean = false;
-    createTimelineTemplateDummy: TimelineTemplate = <TimelineTemplate>{};
-    panelScreenActive: boolean = false;
+    panelScreensActive: boolean = false;
+    panelTimelineTemplatesActive: boolean = false;
 
     constructor(
         private errorHandler: ErrorHandlerService,
@@ -69,15 +69,14 @@ export class AdminScreenComponent implements OnInit {
                 label: 'Manage Screens',
                 icon: 'pi pi-file',
                 command: () => {
-                    this.panelScreenActive = true;
+                    this.panelScreensActive = true;
                 }
             },
             {
-                label: 'Create Timeline',
+                label: 'Manage Timeline Templates',
                 icon: 'pi pi-folder',
                 command: () => {
-                    this.createTimelineTemplateDummy = <TimelineTemplate>{desc: '', user_id: this.currentUser.id, screen_ids: <string[]>[]};
-                    this.createTimelineTemplateActive = true;
+                    this.panelTimelineTemplatesActive = true;
                 }
             }
         ]
@@ -174,7 +173,6 @@ export class AdminScreenComponent implements OnInit {
     }
 
     timelineTemplateEdited(event: string|null|undefined) {
-        this.createTimelineTemplateActive = false;
         if (event) {
             this.timelinetemplateService
                 .getTimelineTemplate(event)
