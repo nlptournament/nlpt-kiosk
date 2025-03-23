@@ -1,8 +1,8 @@
-<p>admin-screen works!</p>
-
-@for (tt of timelineTemplates.values(); track tt.id) {
-<element-timeline-template [timelineTemplate]="tt" [screens]="screens" [screenTemplates]="screenTemplates" [users]="users" [currentUser]="currentUser" (editResult)="timelineTemplateEdited($event)" (screenEdited)="screenEdited($event)"></element-timeline-template>
-}
+<div class="flex flex-col p-2 gap-2">
+    @for (kiosk of kiosks.values(); track kiosk.id) {
+    <element-kiosk [kiosk]="kiosk" [users]="users" [currentUser]="currentUser" [timelineTemplates]="timelineTemplates" (editResult)="kioskEdited($event)"></element-kiosk>
+    }
+</div>
 
 <!-- SCREENS PANEL MODAL -->
 <panel-screens [screens]="screens" [screenTemplates]="screenTemplates" [users]="users" [currentUser]="currentUser" (screenEdited)="screenEdited($event)" [(isActive)]="panelScreensActive" *ngIf="panelScreensActive"></panel-screens>

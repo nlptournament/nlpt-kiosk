@@ -1,0 +1,66 @@
+<!-- ACCEPT MODE -->
+<div class="w-20% bg-kiosk-card rounded-xl shadow-md flex flex-col items-center text-center text-2xl p-5 gap-5" *ngIf="!kiosk().added_by_id && currentUser().admin">
+    <div>
+        Kiosk <span class="text-highlight">{{ kiosk().name }}</span> is requesting access
+    </div>
+    <div class="flex flex-row gap-10">
+        <div class="flex flex-col hover:cursor-pointer hover:text-highlight" (click)="kioskAccept()">
+            <i class="pi pi-check-circle !text-4xl"></i>
+            <p>Accept</p>
+        </div>
+        <div class="flex flex-col hover:cursor-pointer hover:text-danger" (click)="kioskDelete()">
+            <i class="pi pi-times-circle !text-4xl"></i>
+            <p>Decline</p>
+        </div>
+    </div>
+</div>
+
+<!-- DISPLAY MODE -->
+<div class="w-fit max-w-90% bg-kiosk-card rounded-xl shadow-md flex flex-col items-center text-center text-1xl p-2 pt-1" *ngIf="kiosk().added_by_id && (kiosk().common || currentUser().admin || kiosk().added_by_id == currentUser().id)">
+    <div class="flex flex-row justify-between items-start gap-5 mb-1">
+        <div class="flex flex-row items-center gap-1">
+            <i class="pi pi-circle-off !text-1xl" *ngIf="!kiosk().common"></i>
+            <i class="pi pi-circle-on !text-1xl" *ngIf="kiosk().common"></i>
+            <div class="flex flex-row">
+                <div class="text-highlight">{{ kiosk().name }}</div><ng-container *ngIf="kiosk().desc != ''"> - {{ kiosk().desc }}</ng-container>
+            </div>
+        </div>
+        <div class="flex flex-row items-center gap-1">
+            <i class="pi pi-user !text-1xl"></i>
+            <div>{{ users().get(kiosk().added_by_id!)!.login }}</div>
+        </div>
+        <div class="flex flex-row gap-2">
+            <i class="pi pi-trash !text-1xl hover:cursor-pointer hover:text-danger" (click)="kioskDelete()" *ngIf="currentUser().admin || currentUser().id == kiosk().added_by_id"></i>
+            <i class="pi pi-pencil !text-1xl hover:cursor-pointer hover:text-highlight" (click)="editOpen()" *ngIf="currentUser().admin || currentUser().id == kiosk().added_by_id"></i>
+            <i class="pi pi-save !text-1xl hover:cursor-pointer hover:text-highlight"></i>
+        </div>
+    </div>
+    {{ kiosk().name }}
+</div>
+
+<!-- EDIT MODAL -->
+<p-dialog [modal]="true" appendTo="body" [(visible)]="editActive">
+    <ng-template #headless>
+        <div class="p-4 pt-2 pb-3 bg-card rounded-xl shadow-md flex flex-col items-left" *ngIf="editActive">
+            <div class="w-full text-right mb-1">
+                <i class="pi pi-times hover:cursor-pointer hover:text-danger" (click)="editClose()"></i>
+            </div>
+
+            <p-iftalabel class="w-full mb-2">
+                <input pInputText id="desc" [(ngModel)]="kiosk().desc" autocomplete="off" class="w-full" autofocus />
+                <label for="desc">Description</label>
+            </p-iftalabel>
+
+            <p-iftalabel class="w-full mb-2">
+                <p-select [(ngModel)]="kiosk().added_by_id" inputId="added_by_id" [options]="selectableUsers" optionValue="code" optionLabel="name" styleClass="w-full" [disabled]="!currentUser().admin" />
+                <label for="added_by_id">Owner</label>
+            </p-iftalabel>
+
+            <p-selectbutton [options]="selectableCommons" inputId="common" [(ngModel)]="kiosk().common" optionLabel="name" optionValue="code" class="mb-2" />
+
+            <div class="w-full flex justify-end">
+                <p-button label="Save" (onClick)="kioskSave()" />
+            </div>
+        </div>
+    </ng-template>
+</p-dialog>

@@ -22,6 +22,7 @@ module.exports = {
             'anno-default': '#111111',
             'anno-danger': '#7f1d1d',
             'danger': '#7f1d1d',
+            'kiosk-card': '#888888',
             'screen-card': '#777777',
             'timeline-card': '#666666',
             'add-card': '#444444'
@@ -72,7 +73,8 @@ module.exports = {
             '30%': '30vw',
             '35%': '35vw',
             '52%': '52vw',
-            '80%': '80vw'
+            '80%': '80vw',
+            '90%': '90vw'
         }
     }
   },

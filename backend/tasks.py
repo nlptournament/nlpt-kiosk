@@ -5,7 +5,7 @@ import time
 @task(name='testdata')
 def generate_testdata(c):
     from noapi import docDB
-    from elements import Screen, User, TimelineTemplate
+    from elements import Screen, User, TimelineTemplate, Kiosk
     admin_user_id = docDB.search_one('User', {'login': 'admin'})['_id']
     test_user_id = User({'login': 'testuser', 'admin': False, 'pw': 'password'}).save()['created']
     s = Screen({'desc': 'Some TMNF-TAS screen', 'duration': 30})
@@ -26,3 +26,6 @@ def generate_testdata(c):
 
     tt = TimelineTemplate({'desc': 'Testline', 'user_id': admin_user_id, 'screen_ids': [countdown_id, tas_id, anno_id]})
     tt.save()
+
+    Kiosk({'name': 'testkiosk1'}).save()
+    Kiosk({'name': 'testkiosk2'}).save()
