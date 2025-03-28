@@ -90,12 +90,12 @@ class TimelineEndpoint(ElementEndpointBase):
     _session_cls = Session
     _element = Timeline
     _other_readable = list(['id', 'template_id', 'kiosk_id', 'screen_ids', 'start_pos', 'current_pos', 'locked', 'preset'])
-    _other_createable = list(['template_id', 'kiosk_id', 'start_pos'])
+    _other_createable = list(['template_id', 'kiosk_id', 'screen_ids', 'start_pos'])
     _other_updateable = list(['start_pos'])
     _other_delete = True
     _all_readable = list(['id', 'screen_ids', 'start_pos', 'current_pos'])
     _all_updateable = list(['current_pos'])
-    _ro_attr = list(['screen_ids'])
+    _not_updateable = list(['screen_ids'])
 
 
 class KioskEndpoint(ElementEndpointBase):

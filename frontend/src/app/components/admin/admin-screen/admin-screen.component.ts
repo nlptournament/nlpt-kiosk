@@ -22,6 +22,8 @@ import { TimelineTemplatesPanelComponent } from '../timeline-templates-panel/tim
 
 import { MenuItem } from 'primeng/api';
 import { SpeedDial } from 'primeng/speeddial';
+import { Timeline } from '../../../interfaces/timeline';
+import { TimelineService } from '../../../services/timeline.service';
 
 @Component({
   selector: 'app-admin-screen',
@@ -37,9 +39,11 @@ export class AdminScreenComponent implements OnInit {
     screens: Map<string, Screen> = new Map<string, Screen>;
     timelineTemplates: Map<string, TimelineTemplate> = new Map<string, TimelineTemplate>;
     kiosks: Map<string, Kiosk> = new Map<string, Kiosk>;
+    timelines: Map<string, Timeline> = new Map<string, Timeline>;
 
     panelScreensActive: boolean = false;
     panelTimelineTemplatesActive: boolean = false;
+    timelinesChanged: boolean = false;
 
     constructor(
         private errorHandler: ErrorHandlerService,
@@ -48,7 +52,8 @@ export class AdminScreenComponent implements OnInit {
         private screenTemplateService: ScreenTemplateService,
         private screenService: ScreenService,
         private timelinetemplateService: TimelineTemplateService,
-        private kioskService: KioskService
+        private kioskService: KioskService,
+        private timelineService: TimelineService
     ) { }
 
     ngOnInit(): void {
@@ -58,6 +63,7 @@ export class AdminScreenComponent implements OnInit {
         this.refreshScreens();
         this.refreshTimelineTemplates();
         this.refreshKiosks();
+        this.refreshTimelines();
     }
 
     populateMenu() {
@@ -171,6 +177,21 @@ export class AdminScreenComponent implements OnInit {
             });
     }
 
+    refreshTimelines() {
+        this.timelineService
+            .getTimelines()
+            .subscribe({
+                next: (tls: Timeline[]) => {
+                    let tll: Map<string, Timeline> = new Map<string, Timeline>;
+                    for (let tl of tls) if (tl.id && !tl.preset) tll.set(tl.id, tl);
+                    this.timelines = tll;
+                },
+                error: (err: HttpErrorResponse) => {
+                    this.errorHandler.handleError(err);
+                }
+            });
+    }
+
     screenEdited(event: string|null|undefined) {
         if (event) {
             this.screenService
@@ -220,6 +241,30 @@ export class AdminScreenComponent implements OnInit {
                     error: (err: HttpErrorResponse) => {
                         if (err.status == 404 && this.kiosks.has(event))
                             this.kiosks.delete(event);
+                        else
+                            this.errorHandler.handleError(err);
+                    }
+                });
+        }
+    }
+
+    timelineEdited(event: string|null|undefined) {
+        if (event) {
+            this.timelineService
+                .getTimeline(event)
+                .subscribe({
+                    next: (tl: Timeline) => {
+                        if (tl.id) {
+                            if (tl.preset && this.timelines.has(tl.id)) this.timelines.delete(tl.id);
+                            if (!tl.preset) this.timelines.set(tl.id, tl);
+                            this.timelinesChanged = !this.timelinesChanged;
+                        }
+                    },
+                    error: (err: HttpErrorResponse) => {
+                        if (err.status == 404 && this.timelines.has(event)) {
+                            this.timelines.delete(event);
+                            this.timelinesChanged = !this.timelinesChanged;
+                        }
                         else
                             this.errorHandler.handleError(err);
                     }

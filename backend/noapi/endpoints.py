@@ -41,8 +41,10 @@ _all_updateable : list | None
     If None, Endpoint is not available for unauthorized Element updates.
 _all_delete : bool
     if set to True all (unauthorized) Users are allowed to delete Elements on Endpoint (by default only admins and owners are allowed to delete)
-_ro_attr: list
-    List of attr-names, that are always read-only
+_not_updateable : list
+    List of attr-names, that are deleted from PATCH requests but passed trough on POST requests
+_ro_attr : list
+    List of attr-names, that are always read-only (deleted from POST and PATCH requests)
     """
     _element = None
     _session_cls = None
@@ -56,6 +58,7 @@ _ro_attr: list
     _all_createable = None
     _all_updateable = None
     _all_delete = False
+    _not_updateable = list()
     _ro_attr = list()
 
     def _filter_attrs4read(self, attr, is_other=False, is_owner=False, is_admin=False):
@@ -88,6 +91,8 @@ _ro_attr: list
     def _filter_attrs4update(self, attr, is_other=False, is_owner=False, is_admin=False):
         attr.pop('_id', None)
         for ro in self._ro_attr:
+            attr.pop(ro, None)
+        for ro in self._not_updateable:
             attr.pop(ro, None)
         if is_owner or is_admin:
             return attr

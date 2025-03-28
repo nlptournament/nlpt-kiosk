@@ -42,8 +42,11 @@ preset() : bool
         return errors
 
     def save_pre(self):
+        print(self.json())
         if not self.locked():
             self['current_pos'] = self['start_pos']
+        self['start_pos'] = int(int(self['start_pos']) % len(self['screen_ids']))
+        self['current_pos'] = int(int(self['current_pos']) % (len(self['screen_ids']) * 2))
 
     def delete_pre(self):
         if self.locked():

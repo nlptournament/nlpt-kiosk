@@ -1,0 +1,26 @@
+<div class="w-fit p-2 pt-1 bg-timeline-card rounded-xl shadow-md flex flex-col text-1xl">
+    <div class="flex flex-row justify-between items-start gap-5 mb-1">
+        <div class="flex flex-row items-center gap-1 mt-1 ml-1">
+            <div class="text-highlight" *ngIf="timeline().template_id">{{ timelineTemplates().get(timeline().template_id!)!.desc }}</div>
+            <div class="text-highlight" *ngIf="!timeline().template_id">???</div>
+        </div>
+        <div class="flex flex-row items-center gap-1 mt-1">
+            <i class="pi pi-user !text-1xl"></i>
+            <div *ngIf="timeline().template_id">{{ users().get(timelineTemplates().get(timeline().template_id!)!.user_id!)!.login }}</div>
+            <div *ngIf="!timeline().template_id">???</div>
+        </div>
+        <div class="flex flex-row gap-2">
+            <i class="pi pi-pencil !text-1xl hover:cursor-pointer hover:text-highlight" (click)="editActive = true" *ngIf="!editActive && !timeline().locked"></i>
+            <i class="pi pi-lock !text-1xl text-danger" *ngIf="timeline().locked"></i>
+            <i class="pi pi-trash !text-1xl hover:cursor-pointer hover:text-danger" (click)="timelineDelete()" *ngIf="editActive"></i>
+            <i class="pi pi-save !text-1xl hover:cursor-pointer hover:text-highlight" (click)="timelineSave()" *ngIf="editActive"></i>
+            <i class="pi pi-times !text-1xl hover:cursor-pointer hover:text-danger" (click)="editClose()" *ngIf="editActive"></i>
+        </div>
+    </div>
+    <div class="flex flex-row gap-2">
+        @for (sid of timeline().screen_ids; track sid) {
+        <element-screen [screen]="screens().get(sid)!" [screenTemplates]="screenTemplates()" [users]="users()" [currentUser]="currentUser()"></element-screen>
+        }
+    </div>
+    <p-slider class="w-full mt-2 mb-1" [(ngModel)]="timeline().start_pos" [disabled]="!editActive" [min]="0" [max]="timeline().screen_ids.length" />
+</div>

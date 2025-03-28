@@ -9,7 +9,6 @@ import { FormsModule } from '@angular/forms';
 import { InputTextModule } from 'primeng/inputtext';
 import { SelectModule } from 'primeng/select';
 import { CommonModule } from '@angular/common';
-import { ListboxModule } from 'primeng/listbox';
 import { TimelineTemplateService } from '../../../services/timeline-template.service';
 
 interface selectableUser {
@@ -24,7 +23,7 @@ interface selectableScreen {
 
 @Component({
   selector: 'element-timeline-template',
-  imports: [CommonModule, ScreenComponent, ButtonModule, FormsModule, InputTextModule, SelectModule, ListboxModule],
+  imports: [CommonModule, ScreenComponent, ButtonModule, FormsModule, InputTextModule, SelectModule],
   templateUrl: './timeline-template.component.html',
   styleUrl: './timeline-template.component.scss'
 })
@@ -111,6 +110,7 @@ export class TimelineTemplateComponent implements OnInit {
 
     addScreenActivate() {
         this.createSelectableScreens();
+        this.selectedScreen = "";
         this.addScreenActive = true;
     }
 

@@ -16,7 +16,7 @@
 </div>
 
 <!-- DISPLAY MODE -->
-<div class="w-fit max-w-90% bg-kiosk-card rounded-xl shadow-md flex flex-col items-center text-center text-1xl p-2 pt-1" *ngIf="kiosk().added_by_id && (kiosk().common || currentUser().admin || kiosk().added_by_id == currentUser().id)">
+<div class="w-fit max-w-90% bg-kiosk-card rounded-xl shadow-md flex flex-col text-1xl p-2 pt-1" *ngIf="kiosk().added_by_id && (kiosk().common || currentUser().admin || kiosk().added_by_id == currentUser().id)">
     <div class="flex flex-row justify-between items-start gap-5 mb-1">
         <div class="flex flex-row items-center gap-1">
             <i class="pi pi-circle-off !text-1xl" *ngIf="!kiosk().common"></i>
@@ -30,12 +30,19 @@
             <div>{{ users().get(kiosk().added_by_id!)!.login }}</div>
         </div>
         <div class="flex flex-row gap-2">
-            <i class="pi pi-trash !text-1xl hover:cursor-pointer hover:text-danger" (click)="kioskDelete()" *ngIf="currentUser().admin || currentUser().id == kiosk().added_by_id"></i>
             <i class="pi pi-pencil !text-1xl hover:cursor-pointer hover:text-highlight" (click)="editOpen()" *ngIf="currentUser().admin || currentUser().id == kiosk().added_by_id"></i>
             <i class="pi pi-save !text-1xl hover:cursor-pointer hover:text-highlight"></i>
         </div>
     </div>
-    {{ kiosk().name }}
+    <div class="flex flex-col gap-2">
+        @for (timeline of relevantTimelines; track timeline.id) {
+        <element-timeline [timeline]="timeline" [screens]="screens()" [screenTemplates]="screenTemplates()" [users]="users()" [currentUser]="currentUser()" [timelineTemplates]="timelineTemplates()" (editResult)="timelineEdited.emit($event)"></element-timeline>
+        }
+        <div class="w-fill h-28 bg-add-card rounded-xl shadow-md flex items-center justify-center">
+            <i class="pi pi-plus-circle !text-3xl hover:cursor-pointer hover:text-highlight" (click)="timelineCreateActivate()" *ngIf="!timelineCreateActive"></i>
+            <p-select [options]="selectableTimelineTemplates" [(ngModel)]="selectedTimelineTemplate" optionValue="code" optionLabel="name" (onChange)="timelineCreate()" appendTo="body" class="m-3 w-full !text-1xl" *ngIf="timelineCreateActive" />
+        </div>
+    </div>
 </div>
 
 <!-- EDIT MODAL -->
@@ -58,7 +65,8 @@
 
             <p-selectbutton [options]="selectableCommons" inputId="common" [(ngModel)]="kiosk().common" optionLabel="name" optionValue="code" class="mb-2" />
 
-            <div class="w-full flex justify-end">
+            <div class="w-full flex justify-between">
+                <p-button label="Delete" severity="danger" (onClick)="kioskDelete()" />
                 <p-button label="Save" (onClick)="kioskSave()" />
             </div>
         </div>
