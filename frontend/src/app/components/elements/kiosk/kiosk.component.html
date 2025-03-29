@@ -31,16 +31,42 @@
         </div>
         <div class="flex flex-row gap-2">
             <i class="pi pi-pencil !text-1xl hover:cursor-pointer hover:text-highlight" (click)="editOpen()" *ngIf="currentUser().admin || currentUser().id == kiosk().added_by_id"></i>
-            <i class="pi pi-save !text-1xl hover:cursor-pointer hover:text-highlight"></i>
+            <i class="pi pi-save !text-1xl hover:cursor-pointer hover:text-highlight" (click)="changeTimeline()" *ngIf="nextTimeline"></i>
         </div>
     </div>
-    <div class="flex flex-col gap-2">
-        @for (timeline of relevantTimelines; track timeline.id) {
-        <element-timeline [timeline]="timeline" [screens]="screens()" [screenTemplates]="screenTemplates()" [users]="users()" [currentUser]="currentUser()" [timelineTemplates]="timelineTemplates()" (editResult)="timelineEdited.emit($event)"></element-timeline>
-        }
-        <div class="w-fill h-28 bg-add-card rounded-xl shadow-md flex items-center justify-center">
-            <i class="pi pi-plus-circle !text-3xl hover:cursor-pointer hover:text-highlight" (click)="timelineCreateActivate()" *ngIf="!timelineCreateActive"></i>
-            <p-select [options]="selectableTimelineTemplates" [(ngModel)]="selectedTimelineTemplate" optionValue="code" optionLabel="name" (onChange)="timelineCreate()" appendTo="body" class="m-3 w-full !text-1xl" *ngIf="timelineCreateActive" />
+    <div class="flex flex-col gap-1">
+        <element-timeline class="w-fit border border-highlight rounded-xl" [timeline]="timelines().get(kiosk().timeline_id!)!" [screens]="screens()" [screenTemplates]="screenTemplates()" [users]="users()" [currentUser]="currentUser()" [timelineTemplates]="timelineTemplates()" *ngIf="kiosk().timeline_id"></element-timeline>
+        <div class="w-fill h-20 border border-highlight bg-timeline-card rounded-xl shadow-md flex items-center justify-center text-2xl p-3" *ngIf="!kiosk().timeline_id">No Timeline is displayed</div>
+        <div class="flex flex-col bg-screen-card rounded-xl shadow-md p-2 pt-0 pb-0">
+            <div class="flex flex-row justify-end" *ngIf="timelinesExpanded">
+                <i class="pi pi-chevron-up !text-1xl hover:cursor-pointer hover:text-highlight" (click)="timelinesExpanded = false"></i>
+            </div>
+            <div class="flex flex-row justify-between" *ngIf="!timelinesExpanded">
+                <div></div>
+                <div>other Timelines</div>
+                <i class="pi pi-chevron-down !text-1xl hover:cursor-pointer hover:text-highlight" (click)="timelinesExpanded = true"></i>
+            </div>
+            <div class="flex flex-col gap-2" *ngIf="timelinesExpanded">
+                @for (timeline of relevantTimelines; track timeline.id) {
+                <div class="flex flex-row">
+                    <div class="flex flex-col justify-center gap-1.5">
+                        <div class="bg-timeline-card rounded-l-lg pb-1 pl-2 pr-1 pt-1.5">
+                            <i class="pi pi-desktop !text-2xl hover:cursor-pointer hover:text-highlight" (click)="selectTimeline(timeline.id, true)" *ngIf="nextTimeline != timeline.id"></i>
+                            <i class="pi pi-verified !text-2xl hover:cursor-pointer text-highlight" (click)="selectTimeline(timeline.id, true)" *ngIf="nextTimeline == timeline.id"></i>
+                        </div>
+                        <div class="bg-timeline-card rounded-l-lg pb-1 pl-2 pr-1 pt-1.5">
+                            <i class="pi pi-list !text-2xl hover:cursor-pointer hover:text-highlight" (click)="selectTimeline(timeline.id)" *ngIf="!presetTimelines.includes(timeline.id!)"></i>
+                            <i class="pi pi-list-check !text-2xl hover:cursor-pointer text-highlight" (click)="selectTimeline(timeline.id)" *ngIf="presetTimelines.includes(timeline.id!)"></i>
+                        </div>
+                    </div>
+                    <element-timeline [timeline]="timeline" [screens]="screens()" [screenTemplates]="screenTemplates()" [users]="users()" [currentUser]="currentUser()" [timelineTemplates]="timelineTemplates()" (editResult)="timelineEdited.emit($event)"></element-timeline>
+                </div>
+                }
+                <div class="w-fill h-20 bg-add-card rounded-xl shadow-md flex items-center justify-center mb-2">
+                    <i class="pi pi-plus-circle !text-3xl hover:cursor-pointer hover:text-highlight" (click)="timelineCreateActivate()" *ngIf="!timelineCreateActive"></i>
+                    <p-select [options]="selectableTimelineTemplates" [(ngModel)]="selectedTimelineTemplate" optionValue="code" optionLabel="name" (onChange)="timelineCreate()" appendTo="body" class="m-3 w-full !text-1xl" *ngIf="timelineCreateActive" />
+                </div>
+            </div>
         </div>
     </div>
 </div>

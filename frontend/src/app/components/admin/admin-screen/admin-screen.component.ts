@@ -236,7 +236,10 @@ export class AdminScreenComponent implements OnInit {
                 .getKiosk(event)
                 .subscribe({
                     next: (kiosk: Kiosk) => {
-                        if (kiosk.id) this.kiosks.set(kiosk.id, kiosk);
+                        if (kiosk.id) {
+                            this.kiosks.set(kiosk.id, kiosk);
+                            this.timelineEdited(kiosk.timeline_id);
+                        }
                     },
                     error: (err: HttpErrorResponse) => {
                         if (err.status == 404 && this.kiosks.has(event))
@@ -256,7 +259,10 @@ export class AdminScreenComponent implements OnInit {
                     next: (tl: Timeline) => {
                         if (tl.id) {
                             if (tl.preset && this.timelines.has(tl.id)) this.timelines.delete(tl.id);
-                            if (!tl.preset) this.timelines.set(tl.id, tl);
+                            if (!tl.preset) {
+                                this.timelines.set(tl.id, tl);
+                                for (let sid of tl.screen_ids) this.screenEdited(sid);
+                            }
                             this.timelinesChanged = !this.timelinesChanged;
                         }
                     },

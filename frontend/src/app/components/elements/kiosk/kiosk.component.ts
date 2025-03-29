@@ -52,11 +52,14 @@ export class KioskComponent implements OnInit {
 
     relevantTimelines: Timeline[] = [];
     editActive: boolean = false;
+    timelinesExpanded: boolean = false;
     selectableCommons: selectableCommon[] = [];
     selectableUsers: selectableUser[] = [];
     selectableTimelineTemplates: selectableTimelineTemplate[] = [];
     timelineCreateActive: boolean = false;
     selectedTimelineTemplate: string = "";
+    nextTimeline: string | undefined;
+    presetTimelines: string[] = [];
 
     constructor (
         private kioskService: KioskService,
@@ -155,5 +158,34 @@ export class KioskComponent implements OnInit {
                 });
         }
         this.timelineCreateActive = false;
+    }
+
+    selectTimeline(tl_id: string | null, next: boolean = false) {
+        if (tl_id) {
+            if (next) {
+                if (tl_id == this.nextTimeline) this.nextTimeline = undefined;
+                else this.nextTimeline = tl_id
+            }
+            else {
+                if (this.presetTimelines.includes(tl_id)) this.presetTimelines.splice(this.presetTimelines.indexOf(tl_id), 1);
+                else this.presetTimelines.push(tl_id);
+            }
+        }
+    }
+
+    changeTimeline() {
+        if (this.nextTimeline) {
+            let old_timeline_id = this.kiosk().timeline_id;
+            this.kiosk().timeline_id = this.nextTimeline;
+            this.kioskService
+                .updateKiosk(this.kiosk())
+                .subscribe({
+                    next: (result: any) => {
+                        this.editResult.emit(this.kiosk().id);
+                        this.timelineEdited.emit(old_timeline_id);
+                        this.nextTimeline = undefined;
+                    }
+                });
+        }
     }
 }

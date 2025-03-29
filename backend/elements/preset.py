@@ -24,6 +24,11 @@ apply() : None
         common=ElementBase.addAttr(type=bool, default=False, notnone=True)
     )
 
+    def delete_post(self):
+        from elements import Timeline
+        for t in [Timeline.get(t) for t in self['timeline_ids']]:
+            t.delete()
+
     def apply(self):
         from elements import Timeline
         for t in [Timeline.get(t) for t in self['timeline_ids']]:

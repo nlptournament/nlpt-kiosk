@@ -44,7 +44,7 @@ preset() : bool
     def save_pre(self):
         print(self.json())
         if not self.locked():
-            self['current_pos'] = self['start_pos']
+            self['current_pos'] = self['start_pos'] * 2
         self['start_pos'] = int(int(self['start_pos']) % len(self['screen_ids']))
         self['current_pos'] = int(int(self['current_pos']) % (len(self['screen_ids']) * 2))
 

@@ -60,7 +60,6 @@ export class TimelineTemplateComponent implements OnInit {
     }
 
     createSelectableScreens() {
-        console.log("Create Selectable Screens");
         let ss: selectableScreen[] = [];
         for (let k of this.screens().keys()) {
             ss.push(<selectableScreen>{code: k, name: this.screens().get(k)!.desc});

@@ -51,6 +51,7 @@ export class ScreenComponent implements OnInit, OnChanges {
     currentUser = input.required<User>();
     showDetails = input(false, {transform: booleanAttribute});
     editMode = input(false, {transform: booleanAttribute});
+    roMode = input(false, {transform: booleanAttribute});
     editResult = output<string|null|undefined>();
 
     overrideDetails: boolean = false;

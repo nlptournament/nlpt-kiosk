@@ -1,4 +1,4 @@
-<div class="flex flex-col p-2 gap-2">
+<div class="flex flex-wrap p-2 gap-2">
     @for (kiosk of kiosks.values(); track kiosk.id) {
     <element-kiosk [kiosk]="kiosk" [users]="users" [currentUser]="currentUser" [timelineTemplates]="timelineTemplates" [timelines]="timelines" [screens]="screens" [screenTemplates]="screenTemplates" [timelinesChanged]="timelinesChanged" (editResult)="kioskEdited($event)" (timelineEdited)="timelineEdited($event)"></element-kiosk>
     }
