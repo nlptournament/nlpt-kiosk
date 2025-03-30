@@ -16,6 +16,7 @@ import { TimelineComponent } from '../timeline/timeline.component';
 import { TimelineService } from '../../../services/timeline.service';
 import { ScreenTemplate } from '../../../interfaces/screen-template';
 import { Screen } from '../../../interfaces/screen';
+import { TooltipModule } from 'primeng/tooltip';
 
 interface selectableCommon {
     code: boolean,
@@ -34,7 +35,7 @@ interface selectableTimelineTemplate {
 
 @Component({
   selector: 'element-kiosk',
-  imports: [CommonModule, TimelineComponent, Dialog, FormsModule, IftaLabelModule, InputTextModule, SelectModule, SelectButtonModule, ButtonModule],
+  imports: [CommonModule, TimelineComponent, Dialog, FormsModule, IftaLabelModule, InputTextModule, SelectModule, SelectButtonModule, ButtonModule, TooltipModule],
   templateUrl: './kiosk.component.html',
   styleUrl: './kiosk.component.scss'
 })
@@ -92,7 +93,6 @@ export class KioskComponent implements OnInit {
     }
 
     refreshTimelines() {
-        console.log('refresh');
         let rt: Timeline[] = [];
         for (let tl of this.timelines().values()) {
             if (tl.kiosk_id === this.kiosk().id && tl.id !== this.kiosk().timeline_id)

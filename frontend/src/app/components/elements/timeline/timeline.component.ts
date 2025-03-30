@@ -9,10 +9,11 @@ import { CommonModule } from '@angular/common';
 import { SliderModule } from 'primeng/slider';
 import { FormsModule } from '@angular/forms';
 import { TimelineService } from '../../../services/timeline.service';
+import { TooltipModule } from 'primeng/tooltip';
 
 @Component({
   selector: 'element-timeline',
-  imports: [CommonModule, FormsModule, SliderModule, ScreenComponent],
+  imports: [CommonModule, FormsModule, SliderModule, ScreenComponent, TooltipModule],
   templateUrl: './timeline.component.html',
   styleUrl: './timeline.component.scss'
 })

@@ -33,4 +33,8 @@ export class TimelineTemplateService {
     public deleteTimelineTemplate(id: string): Observable<any> {
         return this.http.delete<any>(this.ttUrl + id + '/', {withCredentials:true});
     }
+
+    public updateTimelines(id: string): Observable<any> {
+        return this.http.put<any>(this.ttUrl + 'update_timelines/' + id + '/', {}, {withCredentials:true});
+    }
 }

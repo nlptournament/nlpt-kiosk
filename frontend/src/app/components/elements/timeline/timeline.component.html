@@ -10,11 +10,11 @@
             <div *ngIf="!timeline().template_id">???</div>
         </div>
         <div class="flex flex-row gap-2">
-            <i class="pi pi-pencil !text-1xl hover:cursor-pointer hover:text-highlight" (click)="editActive = true" *ngIf="!editActive && !timeline().locked"></i>
-            <i class="pi pi-lock !text-1xl text-danger" *ngIf="timeline().locked"></i>
-            <i class="pi pi-trash !text-1xl hover:cursor-pointer hover:text-danger" (click)="timelineDelete()" *ngIf="editActive"></i>
-            <i class="pi pi-save !text-1xl hover:cursor-pointer hover:text-highlight" (click)="timelineSave()" *ngIf="editActive"></i>
-            <i class="pi pi-times !text-1xl hover:cursor-pointer hover:text-danger" (click)="editClose()" *ngIf="editActive"></i>
+            <i class="pi pi-pencil !text-1xl hover:cursor-pointer hover:text-highlight" pTooltip="edit" showDelay="300" tooltipPosition="top" (click)="editActive = true" *ngIf="!editActive && !timeline().locked"></i>
+            <i class="pi pi-lock !text-1xl text-danger" pTooltip="locked" showDelay="300" tooltipPosition="top" *ngIf="timeline().locked"></i>
+            <i class="pi pi-trash !text-1xl hover:cursor-pointer hover:text-danger" pTooltip="delete" showDelay="300" tooltipPosition="top" (click)="timelineDelete()" *ngIf="editActive"></i>
+            <i class="pi pi-save !text-1xl hover:cursor-pointer hover:text-highlight" pTooltip="save" showDelay="300" tooltipPosition="top" (click)="timelineSave()" *ngIf="editActive"></i>
+            <i class="pi pi-times !text-1xl hover:cursor-pointer hover:text-danger" pTooltip="drop changes" showDelay="300" tooltipPosition="top" (click)="editClose()" *ngIf="editActive"></i>
         </div>
     </div>
     <div class="flex flex-row gap-2">
@@ -22,6 +22,6 @@
         <element-screen [screen]="screens().get(sid)!" [screenTemplates]="screenTemplates()" [users]="users()" [currentUser]="currentUser()" [roMode]="true"></element-screen>
         }
     </div>
-    <p-slider class="w-full mt-2 mb-1 pl-1 pr-1" [(ngModel)]="timeline().start_pos" [disabled]="!editActive" [min]="0" [max]="timeline().screen_ids.length" *ngIf="!timeline().locked" />
-    <p-slider class="w-full mt-2 mb-1 pl-1 pr-1" [(ngModel)]="timeline().current_pos" [disabled]="true" [min]="0" [max]="timeline().screen_ids.length * 2" *ngIf="timeline().locked" />
+    <p-slider class="w-full mt-2 mb-1 pl-1 pr-1" pTooltip="start position" showDelay="300" tooltipPosition="bottom" [(ngModel)]="timeline().start_pos" [disabled]="!editActive" [min]="0" [max]="timeline().screen_ids.length" *ngIf="!timeline().locked" />
+    <p-slider class="w-full mt-2 mb-1 pl-1 pr-1" pTooltip="current position" showDelay="300" tooltipPosition="bottom" [(ngModel)]="timeline().current_pos" [disabled]="true" [min]="0" [max]="timeline().screen_ids.length * 2" *ngIf="timeline().locked" />
 </div>

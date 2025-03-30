@@ -8,11 +8,13 @@ import { User } from '../../../interfaces/user';
 import { ScreenTemplate } from '../../../interfaces/screen-template';
 import { Screen } from '../../../interfaces/screen';
 import { TimelineTemplate } from '../../../interfaces/timeline-template';
+import { Timeline } from '../../../interfaces/timeline';
 
 import { KioskService } from '../../../services/kiosk.service';
 import { UserService } from '../../../services/user.service';
 import { ScreenTemplateService } from '../../../services/screen-template.service';
 import { ScreenService } from '../../../services/screen.service';
+import { TimelineService } from '../../../services/timeline.service';
 import { TimelineTemplateService } from '../../../services/timeline-template.service';
 import { ErrorHandlerService } from '../../../services/error-handler.service';
 
@@ -22,8 +24,6 @@ import { TimelineTemplatesPanelComponent } from '../timeline-templates-panel/tim
 
 import { MenuItem } from 'primeng/api';
 import { SpeedDial } from 'primeng/speeddial';
-import { Timeline } from '../../../interfaces/timeline';
-import { TimelineService } from '../../../services/timeline.service';
 
 @Component({
   selector: 'app-admin-screen',

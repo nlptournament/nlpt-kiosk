@@ -10,6 +10,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { SelectModule } from 'primeng/select';
 import { CommonModule } from '@angular/common';
 import { TimelineTemplateService } from '../../../services/timeline-template.service';
+import { TooltipModule } from 'primeng/tooltip';
 
 interface selectableUser {
     code: string;
@@ -23,7 +24,7 @@ interface selectableScreen {
 
 @Component({
   selector: 'element-timeline-template',
-  imports: [CommonModule, ScreenComponent, ButtonModule, FormsModule, InputTextModule, SelectModule],
+  imports: [CommonModule, ScreenComponent, ButtonModule, FormsModule, InputTextModule, SelectModule, TooltipModule],
   templateUrl: './timeline-template.component.html',
   styleUrl: './timeline-template.component.scss'
 })
@@ -35,6 +36,7 @@ export class TimelineTemplateComponent implements OnInit {
     currentUser = input.required<User>();
     editMode = input(false, {transform: booleanAttribute});
     screenEdited = output<string|null|undefined>();
+    timelineEdited = output<string|null|undefined>();
     editResult = output<string|null|undefined>();
 
     editActive: boolean = false;
@@ -151,6 +153,23 @@ export class TimelineTemplateComponent implements OnInit {
                 .deleteTimelineTemplate(this.timelineTemplate().id!)
                 .subscribe((result: any) => {
                     next: this.editResult.emit(this.timelineTemplate().id);
+                });
+    }
+
+    updateTimelines() {
+        if (this.timelineTemplate().id)
+            this.ttService
+                .updateTimelines(this.timelineTemplate().id!)
+                .subscribe((result: any) => {
+                    next: {
+                        if (Object.keys(result).includes('updated')) {
+                            console.log('updated');
+                            for (let timeline_id of result['updated']) {
+                                this.timelineEdited.emit(timeline_id);
+                                console.log(timeline_id);
+                            }
+                        }
+                    }
                 });
     }
 }

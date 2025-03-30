@@ -10,11 +10,12 @@
             <p-select [(ngModel)]="timelineTemplate().user_id" inputId="user_id" [options]="selectableUsers" optionValue="code" optionLabel="name" [disabled]="!currentUser().admin" *ngIf="editActive" />
         </div>
         <div class="flex flex-row gap-2">
-            <i class="pi pi-clone !text-1xl hover:cursor-pointer hover:text-highlight" (click)="duplicateTimelineTemplate()" *ngIf="!editActive"></i>
-            <i class="pi pi-pencil !text-1xl hover:cursor-pointer hover:text-highlight" (click)="editActivate()" *ngIf="!editActive && (currentUser().admin || timelineTemplate().user_id == currentUser().id)"></i>
-            <i class="pi pi-trash !text-1xl hover:cursor-pointer hover:text-danger" *ngIf="editActive && !editMode()" (click)="deleteTimelineTemplate()"></i>
-            <i class="pi pi-save !text-1xl hover:cursor-pointer hover:text-highlight" *ngIf="editActive" (click)="saveTimelineTemplate()"></i>
-            <i class="pi pi-times !text-1xl hover:cursor-pointer hover:text-danger" *ngIf="editActive" (click)="editClose()"></i>
+            <i class="pi pi-clone !text-1xl hover:cursor-pointer hover:text-highlight" pTooltip="duplicate" showDelay="300" tooltipPosition="top" (click)="duplicateTimelineTemplate()" *ngIf="!editActive"></i>
+            <i class="pi pi-file-export !text-1xl hover:cursor-pointer hover:text-highlight" pTooltip="update related Timelines" showDelay="300" tooltipPosition="top" (click)="updateTimelines()" *ngIf="!editActive"></i>
+            <i class="pi pi-pencil !text-1xl hover:cursor-pointer hover:text-highlight" pTooltip="edit" showDelay="300" tooltipPosition="top" (click)="editActivate()" *ngIf="!editActive && (currentUser().admin || timelineTemplate().user_id == currentUser().id)"></i>
+            <i class="pi pi-trash !text-1xl hover:cursor-pointer hover:text-danger" pTooltip="delete" showDelay="300" tooltipPosition="top" *ngIf="editActive && !editMode()" (click)="deleteTimelineTemplate()"></i>
+            <i class="pi pi-save !text-1xl hover:cursor-pointer hover:text-highlight" pTooltip="save" showDelay="300" tooltipPosition="top" *ngIf="editActive" (click)="saveTimelineTemplate()"></i>
+            <i class="pi pi-times !text-1xl hover:cursor-pointer hover:text-danger" pTooltip="drop changes" showDelay="300" tooltipPosition="top" *ngIf="editActive" (click)="editClose()"></i>
         </div>
     </div>
     <div class="flex flex-row gap-2">
@@ -29,9 +30,9 @@
     <div class="flex flex-row gap-2 justify-left mt-1" *ngIf="editActive">
         @for (sid of timelineTemplate().screen_ids; track sid; let first = $first, last = $last, index = $index) {
         <div class="w-10% flex flex-row justify-center gap-2">
-            <i class="pi pi-arrow-left !text-2xl hover:cursor-pointer hover:text-highlight" (click)="screenMoveLeft(index)" *ngIf="!first"></i>
-            <i class="pi pi-times !text-2xl hover:cursor-pointer hover:text-danger" (click)="screenRemove(index)"></i>
-            <i class="pi pi-arrow-right !text-2xl hover:cursor-pointer hover:text-highlight" (click)="screenMoveRight(index)" *ngIf="!last"></i>
+            <i class="pi pi-arrow-left !text-2xl hover:cursor-pointer hover:text-highlight" pTooltip="move left" showDelay="300" tooltipPosition="bottom" (click)="screenMoveLeft(index)" *ngIf="!first"></i>
+            <i class="pi pi-times !text-2xl hover:cursor-pointer hover:text-danger" pTooltip="remove" showDelay="300" tooltipPosition="bottom" (click)="screenRemove(index)"></i>
+            <i class="pi pi-arrow-right !text-2xl hover:cursor-pointer hover:text-highlight" pTooltip="move right" showDelay="300" tooltipPosition="bottom" (click)="screenMoveRight(index)" *ngIf="!last"></i>
         </div>
         }
     </div>

@@ -22,6 +22,7 @@ export class TimelineTemplatesPanelComponent {
     users = input.required<Map<string, User>>();
     currentUser = input.required<User>();
     timelineTemplateEdited = output<string|null|undefined>();
+    timelineEdited = output<string|null|undefined>();
     screenEdited = output<string|null|undefined>();
     isActive = model.required<boolean>();
 

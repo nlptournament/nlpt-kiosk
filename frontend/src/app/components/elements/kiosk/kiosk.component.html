@@ -19,8 +19,8 @@
 <div class="w-fit max-w-90% bg-kiosk-card rounded-xl shadow-md flex flex-col text-1xl p-2 pt-1" *ngIf="kiosk().added_by_id && (kiosk().common || currentUser().admin || kiosk().added_by_id == currentUser().id)">
     <div class="flex flex-row justify-between items-start gap-5 mb-1">
         <div class="flex flex-row items-center gap-1">
-            <i class="pi pi-circle-off !text-1xl" *ngIf="!kiosk().common"></i>
-            <i class="pi pi-circle-on !text-1xl" *ngIf="kiosk().common"></i>
+            <i class="pi pi-circle-off !text-1xl" pTooltip="only visible to owner" showDelay="300" tooltipPosition="right" *ngIf="!kiosk().common"></i>
+            <i class="pi pi-circle-on !text-1xl" pTooltip="visible to anyone" showDelay="300" tooltipPosition="right" *ngIf="kiosk().common"></i>
             <div class="flex flex-row">
                 <div class="text-highlight">{{ kiosk().name }}</div><ng-container *ngIf="kiosk().desc != ''"> - {{ kiosk().desc }}</ng-container>
             </div>
@@ -30,33 +30,34 @@
             <div>{{ users().get(kiosk().added_by_id!)!.login }}</div>
         </div>
         <div class="flex flex-row gap-2">
-            <i class="pi pi-pencil !text-1xl hover:cursor-pointer hover:text-highlight" (click)="editOpen()" *ngIf="currentUser().admin || currentUser().id == kiosk().added_by_id"></i>
-            <i class="pi pi-save !text-1xl hover:cursor-pointer hover:text-highlight" (click)="changeTimeline()" *ngIf="nextTimeline"></i>
+            <i class="pi pi-pencil !text-1xl hover:cursor-pointer hover:text-highlight" pTooltip="edit" showDelay="300" tooltipPosition="bottom" (click)="editOpen()" *ngIf="currentUser().admin || currentUser().id == kiosk().added_by_id"></i>
+            <i class="pi pi-save !text-1xl hover:cursor-pointer hover:text-highlight" pTooltip="apply next Timeline as current Timeline" showDelay="300" tooltipPosition="bottom" (click)="changeTimeline()" *ngIf="nextTimeline"></i>
         </div>
     </div>
+
     <div class="flex flex-col gap-1">
         <element-timeline class="w-fit border border-highlight rounded-xl" [timeline]="timelines().get(kiosk().timeline_id!)!" [screens]="screens()" [screenTemplates]="screenTemplates()" [users]="users()" [currentUser]="currentUser()" [timelineTemplates]="timelineTemplates()" *ngIf="kiosk().timeline_id"></element-timeline>
         <div class="w-fill h-20 border border-highlight bg-timeline-card rounded-xl shadow-md flex items-center justify-center text-2xl p-3" *ngIf="!kiosk().timeline_id">No Timeline is displayed</div>
         <div class="flex flex-col bg-screen-card rounded-xl shadow-md p-2 pt-0 pb-0">
             <div class="flex flex-row justify-end" *ngIf="timelinesExpanded">
-                <i class="pi pi-chevron-up !text-1xl hover:cursor-pointer hover:text-highlight" (click)="timelinesExpanded = false"></i>
+                <i class="pi pi-chevron-up !text-1xl hover:cursor-pointer hover:text-highlight" pTooltip="collapse other Timelines" showDelay="300" tooltipPosition="bottom" (click)="timelinesExpanded = false"></i>
             </div>
             <div class="flex flex-row justify-between" *ngIf="!timelinesExpanded">
                 <div></div>
                 <div>other Timelines</div>
-                <i class="pi pi-chevron-down !text-1xl hover:cursor-pointer hover:text-highlight" (click)="timelinesExpanded = true"></i>
+                <i class="pi pi-chevron-down !text-1xl hover:cursor-pointer hover:text-highlight" pTooltip="show other Timelines" showDelay="300" tooltipPosition="bottom" (click)="timelinesExpanded = true"></i>
             </div>
             <div class="flex flex-col gap-2" *ngIf="timelinesExpanded">
                 @for (timeline of relevantTimelines; track timeline.id) {
                 <div class="flex flex-row">
                     <div class="flex flex-col justify-center gap-1.5">
                         <div class="bg-timeline-card rounded-l-lg pb-1 pl-2 pr-1 pt-1.5">
-                            <i class="pi pi-desktop !text-2xl hover:cursor-pointer hover:text-highlight" (click)="selectTimeline(timeline.id, true)" *ngIf="nextTimeline != timeline.id"></i>
-                            <i class="pi pi-verified !text-2xl hover:cursor-pointer text-highlight" (click)="selectTimeline(timeline.id, true)" *ngIf="nextTimeline == timeline.id"></i>
+                            <i class="pi pi-desktop !text-2xl hover:cursor-pointer hover:text-highlight" pTooltip="select as next Timeline" showDelay="300" tooltipPosition="right" (click)="selectTimeline(timeline.id, true)" *ngIf="nextTimeline != timeline.id"></i>
+                            <i class="pi pi-verified !text-2xl hover:cursor-pointer text-highlight" pTooltip="unselect as next Timeline" showDelay="300" tooltipPosition="right" (click)="selectTimeline(timeline.id, true)" *ngIf="nextTimeline == timeline.id"></i>
                         </div>
                         <div class="bg-timeline-card rounded-l-lg pb-1 pl-2 pr-1 pt-1.5">
-                            <i class="pi pi-list !text-2xl hover:cursor-pointer hover:text-highlight" (click)="selectTimeline(timeline.id)" *ngIf="!presetTimelines.includes(timeline.id!)"></i>
-                            <i class="pi pi-list-check !text-2xl hover:cursor-pointer text-highlight" (click)="selectTimeline(timeline.id)" *ngIf="presetTimelines.includes(timeline.id!)"></i>
+                            <i class="pi pi-list !text-2xl hover:cursor-pointer hover:text-highlight" pTooltip="select for Preset creation" showDelay="300" tooltipPosition="right" (click)="selectTimeline(timeline.id)" *ngIf="!presetTimelines.includes(timeline.id!)"></i>
+                            <i class="pi pi-list-check !text-2xl hover:cursor-pointer text-highlight" pTooltip="unselect from Preset creation" showDelay="300" tooltipPosition="right" (click)="selectTimeline(timeline.id)" *ngIf="presetTimelines.includes(timeline.id!)"></i>
                         </div>
                     </div>
                     <element-timeline [timeline]="timeline" [screens]="screens()" [screenTemplates]="screenTemplates()" [users]="users()" [currentUser]="currentUser()" [timelineTemplates]="timelineTemplates()" (editResult)="timelineEdited.emit($event)"></element-timeline>
