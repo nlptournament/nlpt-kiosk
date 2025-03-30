@@ -29,9 +29,12 @@ update_timelines()
 
     def update_timelines(self):
         from elements import Timeline
+        result = list()
         for t in [Timeline(t) for t in docDB.search_many('Timeline', {'template_id': self['_id']})]:
             if not t.locked():
                 t['screen_ids'] = list()
                 for s in self['screen_ids']:
                     t['screen_ids'].append(s)
                 t.save()
+                result.append(t['_id'])
+        return result

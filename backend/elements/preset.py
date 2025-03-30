@@ -31,7 +31,11 @@ apply() : None
 
     def apply(self):
         from elements import Timeline
+        result = list()
         for t in [Timeline.get(t) for t in self['timeline_ids']]:
             tnew = Timeline(t.json())
             tnew['_id'] = None
-            tnew.save()
+            r = tnew.save()
+            if 'created' in r:
+                result.append(r['created'])
+        return result
