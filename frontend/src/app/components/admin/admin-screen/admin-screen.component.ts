@@ -1,14 +1,15 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
-import { CommonModule } from '@angular/common';
+import { CommonModule, Time } from '@angular/common';
 
-import { Kiosk } from '../../../interfaces/kiosk';
+import { Kiosk, KioskTlSelection } from '../../../interfaces/kiosk';
 import { User } from '../../../interfaces/user';
 import { ScreenTemplate } from '../../../interfaces/screen-template';
 import { Screen } from '../../../interfaces/screen';
 import { TimelineTemplate } from '../../../interfaces/timeline-template';
 import { Timeline } from '../../../interfaces/timeline';
+import { Preset } from '../../../interfaces/preset';
 
 import { KioskService } from '../../../services/kiosk.service';
 import { UserService } from '../../../services/user.service';
@@ -16,6 +17,7 @@ import { ScreenTemplateService } from '../../../services/screen-template.service
 import { ScreenService } from '../../../services/screen.service';
 import { TimelineService } from '../../../services/timeline.service';
 import { TimelineTemplateService } from '../../../services/timeline-template.service';
+import { PresetService } from '../../../services/preset.service';
 import { ErrorHandlerService } from '../../../services/error-handler.service';
 
 import { KioskComponent } from '../../elements/kiosk/kiosk.component';
@@ -23,11 +25,13 @@ import { ScreensPanelComponent } from '../screens-panel/screens-panel.component'
 import { TimelineTemplatesPanelComponent } from '../timeline-templates-panel/timeline-templates-panel.component';
 
 import { MenuItem } from 'primeng/api';
-import { SpeedDial } from 'primeng/speeddial';
+import { MenubarModule } from 'primeng/menubar';
+import { delay } from 'rxjs';
+
 
 @Component({
   selector: 'app-admin-screen',
-  imports: [CommonModule, SpeedDial, KioskComponent, ScreensPanelComponent, TimelineTemplatesPanelComponent],
+  imports: [CommonModule, MenubarModule, KioskComponent, ScreensPanelComponent, TimelineTemplatesPanelComponent],
   templateUrl: './admin-screen.component.html',
   styleUrl: './admin-screen.component.scss'
 })
@@ -40,10 +44,13 @@ export class AdminScreenComponent implements OnInit {
     timelineTemplates: Map<string, TimelineTemplate> = new Map<string, TimelineTemplate>;
     kiosks: Map<string, Kiosk> = new Map<string, Kiosk>;
     timelines: Map<string, Timeline> = new Map<string, Timeline>;
+    presets: Map<string, Preset> = new Map<string, Preset>;
 
     panelScreensActive: boolean = false;
     panelTimelineTemplatesActive: boolean = false;
     timelinesChanged: boolean = false;
+    selectedNextTimelines: Map<string, string> = new Map<string, string>;
+    selectedPresetTimelines: Map<string, string[]> = new Map<string, string[]>;
 
     constructor(
         private errorHandler: ErrorHandlerService,
@@ -53,7 +60,8 @@ export class AdminScreenComponent implements OnInit {
         private screenService: ScreenService,
         private timelinetemplateService: TimelineTemplateService,
         private kioskService: KioskService,
-        private timelineService: TimelineService
+        private timelineService: TimelineService,
+        private presetService: PresetService
     ) { }
 
     ngOnInit(): void {
@@ -64,6 +72,7 @@ export class AdminScreenComponent implements OnInit {
         this.refreshTimelineTemplates();
         this.refreshKiosks();
         this.refreshTimelines();
+        this.refreshPresets();
     }
 
     populateMenu() {
@@ -83,10 +92,26 @@ export class AdminScreenComponent implements OnInit {
                 }
             },
             {
-                label: 'Manage Timeline Templates',
+                label: 'Manage Timelines',
                 icon: 'pi pi-folder',
                 command: () => {
                     this.panelTimelineTemplatesActive = true;
+                }
+            },
+            {
+                label: 'Create Preset',
+                icon: 'pi pi-clipboard',
+                disabled: this.selectedPresetTimelines.size == 0,
+                command: () => {
+                    this.createPresetFromSelection();
+                }
+            },
+            {
+                label: 'Synced Apply',
+                icon: 'pi pi-desktop',
+                disabled: this.selectedNextTimelines.size < 2,
+                command: () => {
+                    this.syncedCurrentTimelineApply();
                 }
             }
         ]
@@ -192,6 +217,21 @@ export class AdminScreenComponent implements OnInit {
             });
     }
 
+    refreshPresets() {
+        this.presetService
+            .getPresets()
+            .subscribe({
+                next: (presets: Preset[]) => {
+                    let pl: Map<string, Preset> = new Map<string, Preset>;
+                    for (let p of presets) if (p.id) pl.set(p.id, p);
+                    this.presets = pl;
+                },
+                error: (err: HttpErrorResponse) => {
+                    this.errorHandler.handleError(err);
+                }
+            });
+    }
+
     screenEdited(event: string|null|undefined) {
         if (event) {
             this.screenService
@@ -276,6 +316,67 @@ export class AdminScreenComponent implements OnInit {
                     }
                 });
         }
+    }
+
+    presetEdited(event: string|null|undefined) {
+        if (event) {
+            this.presetService
+                .getPreset(event)
+                .subscribe({
+                    next: (preset: Preset) => {
+                        if (preset.id) {
+                            this.presets.set(preset.id, preset);
+                            for (let tlid of preset.timeline_ids) this.timelineEdited(tlid);
+                        }
+                    },
+                    error: (err: HttpErrorResponse) => {
+                        if (err.status == 404 && this.presets.has(event))
+                            this.presets.delete(event);
+                        else
+                            this.errorHandler.handleError(err);
+                    }
+                });
+        }
+    }
+
+    timelinesSelected(event: KioskTlSelection) {
+        if (event.next) this.selectedNextTimelines.set(event.kiosk_id, event.next);
+        else if (this.selectedNextTimelines.has(event.kiosk_id)) this.selectedNextTimelines.delete(event.kiosk_id);
+
+        if (event.preset.length > 0) this.selectedPresetTimelines.set(event.kiosk_id, event.preset);
+        else if (this.selectedPresetTimelines.has(event.kiosk_id)) this.selectedPresetTimelines.delete(event.kiosk_id);
+
+        this.populateMenu();
+    }
+
+    syncedCurrentTimelineApply() {
+        for (let kiosk_id of this.selectedNextTimelines.keys()) {
+            if (this.kiosks.has(kiosk_id)) {
+                let k: Kiosk = this.kiosks.get(kiosk_id)!;
+                k.timeline_id = this.selectedNextTimelines.get(kiosk_id)!;
+                this.kioskService
+                    .updateKiosk(k)
+                    .subscribe((result: any) => {
+                        this.kioskEdited(kiosk_id);
+                    });
+            }
+        }
+    }
+
+    createPresetFromSelection() {
+        let preset: Preset = <Preset>{id: null, user_id: this.currentUser.id, timeline_ids: <string[]>[], desc: '', common: false};
+        for (let timeline_ids of this.selectedPresetTimelines.values()) {
+            for (let tlid of timeline_ids) {
+                preset.timeline_ids.push(tlid);
+            }
+        }
+        this.presetService
+            .createPreset(preset)
+            .subscribe({
+                next: (result: any) => {
+                   if (Object.keys(result).includes('created')) this.presetEdited(result['created']);
+                }
+            });
     }
 
 }

@@ -1,6 +1,6 @@
 import { Component, effect, input, OnInit, output } from '@angular/core';
 import { User } from '../../../interfaces/user';
-import { Kiosk } from '../../../interfaces/kiosk';
+import { Kiosk, KioskTlSelection } from '../../../interfaces/kiosk';
 import { TimelineTemplate } from '../../../interfaces/timeline-template';
 import { CommonModule } from '@angular/common';
 import { KioskService } from '../../../services/kiosk.service';
@@ -17,6 +17,8 @@ import { TimelineService } from '../../../services/timeline.service';
 import { ScreenTemplate } from '../../../interfaces/screen-template';
 import { Screen } from '../../../interfaces/screen';
 import { TooltipModule } from 'primeng/tooltip';
+import { HttpErrorResponse } from '@angular/common/http';
+import { ErrorHandlerService } from '../../../services/error-handler.service';
 
 interface selectableCommon {
     code: boolean,
@@ -50,6 +52,7 @@ export class KioskComponent implements OnInit {
     screenTemplates = input.required<Map<string, ScreenTemplate>>();
     editResult = output<string|null|undefined>();
     timelineEdited = output<string|null|undefined>();
+    timelineSelection = output<KioskTlSelection>();
 
     relevantTimelines: Timeline[] = [];
     editActive: boolean = false;
@@ -63,6 +66,7 @@ export class KioskComponent implements OnInit {
     presetTimelines: string[] = [];
 
     constructor (
+        private errorHandler: ErrorHandlerService,
         private kioskService: KioskService,
         private timelineService: TimelineService
     ) {
@@ -117,10 +121,13 @@ export class KioskComponent implements OnInit {
     kioskSave() {
         this.kioskService
             .updateKiosk(this.kiosk())
-            .subscribe((result: any) => {
-                next: {
+            .subscribe({
+                next: (result: any) => {
                     if (this.editActive) this.editClose();
                     else this.editResult.emit(this.kiosk().id);
+                },
+                error: (err: HttpErrorResponse) => {
+                    this.errorHandler.handleError(err);
                 }
             });
     }
@@ -170,6 +177,12 @@ export class KioskComponent implements OnInit {
                 if (this.presetTimelines.includes(tl_id)) this.presetTimelines.splice(this.presetTimelines.indexOf(tl_id), 1);
                 else this.presetTimelines.push(tl_id);
             }
+            let kts: KioskTlSelection = <KioskTlSelection>{
+                kiosk_id: this.kiosk().id,
+                next: this.nextTimeline,
+                preset: this.presetTimelines
+            };
+            this.timelineSelection.emit(kts);
         }
     }
 
@@ -184,6 +197,11 @@ export class KioskComponent implements OnInit {
                         this.editResult.emit(this.kiosk().id);
                         this.timelineEdited.emit(old_timeline_id);
                         this.nextTimeline = undefined;
+                    },
+                    error: (err: HttpErrorResponse) => {
+                        this.editResult.emit(this.kiosk().id);
+                        this.nextTimeline = undefined;
+                        this.errorHandler.handleError(err);
                     }
                 });
         }

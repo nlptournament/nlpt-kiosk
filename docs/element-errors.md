@@ -63,6 +63,12 @@
   * **7**: *(current_pos)* needs to be 0 or bigger
   * **70**: *(_id)* Timeline can't be changed, as it is locked
 
+## Kiosk
+
+*reserved range **8x** for individual errors*
+
+  * **80**: *(timeline_id)* Timeline is part of a Preset and therefore can't be displayed
+
 # element delete error-codes
 
   * **1**: at least one locked Screen is using this <element-name\>

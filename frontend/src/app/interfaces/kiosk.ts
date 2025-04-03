@@ -6,3 +6,9 @@ export interface Kiosk {
     common?: boolean;
     timeline_id: string | null;
 }
+
+export interface KioskTlSelection {
+    kiosk_id: string;
+    next?: string;
+    preset: string[];
+}

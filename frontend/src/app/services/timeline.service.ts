@@ -22,12 +22,12 @@ export class TimelineService {
         return this.http.get<Timeline[]>(this.timelineUrl, {withCredentials:true});
     }
 
-    public updateTimeline(kiosk: Timeline): Observable<any> {
-        return this.http.patch<any>(this.timelineUrl + kiosk.id + '/', kiosk, {withCredentials:true});
+    public updateTimeline(timeline: Timeline): Observable<any> {
+        return this.http.patch<any>(this.timelineUrl + timeline.id + '/', timeline, {withCredentials:true});
     }
 
-    public createTimeline(kiosk: Timeline): Observable<any> {
-        return this.http.post<any>(this.timelineUrl, kiosk, {withCredentials:true});
+    public createTimeline(timeline: Timeline): Observable<any> {
+        return this.http.post<any>(this.timelineUrl, timeline, {withCredentials:true});
     }
 
     public deleteTimeline(id: string): Observable<any> {

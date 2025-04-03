@@ -25,6 +25,12 @@ timeline_id : str | None
         timeline_id=ElementBase.addAttr(type=str, default=None, fk='Timeline')
     )
 
+    def validate(self):
+        errors = dict()
+        if self['timeline_id'] is not None and self.timeline().preset():
+            errors['_id'] = {'code': 80, 'desc': "Timeline is part of a Preset and therefore can't be displayed"}
+        return errors
+
     def delete_pre(self):
         self['timeline_id'] = None
         self.save()

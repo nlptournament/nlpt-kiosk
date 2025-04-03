@@ -1,6 +1,7 @@
+<p-menubar class="!text-1xl" [model]="menuItems"></p-menubar>
 <div class="flex flex-wrap p-2 gap-2">
     @for (kiosk of kiosks.values(); track kiosk.id) {
-    <element-kiosk [kiosk]="kiosk" [users]="users" [currentUser]="currentUser" [timelineTemplates]="timelineTemplates" [timelines]="timelines" [screens]="screens" [screenTemplates]="screenTemplates" [timelinesChanged]="timelinesChanged" (editResult)="kioskEdited($event)" (timelineEdited)="timelineEdited($event)"></element-kiosk>
+    <element-kiosk [kiosk]="kiosk" [users]="users" [currentUser]="currentUser" [timelineTemplates]="timelineTemplates" [timelines]="timelines" [screens]="screens" [screenTemplates]="screenTemplates" [timelinesChanged]="timelinesChanged" (editResult)="kioskEdited($event)" (timelineEdited)="timelineEdited($event)" (timelineSelection)="timelinesSelected($event)"></element-kiosk>
     }
 </div>
 
@@ -9,5 +10,3 @@
 
 <!-- TIMELINETEMPLATES PANEL MODAL -->
 <panel-timeline-templates [timelineTemplates]="timelineTemplates" [screens]="screens" [screenTemplates]="screenTemplates" [users]="users" [currentUser]="currentUser" (timelineTemplateEdited)="timelineTemplateEdited($event)" (screenEdited)="screenEdited($event)" (timelineEdited)="timelineEdited($event)" [(isActive)]="panelTimelineTemplatesActive" *ngIf="panelTimelineTemplatesActive"></panel-timeline-templates>
-
-<p-speedDial [model]="menuItems" direction="left" mask [tooltipOptions]="{ tooltipPosition: 'top' }" buttonClassName="p-button-outlined"></p-speedDial>
