@@ -1,0 +1,16 @@
+<p-dialog [modal]="true" appendTo="body" [visible]="isActive()">
+    <ng-template #headless>
+        <div class="p-2 pt-1">
+            <div class="w-fill flex flex-row justify-between items-start gap-5 mb-2">
+                <div>&nbsp;</div>
+                <div class="text-2xl">Presets Manager</div>
+                <i class="pi pi-times !text-1xl hover:cursor-pointer hover:text-danger" (click)="isActive.set(false)"></i>
+            </div>
+            <div class="flex flex-col max-w-80% max-h-35% overflow-scroll gap-2">
+                @for (preset of presets().values(); track preset.id) {
+                    <element-preset [preset]="preset" [kiosks]="kiosks()" [timelines]="timelines" [screens]="screens()" [screenTemplates]="screenTemplates()" [users]="users()" [currentUser]="currentUser()" [timelineTemplates]="timelineTemplates()" (timelineEdited)="timelineEdited.emit($event)" (editResult)="presetEdited.emit($event)"></element-preset>
+                }
+            </div>
+        </div>
+    </ng-template>
+</p-dialog>

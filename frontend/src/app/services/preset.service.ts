@@ -33,4 +33,8 @@ export class PresetService {
     public deletePreset(id: string): Observable<any> {
         return this.http.delete<any>(this.presetUrl + id + '/', {withCredentials:true});
     }
+
+    public applyPreset(id: string): Observable<any> {
+        return this.http.put<any>(this.presetUrl + 'apply/' + id + '/', {}, {withCredentials:true});
+    }
 }

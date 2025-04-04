@@ -10,3 +10,6 @@
 
 <!-- TIMELINETEMPLATES PANEL MODAL -->
 <panel-timeline-templates [timelineTemplates]="timelineTemplates" [screens]="screens" [screenTemplates]="screenTemplates" [users]="users" [currentUser]="currentUser" (timelineTemplateEdited)="timelineTemplateEdited($event)" (screenEdited)="screenEdited($event)" (timelineEdited)="timelineEdited($event)" [(isActive)]="panelTimelineTemplatesActive" *ngIf="panelTimelineTemplatesActive"></panel-timeline-templates>
+
+<!-- PRESETS PANEL MODAL -->
+<panel-presets [presets]="presets" [kiosks]="kiosks" [screens]="screens" [screenTemplates]="screenTemplates" [users]="users" [currentUser]="currentUser" [timelineTemplates]="timelineTemplates" [(isActive)]="panelPresetsActive" (timelineEdited)="timelineEdited($event)" (presetEdited)="presetEdited($event)" *ngIf="panelPresetsActive"></panel-presets>

@@ -22,7 +22,8 @@
             <i class="pi pi-circle-off !text-1xl" pTooltip="only visible to owner" showDelay="300" tooltipPosition="right" *ngIf="!kiosk().common"></i>
             <i class="pi pi-circle-on !text-1xl" pTooltip="visible to anyone" showDelay="300" tooltipPosition="right" *ngIf="kiosk().common"></i>
             <div class="flex flex-row">
-                <div class="text-highlight">{{ kiosk().name }}</div><ng-container *ngIf="kiosk().desc != ''"> - {{ kiosk().desc }}</ng-container>
+                <div class="text-highlight">{{ kiosk().name }}</div>
+                <div *ngIf="kiosk().desc != ''">&nbsp;- {{ kiosk().desc }}</div>
             </div>
         </div>
         <div class="flex flex-row items-center gap-1">

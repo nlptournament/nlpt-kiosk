@@ -23,6 +23,7 @@ import { ErrorHandlerService } from '../../../services/error-handler.service';
 import { KioskComponent } from '../../elements/kiosk/kiosk.component';
 import { ScreensPanelComponent } from '../screens-panel/screens-panel.component';
 import { TimelineTemplatesPanelComponent } from '../timeline-templates-panel/timeline-templates-panel.component';
+import { PresetsPanelComponent } from '../presets-panel/presets-panel.component';
 
 import { MenuItem } from 'primeng/api';
 import { MenubarModule } from 'primeng/menubar';
@@ -31,7 +32,7 @@ import { delay } from 'rxjs';
 
 @Component({
   selector: 'app-admin-screen',
-  imports: [CommonModule, MenubarModule, KioskComponent, ScreensPanelComponent, TimelineTemplatesPanelComponent],
+  imports: [CommonModule, MenubarModule, KioskComponent, ScreensPanelComponent, TimelineTemplatesPanelComponent, PresetsPanelComponent],
   templateUrl: './admin-screen.component.html',
   styleUrl: './admin-screen.component.scss'
 })
@@ -48,6 +49,7 @@ export class AdminScreenComponent implements OnInit {
 
     panelScreensActive: boolean = false;
     panelTimelineTemplatesActive: boolean = false;
+    panelPresetsActive: boolean = false;
     timelinesChanged: boolean = false;
     selectedNextTimelines: Map<string, string> = new Map<string, string>;
     selectedPresetTimelines: Map<string, string[]> = new Map<string, string[]>;
@@ -96,6 +98,14 @@ export class AdminScreenComponent implements OnInit {
                 icon: 'pi pi-folder',
                 command: () => {
                     this.panelTimelineTemplatesActive = true;
+                }
+            },
+            {
+                label: 'Manage Presets',
+                icon: 'pi pi-list',
+                disabled: this.presets.size == 0,
+                command: () => {
+                    this.panelPresetsActive = true;
                 }
             },
             {
@@ -225,6 +235,7 @@ export class AdminScreenComponent implements OnInit {
                     let pl: Map<string, Preset> = new Map<string, Preset>;
                     for (let p of presets) if (p.id) pl.set(p.id, p);
                     this.presets = pl;
+                    this.populateMenu();
                 },
                 error: (err: HttpErrorResponse) => {
                     this.errorHandler.handleError(err);
@@ -328,12 +339,14 @@ export class AdminScreenComponent implements OnInit {
                             this.presets.set(preset.id, preset);
                             for (let tlid of preset.timeline_ids) this.timelineEdited(tlid);
                         }
+                        this.populateMenu();
                     },
                     error: (err: HttpErrorResponse) => {
                         if (err.status == 404 && this.presets.has(event))
                             this.presets.delete(event);
                         else
                             this.errorHandler.handleError(err);
+                        this.populateMenu();
                     }
                 });
         }

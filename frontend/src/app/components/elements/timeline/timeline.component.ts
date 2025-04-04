@@ -1,4 +1,4 @@
-import { Component, input, output } from '@angular/core';
+import { booleanAttribute, Component, input, output } from '@angular/core';
 import { Timeline } from '../../../interfaces/timeline';
 import { ScreenTemplate } from '../../../interfaces/screen-template';
 import { User } from '../../../interfaces/user';
@@ -24,6 +24,7 @@ export class TimelineComponent {
     users = input.required<Map<string, User>>();
     currentUser = input.required<User>();
     timelineTemplates = input.required<Map<string, TimelineTemplate>>();
+    roMode = input(false, {transform: booleanAttribute});
     editResult = output<string|null|undefined>();
 
     editActive: boolean = false;

@@ -10,7 +10,7 @@
             <div *ngIf="!timeline().template_id">???</div>
         </div>
         <div class="flex flex-row gap-2">
-            <i class="pi pi-pencil !text-1xl hover:cursor-pointer hover:text-highlight" pTooltip="edit" showDelay="300" tooltipPosition="top" (click)="editActive = true" *ngIf="!editActive && !timeline().locked"></i>
+            <i class="pi pi-pencil !text-1xl hover:cursor-pointer hover:text-highlight" pTooltip="edit" showDelay="300" tooltipPosition="top" (click)="editActive = true" *ngIf="!editActive && !timeline().locked && !roMode()"></i>
             <i class="pi pi-lock !text-1xl text-danger" pTooltip="locked" showDelay="300" tooltipPosition="top" *ngIf="timeline().locked"></i>
             <i class="pi pi-trash !text-1xl hover:cursor-pointer hover:text-danger" pTooltip="delete" showDelay="300" tooltipPosition="top" (click)="timelineDelete()" *ngIf="editActive"></i>
             <i class="pi pi-save !text-1xl hover:cursor-pointer hover:text-highlight" pTooltip="save" showDelay="300" tooltipPosition="top" (click)="timelineSave()" *ngIf="editActive"></i>

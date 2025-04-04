@@ -1,0 +1,44 @@
+<div class="w-fit bg-kiosk-card rounded-xl shadow-md flex flex-col text-1xl p-2 pt-1">
+    <div class="flex flex-row justify-between items-start gap-5 mb-1">
+        <div class="flex flex-row items-center gap-1">
+            <div class="text-highlight" *ngIf="!editActive">{{ preset().desc }}</div>
+            <input pInputText id="desc" [(ngModel)]="preset().desc" autocomplete="off" *ngIf="editActive" />
+        </div>
+        <div class="flex flex-row items-center gap-1">
+            <i class="pi pi-user !text-1xl"></i>
+            <div *ngIf="!editActive">{{ users().get(preset().user_id)!.login }}</div>
+            <p-select [(ngModel)]="preset().user_id" inputId="user_id" [options]="selectableUsers" optionValue="code" optionLabel="name" [disabled]="!currentUser().admin" *ngIf="editActive" />
+        </div>
+        <div class="flex flex-row gap-2">
+            <i class="pi pi-file-export !text-1xl hover:cursor-pointer hover:text-highlight" pTooltip="apply" showDelay="300" tooltipPosition="top" (click)="presetApply()" *ngIf="!editActive"></i>
+            <i class="pi pi-pencil !text-1xl hover:cursor-pointer hover:text-highlight" pTooltip="edit" showDelay="300" tooltipPosition="top" (click)="editOpen()" *ngIf="!editActive && (currentUser().admin || currentUser().id == preset().user_id)"></i>
+            <i class="pi pi-trash !text-1xl hover:cursor-pointer hover:text-danger" pTooltip="delete" showDelay="300" tooltipPosition="top" (click)="presetDelete()" *ngIf="editActive"></i>
+            <i class="pi pi-save !text-1xl hover:cursor-pointer hover:text-highlight" pTooltip="save" showDelay="300" tooltipPosition="top" (click)="presetSave()" *ngIf="editActive"></i>
+            <i class="pi pi-times !text-1xl hover:cursor-pointer hover:text-danger" pTooltip="drop changes" showDelay="300" tooltipPosition="top" (click)="editClose()" *ngIf="editActive"></i>
+        </div>
+    </div>
+
+    <div class="flex flex-col bg-screen-card rounded-xl shadow-md p-2 pt-0 pb-0">
+        <div class="flex flex-row justify-end" *ngIf="timelinesExpanded">
+            <i class="pi pi-chevron-up !text-1xl hover:cursor-pointer hover:text-highlight" pTooltip="collapse Timelines" showDelay="300" tooltipPosition="bottom" (click)="timelinesExpanded = false"></i>
+        </div>
+        <div class="flex flex-row justify-between" *ngIf="!timelinesExpanded">
+            <div></div>
+            <div>Timelines</div>
+            <i class="pi pi-chevron-down !text-1xl hover:cursor-pointer hover:text-highlight" pTooltip="show Timelines" showDelay="300" tooltipPosition="bottom" (click)="timelinesExpand()"></i>
+        </div>
+        <div class="flex flex-col gap-2" *ngIf="timelinesExpanded">
+            @for (kiosk_id of relevantTimelines.keys(); track kiosk_id) {
+            <div class="flex flex-col gap-2">
+                <div class="flex flex-row">
+                    <div class="text-highlight">{{ kiosks().get(kiosk_id)!.name }}</div>
+                    <ng-container *ngIf="kiosks().get(kiosk_id)!.desc != ''">&nbsp;- {{ kiosks().get(kiosk_id)!.desc }}</ng-container>
+                </div>
+                @for (timeline of relevantTimelines.get(kiosk_id); track timeline.id) {
+                <element-timeline [timeline]="timeline" [screens]="screens()" [screenTemplates]="screenTemplates()" [users]="users()" [currentUser]="currentUser()" [timelineTemplates]="timelineTemplates()" [roMode]="true"></element-timeline>
+                }
+            </div>
+            }
+        </div>
+    </div>
+</div>
