@@ -67,7 +67,7 @@ class KioskEndpoint(ElementEndpointBase):
     _other_readable = list(['id', 'name', 'desc', 'added_by_id', 'common', 'timeline_id'])
     _other_createable = list(['name', 'desc', 'added_by_id', 'common', 'timeline_id'])
     _other_updateable = list(['timeline_id'])
-    _all_readable = list(['id', 'name', 'timeline_id'])
+    _all_readable = list(['id', 'name', 'desc', 'timeline_id'])
     _all_createable = list(['name'])
 
 

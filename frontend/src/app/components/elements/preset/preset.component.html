@@ -1,20 +1,20 @@
+<!-- DISPLAY MODE -->
 <div class="w-fit bg-kiosk-card rounded-xl shadow-md flex flex-col text-1xl p-2 pt-1">
     <div class="flex flex-row justify-between items-start gap-5 mb-1">
         <div class="flex flex-row items-center gap-1">
-            <div class="text-highlight" *ngIf="!editActive">{{ preset().desc }}</div>
-            <input pInputText id="desc" [(ngModel)]="preset().desc" autocomplete="off" *ngIf="editActive" />
+            <i class="pi pi-circle-off !text-1xl" pTooltip="only visible to owner" showDelay="300" tooltipPosition="right" *ngIf="!preset().common"></i>
+            <i class="pi pi-circle-on !text-1xl" pTooltip="visible to anyone" showDelay="300" tooltipPosition="right" *ngIf="preset().common"></i>
+            <div class="flex flex-row items-center gap-1">
+                <div class="text-highlight">{{ preset().desc }}</div>
+            </div>
         </div>
         <div class="flex flex-row items-center gap-1">
             <i class="pi pi-user !text-1xl"></i>
-            <div *ngIf="!editActive">{{ users().get(preset().user_id)!.login }}</div>
-            <p-select [(ngModel)]="preset().user_id" inputId="user_id" [options]="selectableUsers" optionValue="code" optionLabel="name" [disabled]="!currentUser().admin" *ngIf="editActive" />
+            <div>{{ users().get(preset().user_id)!.login }}</div>
         </div>
         <div class="flex flex-row gap-2">
             <i class="pi pi-file-export !text-1xl hover:cursor-pointer hover:text-highlight" pTooltip="apply" showDelay="300" tooltipPosition="top" (click)="presetApply()" *ngIf="!editActive"></i>
             <i class="pi pi-pencil !text-1xl hover:cursor-pointer hover:text-highlight" pTooltip="edit" showDelay="300" tooltipPosition="top" (click)="editOpen()" *ngIf="!editActive && (currentUser().admin || currentUser().id == preset().user_id)"></i>
-            <i class="pi pi-trash !text-1xl hover:cursor-pointer hover:text-danger" pTooltip="delete" showDelay="300" tooltipPosition="top" (click)="presetDelete()" *ngIf="editActive"></i>
-            <i class="pi pi-save !text-1xl hover:cursor-pointer hover:text-highlight" pTooltip="save" showDelay="300" tooltipPosition="top" (click)="presetSave()" *ngIf="editActive"></i>
-            <i class="pi pi-times !text-1xl hover:cursor-pointer hover:text-danger" pTooltip="drop changes" showDelay="300" tooltipPosition="top" (click)="editClose()" *ngIf="editActive"></i>
         </div>
     </div>
 
@@ -42,3 +42,31 @@
         </div>
     </div>
 </div>
+
+<!-- EDIT MODAL -->
+<p-dialog [modal]="true" appendTo="body" [(visible)]="editActive">
+    <ng-template #headless>
+        <div class="p-4 pt-2 pb-3 bg-card rounded-xl shadow-md flex flex-col items-left" *ngIf="editActive">
+            <div class="w-full text-right mb-1">
+                <i class="pi pi-times hover:cursor-pointer hover:text-danger" (click)="editClose()"></i>
+            </div>
+
+            <p-iftalabel class="w-full mb-2">
+                <input pInputText id="desc" [(ngModel)]="preset().desc" autocomplete="off" class="w-full" autofocus />
+                <label for="desc">Description</label>
+            </p-iftalabel>
+
+            <p-iftalabel class="w-full mb-2">
+                <p-select [(ngModel)]="preset().user_id" inputId="user_id" [options]="selectableUsers" optionValue="code" optionLabel="name" styleClass="w-full" [disabled]="!currentUser().admin" />
+                <label for="user_id">Owner</label>
+            </p-iftalabel>
+
+            <p-selectbutton [options]="selectableCommons" inputId="common" [(ngModel)]="preset().common" optionLabel="name" optionValue="code" class="mb-2" />
+
+            <div class="w-full flex justify-between">
+                <p-button label="Delete" severity="danger" (onClick)="presetDelete()" />
+                <p-button label="Save" (onClick)="presetSave()" />
+            </div>
+        </div>
+    </ng-template>
+</p-dialog>

@@ -1,4 +1,4 @@
-import { Component, input, output } from '@angular/core';
+import { Component, input, OnInit, output } from '@angular/core';
 
 import { Preset } from '../../../interfaces/preset';
 import { Kiosk } from '../../../interfaces/kiosk';
@@ -11,25 +11,34 @@ import { TimelineTemplate } from '../../../interfaces/timeline-template';
 import { TimelineComponent } from '../timeline/timeline.component';
 
 import { PresetService } from '../../../services/preset.service';
+import { Dialog } from 'primeng/dialog';
 
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { InputTextModule } from 'primeng/inputtext';
 import { SelectModule } from 'primeng/select';
 import { TooltipModule } from 'primeng/tooltip';
+import { IftaLabelModule } from 'primeng/iftalabel';
+import { ButtonModule } from 'primeng/button';
+import { SelectButtonModule } from 'primeng/selectbutton';
 
 interface selectableUser {
     code: string;
     name: string;
 }
 
+interface selectableCommon {
+    code: boolean,
+    name: string
+}
+
 @Component({
   selector: 'element-preset',
-  imports: [CommonModule, FormsModule, TooltipModule, SelectModule, InputTextModule, TimelineComponent],
+  imports: [CommonModule, Dialog, FormsModule, TooltipModule, IftaLabelModule, SelectModule, InputTextModule, TimelineComponent, ButtonModule, SelectButtonModule],
   templateUrl: './preset.component.html',
   styleUrl: './preset.component.scss'
 })
-export class PresetComponent {
+export class PresetComponent implements OnInit {
     preset = input.required<Preset>();
     kiosks = input.required<Map<string, Kiosk>>();
     timelines = input.required<Map<string, Timeline>>();
@@ -45,10 +54,16 @@ export class PresetComponent {
     editActive: boolean = false;
     timelinesExpanded: boolean = false;
     selectableUsers: selectableUser[] = [];
+    selectableCommons: selectableCommon[] = [];
 
     constructor(
         private presetService: PresetService
     ) { }
+
+    ngOnInit(): void {
+        this.selectableCommons.push(<selectableCommon>{code: true, 'name': 'available2everyone'});
+        this.selectableCommons.push(<selectableCommon>{code: false, 'name': 'just4owner'});
+    }
 
     createSelectableUsers() {
         let su: selectableUser[] = [];
