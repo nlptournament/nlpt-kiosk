@@ -1,6 +1,8 @@
-<div class="mx-auto font-orbitron h-screen w-screen overflow-hidden w-fill flex flex-col items-center justify-center gap-6 text-6xl">
-    <a class="text-text transition ease-in-out hover:scale-110" href="/players">Spielerzahlen</a>
-    <a class="text-text transition ease-in-out hover:scale-110" href="/tas">TrackMania</a>
-    <a class="text-text transition ease-in-out hover:scale-110" href="/timer">Timer</a>
-    <a class="text-text transition ease-in-out hover:scale-110" href="/anno">Announcements</a>
+<div class="mx-auto max-h-screen overflow-hidden w-fill flex flex-col h-screen items-center justify-center" *ngIf="showMissingName">
+    <div class="text-3xl">define name of this Kiosk by adding URL-parameter name (?name=kioskname)</div>
+</div>
+
+<div class="mx-auto max-h-screen overflow-hidden w-fill flex flex-col h-screen items-center justify-center" *ngIf="kiosk && !kiosk.timeline_id">
+    <div class="text-6xl text-highlight">{{ kiosk.name }}</div>
+    <div class="text-5xl">awaiting data from server</div>
 </div>

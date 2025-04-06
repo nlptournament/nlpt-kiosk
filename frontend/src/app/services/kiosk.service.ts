@@ -22,6 +22,10 @@ export class KioskService {
         return this.http.get<Kiosk[]>(this.kioskUrl, {withCredentials:true});
     }
 
+    public getMyId(name: string): Observable<string> {
+        return this.http.put<string>(this.kioskUrl + 'my_id/' + name + '/', {});
+    }
+
     public updateKiosk(kiosk: Kiosk): Observable<any> {
         return this.http.patch<any>(this.kioskUrl + kiosk.id + '/', kiosk, {withCredentials:true});
     }

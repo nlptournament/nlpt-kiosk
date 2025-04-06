@@ -25,6 +25,16 @@ timeline_id : str | None
         timeline_id=ElementBase.addAttr(type=str, default=None, fk='Timeline')
     )
 
+    @classmethod
+    def id_by_name(cls, name):
+        fromdb = docDB.search_one(cls.__name__, {'name': name})
+        if fromdb is not None:
+            return fromdb['_id']
+        else:
+            k = cls()
+            k['name'] = name
+            return k.save()['created']
+
     def validate(self):
         errors = dict()
         if self['timeline_id'] is not None and self.timeline().preset():
