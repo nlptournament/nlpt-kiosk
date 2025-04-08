@@ -1,12 +1,15 @@
-import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Component, input, OnInit } from '@angular/core';
 
 @Component({
-  selector: 'app-player-counts',
-  imports: [],
+  selector: 'screen-player-counts',
+  imports: [CommonModule],
   templateUrl: './player-counts.component.html',
   styleUrl: './player-counts.component.scss'
 })
 export class PlayerCountsComponent implements OnInit {
+    isActive = input.required<boolean>();
+
     counts: any[] = [];
 
     ngOnInit(): void {

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, input, OnInit } from '@angular/core';
 import { Subscription, timer } from 'rxjs';
 
 interface Announcement {
@@ -12,15 +12,17 @@ interface Announcement {
 }
 
 @Component({
-  selector: 'app-announcements',
+  selector: 'screen-announcements',
   imports: [CommonModule],
   templateUrl: './announcements.component.html',
   styleUrl: './announcements.component.scss'
 })
 export class AnnouncementsComponent implements OnInit {
+    isActive = input.required<boolean>();
+
     refreshTimesTimer = timer(1000, 1000);
     refreshTimesTimerSubscription: Subscription | undefined;
-    
+
     announce: Announcement[] =[];
 
     ngOnInit(): void {

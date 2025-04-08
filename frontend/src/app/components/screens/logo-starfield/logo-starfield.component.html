@@ -1,4 +1,4 @@
-<div class="mx-auto h-screen w-screen overflow-hidden bg-[url('/Animated%20Logo%20Starfield.gif')] bg-no-repeat bg-center bg-contain flex flex-col items-center justify-center">
+<div class="mx-auto h-screen w-screen overflow-hidden bg-[url('/Animated%20Logo%20Starfield.gif')] bg-no-repeat bg-center bg-contain flex flex-col items-center justify-center" *ngIf="isActive()">
     <div class="h-1/6 flex items-center justify-center">
         <div class="text-text text-9xl">{{ (!title ? "" : title) }}</div>
     </div>

@@ -1,13 +1,15 @@
-import { DecimalPipe } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { CommonModule, DecimalPipe } from '@angular/common';
+import { Component, input, OnInit } from '@angular/core';
 
 @Component({
-  selector: 'app-tas',
-  imports: [DecimalPipe],
+  selector: 'screen-tas',
+  imports: [CommonModule, DecimalPipe],
   templateUrl: './tas.component.html',
   styleUrl: './tas.component.scss'
 })
 export class TasComponent implements OnInit {
+    isActive = input.required<boolean>();
+
     challenge_ranks: any[] = [];
     global_ranks: any[] = [];
 

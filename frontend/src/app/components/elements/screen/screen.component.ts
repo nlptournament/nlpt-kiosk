@@ -173,7 +173,7 @@ export class ScreenComponent implements OnInit, OnChanges {
 
     duplicateScreen() {
         let cs: Screen = this.screen();
-        let s: Screen = <Screen>{desc: cs.desc + ' - duplacate', template_id: cs.template_id, user_id: this.currentUser().id, duration: cs.duration, repeat: cs.repeat, loop: cs.loop, variables: cs.variables};
+        let s: Screen = <Screen>{desc: cs.desc + ' - duplicate', template_id: cs.template_id, user_id: this.currentUser().id, duration: cs.duration, repeat: cs.repeat, loop: cs.loop, variables: cs.variables};
         this.screenService
             .createScreen(s)
             .subscribe((result: any) => {

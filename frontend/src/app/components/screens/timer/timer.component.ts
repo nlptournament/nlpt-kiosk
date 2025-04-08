@@ -1,14 +1,17 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, input, OnInit, output } from '@angular/core';
 import { Subscription, timer } from 'rxjs';
 
 @Component({
-  selector: 'app-timer',
+  selector: 'screen-timer',
   imports: [CommonModule],
   templateUrl: './timer.component.html',
   styleUrl: './timer.component.scss'
 })
 export class TimerComponent implements OnInit {
+    isActive = input.required<boolean>();
+    finished = output<null>();
+
     refreshCountdownTimer = timer(1000, 1000);
     refreshCountdownTimerSubscription: Subscription | undefined;
 
@@ -19,7 +22,8 @@ export class TimerComponent implements OnInit {
 
     ngOnInit(): void {
         if (this.target == 0) {
-            this.target = Date.now() / 1000 + 3615;
+            //this.target = Date.now() / 1000 + 3615;
+            this.target = Date.now() / 1000 + 72;
             this.updateCountdown();
             this.refreshCountdownTimerSubscription = this.refreshCountdownTimer.subscribe(() => this.updateCountdown());
         }
@@ -28,6 +32,7 @@ export class TimerComponent implements OnInit {
     updateCountdown() {
         let diff: number = this.target - Date.now() / 1000;
         if (diff <= 0) {
+            this.finished.emit(null);
             this.countdown = '00:00:00';
             this.refreshCountdownTimerSubscription?.unsubscribe();
         }
