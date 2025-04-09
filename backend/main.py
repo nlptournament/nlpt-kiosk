@@ -2,8 +2,8 @@ import cherrypy
 import cherrypy_cors
 from noapi import docDB, ElementEndpointBase
 from noapi.endpoints import SettingEndpointBase, LoginEndpointBase
-from elements import Setting, Session, ScreenTemplate, Screen, Timeline
-from endpoints import UserEndpoint, TimelineTemplateEndpoint, PresetEndpoint, KioskEndpoint
+from elements import Setting, Session, ScreenTemplate, Screen
+from endpoints import UserEndpoint, TimelineTemplateEndpoint, PresetEndpoint, KioskEndpoint, TimelineEndpoint
 from helpers.versioning import run as versioning_run
 
 
@@ -45,18 +45,6 @@ class ScreenEndpoint(ElementEndpointBase):
     _other_readable = list(['id', 'desc', 'template_id', 'user_id', 'duration', 'repeat', 'loop', 'variables', 'locked', 'key'])
     _other_createable = list(['desc', 'template_id', 'user_id', 'duration', 'repeat', 'loop', 'variables'])
     _all_readable = list(['id', 'duration', 'repeat', 'loop', 'variables', 'key'])
-
-
-class TimelineEndpoint(ElementEndpointBase):
-    _session_cls = Session
-    _element = Timeline
-    _other_readable = list(['id', 'template_id', 'kiosk_id', 'screen_ids', 'start_pos', 'current_pos', 'locked', 'preset'])
-    _other_createable = list(['template_id', 'kiosk_id', 'screen_ids', 'start_pos'])
-    _other_updateable = list(['start_pos'])
-    _other_delete = True
-    _all_readable = list(['id', 'screen_ids', 'start_pos', 'current_pos'])
-    _all_updateable = list(['current_pos'])
-    _not_updateable = list(['screen_ids'])
 
 
 if __name__ == '__main__':

@@ -33,4 +33,12 @@ export class TimelineService {
     public deleteTimeline(id: string): Observable<any> {
         return this.http.delete<any>(this.timelineUrl + id + '/', {withCredentials:true});
     }
+
+    public setCurrentPos(timeline: Timeline): Observable<number> {
+        let data = {
+            'kiosk_id': timeline.kiosk_id,
+            'current_pos': timeline.current_pos
+        };
+        return this.http.put<number>(this.timelineUrl + 'currentPos/' + timeline.id + '/', data);
+    }
 }

@@ -100,7 +100,8 @@ export class DisplayComponent implements OnInit {
     sendCurrentPos(pos: number) {
         if (this.timeline) {
             this.timeline.current_pos = pos;
-            this.timelineService.updateTimeline(this.timeline).subscribe(() => {});
+            this.timeline.kiosk_id = this.kiosk.id;
+            this.timelineService.setCurrentPos(this.timeline).subscribe(() => {});
         }
     }
 
