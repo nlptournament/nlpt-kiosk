@@ -10,6 +10,7 @@ import { Subscription, timer } from 'rxjs';
 })
 export class TimerComponent implements OnInit {
     isActive = input.required<boolean>();
+    variables = input.required<any>();
     finished = output<null>();
 
     refreshCountdownTimer = timer(1000, 1000);
@@ -17,13 +18,15 @@ export class TimerComponent implements OnInit {
 
     countdown: string = '00:00:00';
     target: number = 0;
-    title: string | undefined | null = "Ein Titel";
-    subtitle: string | undefined | null = "Eine Unterschrift";
+    title: string | undefined | null;
+    subtitle: string | undefined | null;
 
     ngOnInit(): void {
+        if (Object.keys(this.variables()).includes('text_above')) this.title = this.variables()['text_above'];
+        if (Object.keys(this.variables()).includes('text_below')) this.subtitle = this.variables()['text_below'];
         if (this.target == 0) {
-            //this.target = Date.now() / 1000 + 3615;
-            this.target = Date.now() / 1000 + 72;
+            if (Object.keys(this.variables()).includes('time')) this.target = this.variables()['time'];
+            else this.target = Date.now() / 1000;
             this.updateCountdown();
             this.refreshCountdownTimerSubscription = this.refreshCountdownTimer.subscribe(() => this.updateCountdown());
         }
