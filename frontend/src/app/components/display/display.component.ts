@@ -113,10 +113,17 @@ export class DisplayComponent implements OnInit {
                 .getScreen(this.timeline.screen_ids[load_pos])
                 .subscribe((screen: Screen) => {
                     let sdp: screenDP = <screenDP>{screen: screen, active: false, startTS: null};
+                    if (this.screens.size == 0 && this.timeline?.start_time) sdp.startTS = this.timeline.start_time;
                     this.screens.set(this.screensNextKey, sdp);
                     this.screensNextKey = this.screensNextKey + 1;
                     this.sendCurrentPos(load_pos * 2);
-                    if (this.screens.size == 1) this.activateNextScreen();
+                    if (this.screens.size == 1) {
+                        if (sdp.startTS) {
+                            let target: Date = new Date(sdp.startTS * 1000);
+                            this.activateScreenTimerSubscription = timer(target).subscribe(() => this.activateNextScreen(target));
+                        }
+                        else this.activateNextScreen();
+                    }
                     else {
                         if (forceActivate) this.activateNextScreen();
                         else if (this.screens.has(this.screensNextKey - 2)) {

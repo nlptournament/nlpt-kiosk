@@ -5,6 +5,7 @@ export interface Timeline {
     screen_ids: string[];
     start_pos: number;
     current_pos: number;
+    start_time: number | null;
     locked?: boolean;
     preset?: boolean;
 }

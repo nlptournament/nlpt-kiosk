@@ -7,11 +7,11 @@ from elements import Session, Timeline
 class TimelineEndpoint(ElementEndpointBase):
     _session_cls = Session
     _element = Timeline
-    _other_readable = list(['id', 'template_id', 'kiosk_id', 'screen_ids', 'start_pos', 'current_pos', 'locked', 'preset'])
+    _other_readable = list(['id', 'template_id', 'kiosk_id', 'screen_ids', 'start_pos', 'current_pos', 'start_time', 'locked', 'preset'])
     _other_createable = list(['template_id', 'kiosk_id', 'screen_ids', 'start_pos'])
-    _other_updateable = list(['start_pos'])
+    _other_updateable = list(['start_pos', 'start_time'])
     _other_delete = True
-    _all_readable = list(['id', 'screen_ids', 'start_pos', 'current_pos'])
+    _all_readable = list(['id', 'screen_ids', 'start_pos', 'current_pos', 'start_time'])
     _not_updateable = list(['screen_ids'])
 
     @cherrypy.expose()

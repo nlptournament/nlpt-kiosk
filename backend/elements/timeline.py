@@ -1,4 +1,5 @@
 from noapi import ElementBase, docDB
+import time
 
 
 class Timeline(ElementBase):
@@ -16,6 +17,9 @@ start_pos : int (default: 0)
 current_pos : int (default: 0)
     time index (as seconds) at which Timeline is currently displayed on Kiosk
     If Timeline is not displayed this value equals to start_pos
+start_time : int | None (default: None)
+    time, as timestamp, when this Timeline should start to run on Kiosk, needs to be in the future
+    this value is used for synced starts of Timelines on multiple Kiosks
 
 locked() : bool
     if True, Timeline is not allowed to be changed
@@ -28,7 +32,8 @@ preset() : bool
         kiosk_id=ElementBase.addAttr(type=str, notnone=True, fk='Kiosk'),
         screen_ids=ElementBase.addAttr(type=list, default=list(), notnone=True, fk='Screen'),
         start_pos=ElementBase.addAttr(type=int, default=0, notnone=True),
-        current_pos=ElementBase.addAttr(type=int, default=0, notnone=True)
+        current_pos=ElementBase.addAttr(type=int, default=0, notnone=True),
+        start_time=ElementBase.addAttr(type=int, default=None)
     )
 
     def validate(self):
@@ -42,11 +47,13 @@ preset() : bool
         return errors
 
     def save_pre(self):
-        print(self.json())
         if not self.locked():
             self['current_pos'] = self['start_pos'] * 2
         self['start_pos'] = int(int(self['start_pos']) % len(self['screen_ids']))
         self['current_pos'] = int(int(self['current_pos']) % (len(self['screen_ids']) * 2))
+        if self['start_time'] is not None:
+            if time.time() > self['start_time']:
+                self['start_time'] = None
 
     def delete_pre(self):
         if self.locked():

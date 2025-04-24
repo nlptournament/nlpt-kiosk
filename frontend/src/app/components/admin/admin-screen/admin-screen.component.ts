@@ -27,7 +27,6 @@ import { PresetsPanelComponent } from '../presets-panel/presets-panel.component'
 
 import { MenuItem } from 'primeng/api';
 import { MenubarModule } from 'primeng/menubar';
-import { delay } from 'rxjs';
 
 
 @Component({
@@ -367,10 +366,16 @@ export class AdminScreenComponent implements OnInit {
             if (this.kiosks.has(kiosk_id)) {
                 let k: Kiosk = this.kiosks.get(kiosk_id)!;
                 k.timeline_id = this.selectedNextTimelines.get(kiosk_id)!;
-                this.kioskService
-                    .updateKiosk(k)
+                let t: Timeline = this.timelines.get(k.timeline_id)!;
+                t.start_time = Math.floor((Date.now() / 1000)) + 3;
+                this.timelineService
+                    .updateTimeline(t)
                     .subscribe((result: any) => {
-                        this.kioskEdited(kiosk_id);
+                        this.kioskService
+                            .updateKiosk(k)
+                            .subscribe((result: any) => {
+                                this.kioskEdited(kiosk_id);
+                            });
                     });
             }
         }
