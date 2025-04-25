@@ -113,7 +113,7 @@ export class DisplayComponent implements OnInit {
                 .getScreen(this.timeline.screen_ids[load_pos])
                 .subscribe((screen: Screen) => {
                     let sdp: screenDP = <screenDP>{screen: screen, active: false, startTS: null};
-                    if (this.screens.size == 0 && this.timeline?.start_time) sdp.startTS = this.timeline.start_time;
+                    if (this.screens.size == 0 && this.timeline?.start_time && this.timeline.start_time > (Date.now() / 1000)) sdp.startTS = this.timeline.start_time;
                     this.screens.set(this.screensNextKey, sdp);
                     this.screensNextKey = this.screensNextKey + 1;
                     this.sendCurrentPos(load_pos * 2);

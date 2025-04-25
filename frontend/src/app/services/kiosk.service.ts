@@ -37,4 +37,8 @@ export class KioskService {
     public deleteKiosk(id: string): Observable<any> {
         return this.http.delete<any>(this.kioskUrl + id + '/', {withCredentials:true});
     }
+
+    public syncedApply(data: any): Observable<any> {
+        return this.http.put<string>(this.kioskUrl + 'synced_apply/', data, {withCredentials:true});
+    }
 }

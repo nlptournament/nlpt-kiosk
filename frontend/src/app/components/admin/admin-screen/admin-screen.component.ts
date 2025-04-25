@@ -362,23 +362,18 @@ export class AdminScreenComponent implements OnInit {
     }
 
     syncedCurrentTimelineApply() {
+        let data = {};
         for (let kiosk_id of this.selectedNextTimelines.keys()) {
-            if (this.kiosks.has(kiosk_id)) {
-                let k: Kiosk = this.kiosks.get(kiosk_id)!;
-                k.timeline_id = this.selectedNextTimelines.get(kiosk_id)!;
-                let t: Timeline = this.timelines.get(k.timeline_id)!;
-                t.start_time = Math.floor((Date.now() / 1000)) + 3;
-                this.timelineService
-                    .updateTimeline(t)
-                    .subscribe((result: any) => {
-                        this.kioskService
-                            .updateKiosk(k)
-                            .subscribe((result: any) => {
-                                this.kioskEdited(kiosk_id);
-                            });
-                    });
-            }
+            let timeline_id: string = this.selectedNextTimelines.get(kiosk_id)!;
+            data = { ...data, [kiosk_id]: timeline_id};
         }
+        this.kioskService
+            .syncedApply(data)
+            .subscribe((result: any) => {
+                for (let kiosk_id of Object.keys(data)) this.kioskEdited(kiosk_id);
+                this.selectedNextTimelines.clear();
+                this.populateMenu();
+            });
     }
 
     createPresetFromSelection() {
