@@ -55,6 +55,10 @@ preset() : bool
             if time.time() > self['start_time']:
                 self['start_time'] = None
 
+    def save_post(self):
+        from helpers.wss import transmit_timeline_update
+        transmit_timeline_update(self)
+
     def delete_pre(self):
         if self.locked():
             return {'error': {'code': 2, 'desc': "can't be deleted as it is locked"}}

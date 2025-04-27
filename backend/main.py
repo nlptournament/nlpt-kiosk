@@ -5,6 +5,7 @@ from noapi.endpoints import SettingEndpointBase, LoginEndpointBase
 from elements import Setting, Session, ScreenTemplate, Screen
 from endpoints import UserEndpoint, TimelineTemplateEndpoint, PresetEndpoint, KioskEndpoint, TimelineEndpoint
 from helpers.versioning import run as versioning_run
+from helpers.wss import start_server as start_wss_server
 
 
 class API():
@@ -23,8 +24,8 @@ class API():
 class SettingEndpoint(SettingEndpointBase):
     _setting_cls = Setting
     _session_cls = Session
-    _all_readable = ['version']
-    _admin_writeable = ['server_port']
+    _all_readable = ['version', 'wss_port']
+    _admin_writeable = ['server_port', 'wss_port']
 
 
 class LoginEndpoint(LoginEndpointBase):
@@ -48,16 +49,17 @@ class ScreenEndpoint(ElementEndpointBase):
 
 
 if __name__ == '__main__':
+    docDB.wait_for_connection()
+
     conf = {}
-    listen_port = Setting.value('server_port')
     cherrypy_cors.install()
     cherrypy.config.update({
         'server.socket_host': '0.0.0.0',
-        'server.socket_port': listen_port,
+        'server.socket_port': Setting.value('server_port'),
         'cors.expose.on': True,
         'tools.response_headers.on': True,
         'tools.response_headers.headers': [('Access-Control-Allow-Origin', 'http://localhost:4200/'), ('Access-Control-Allow-Credentials', 'true')]})
 
-    docDB.wait_for_connection()
     versioning_run()
+    start_wss_server()
     cherrypy.quickstart(API(), '/', conf)
