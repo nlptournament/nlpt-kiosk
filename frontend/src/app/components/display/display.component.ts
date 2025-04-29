@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription, timer } from 'rxjs';
 
 import { Kiosk } from '../../interfaces/kiosk';
@@ -15,6 +15,7 @@ import { LogoStarfieldComponent } from '../screens/logo-starfield/logo-starfield
 import { PlayerCountsComponent } from '../screens/player-counts/player-counts.component';
 import { TasComponent } from '../screens/tas/tas.component';
 import { TimerComponent } from '../screens/timer/timer.component';
+import { WebSocketService } from '../../services/web-socket.service';
 
 
 interface screenDP {
@@ -29,20 +30,20 @@ interface screenDP {
   templateUrl: './display.component.html',
   styleUrl: './display.component.scss'
 })
-export class DisplayComponent implements OnInit {
+export class DisplayComponent implements OnInit, OnDestroy {
     kiosk!: Kiosk;
     timeline?: Timeline;
     screens: Map<number, screenDP> = new Map<number, screenDP>;
     screensNextKey: number = 0;
 
-    refreshKioskTimer = timer(1000, 1000);
-    refreshKioskTimerSubscription: Subscription | undefined;
+    wssSubscription: Subscription | undefined;
     activateScreenTimerSubscription: Subscription | undefined;
     loadNextScreenTimerSubscription: Subscription | undefined;
 
     showMissingName: boolean = false;
 
     constructor(
+        private websocketService: WebSocketService,
         private kioskService: KioskService,
         private timelineService: TimelineService,
         private screenService: ScreenService
@@ -59,24 +60,25 @@ export class DisplayComponent implements OnInit {
                         .subscribe((kiosk: Kiosk) => {
                             this.kiosk = kiosk;
                             this.refreshTimeline();
-                            this.refreshKioskTimerSubscription = this.refreshKioskTimer.subscribe(() => this.refreshKiosk());
+                            this.wssSubscription = this.websocketService.getMessages().subscribe((msg) => this.wssRx(msg));
                         });
                 });
         else this.showMissingName = true;
     }
 
-    refreshKiosk() {
-        this.kioskService
-            .getKiosk(this.kiosk.id)
-            .subscribe((kiosk: Kiosk) => {
-                if (this.kiosk.timeline_id != kiosk.timeline_id) {
-                    this.kiosk = kiosk;
-                    this.refreshTimeline();
-                }
-                else {
-                    this.kiosk = kiosk;
-                }
-            });
+    ngOnDestroy(): void {
+        this.wssSubscription?.unsubscribe();
+        this.websocketService.closeConnection();
+    }
+
+    wssRx(msg: any) {
+        if (Object.keys(msg).includes('kiosk')) {
+            let k: Kiosk = <Kiosk>msg['kiosk'];
+            if (this.kiosk.id == k.id && this.kiosk.timeline_id != k.timeline_id) {
+                this.kiosk = k;
+                this.refreshTimeline();
+            }
+        }
     }
 
     refreshTimeline() {

@@ -41,6 +41,10 @@ timeline_id : str | None
             errors['_id'] = {'code': 80, 'desc': "Timeline is part of a Preset and therefore can't be displayed"}
         return errors
 
+    def save_post(self):
+        from helpers.wss import transmit_kiosk_update
+        transmit_kiosk_update(self)
+
     def delete_pre(self):
         self['timeline_id'] = None
         self.save()

@@ -1,5 +1,7 @@
 import cherrypy
 import cherrypy_cors
+import time
+import math
 from noapi import ElementEndpointBase
 from elements import Session, Kiosk
 
@@ -39,7 +41,6 @@ class KioskEndpoint(ElementEndpointBase):
     @cherrypy.tools.json_out()
     def synced_apply(self, element_id=None):
         from elements import Timeline
-        import time
         if cherrypy.request.method == 'OPTIONS':
             cherrypy.response.headers['Allow'] = 'OPTIONS, PUT'
             cherrypy_cors.preflight(allowed_methods=['PUT'])
@@ -91,7 +92,7 @@ class KioskEndpoint(ElementEndpointBase):
                 cherrypy.response.status = 403
                 return {'error': 'access not allowed'}
 
-            target = int(time.time()) + 3
+            target = math.ceil(time.time()) + 1
             for k, t in data:
                 t['start_time'] = target
                 t.save()
