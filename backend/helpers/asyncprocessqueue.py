@@ -31,7 +31,7 @@ class _ProcQueue(object):
                     'get', 'get_nowait', 'close']:
             return getattr(self._queue, name)
         else:
-            raise AttributeError("'%s' object has no attribute '%s'" % (self.__class__.__name__, name))
+            raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
 
     @asyncio.coroutine
     def coro_put(self, item):

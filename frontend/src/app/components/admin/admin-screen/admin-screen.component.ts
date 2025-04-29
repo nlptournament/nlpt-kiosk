@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 import { CommonModule, Time } from '@angular/common';
@@ -27,6 +27,8 @@ import { PresetsPanelComponent } from '../presets-panel/presets-panel.component'
 
 import { MenuItem } from 'primeng/api';
 import { MenubarModule } from 'primeng/menubar';
+import { Subscription } from 'rxjs';
+import { WebSocketService } from '../../../services/web-socket.service';
 
 
 @Component({
@@ -35,7 +37,7 @@ import { MenubarModule } from 'primeng/menubar';
   templateUrl: './admin-screen.component.html',
   styleUrl: './admin-screen.component.scss'
 })
-export class AdminScreenComponent implements OnInit {
+export class AdminScreenComponent implements OnInit, OnDestroy {
     menuItems: MenuItem[] = [];
     currentUser!: User;
     users: Map<string, User> = new Map<string, User>;
@@ -46,6 +48,8 @@ export class AdminScreenComponent implements OnInit {
     timelines: Map<string, Timeline> = new Map<string, Timeline>;
     presets: Map<string, Preset> = new Map<string, Preset>;
 
+    wssSubscription: Subscription | undefined;
+
     panelScreensActive: boolean = false;
     panelTimelineTemplatesActive: boolean = false;
     panelPresetsActive: boolean = false;
@@ -55,6 +59,7 @@ export class AdminScreenComponent implements OnInit {
 
     constructor(
         private errorHandler: ErrorHandlerService,
+        private websocketService: WebSocketService,
         private router: Router,
         private userService: UserService,
         private screenTemplateService: ScreenTemplateService,
@@ -74,6 +79,23 @@ export class AdminScreenComponent implements OnInit {
         this.refreshKiosks();
         this.refreshTimelines();
         this.refreshPresets();
+        this.wssSubscription = this.websocketService.getMessages().subscribe((msg) => this.wssRx(msg));
+        console.log(document.cookie.split(';'));
+    }
+
+    ngOnDestroy(): void {
+        this.wssSubscription?.unsubscribe();
+        this.websocketService.closeConnection();
+    }
+
+    wssRx(msg: any) {
+        if (Object.keys(msg).includes('timeline')) {
+            let t: Timeline = <Timeline>msg['timeline'];
+            if (t.id) {
+                this.timelines.set(t.id, t);
+                this.timelinesChanged = !this.timelinesChanged;
+            }
+        }
     }
 
     populateMenu() {

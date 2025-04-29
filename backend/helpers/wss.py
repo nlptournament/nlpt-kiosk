@@ -21,16 +21,26 @@ def _websocket_process(rx_queue, tx_queue):
             async for msg in websocket:
                 rx_queue.put({'what': 'rec', 'ws': f'{addr}:{port}', 'msg': msg})
         finally:
+            CONNECTIONS.remove(websocket)
             rx_queue.put({'what': 'del', 'ws': f'{addr}:{port}'})
 
     @asyncio.coroutine
     def _tx_handler():
         while True:
             msg = yield from tx_queue.coro_get()
-            if 'target' not in msg:
+            if 'target' not in msg or 'msg' not in msg:
                 continue
-            if msg['target'] == 'all':
+            if isinstance(msg['target'], str) and msg['target'] == 'all':
                 broadcast(CONNECTIONS, msg['msg'])
+            elif not isinstance(msg['target'], list) or len(msg['target']) == 0:
+                continue
+            else:
+                targets = set()
+                for c in CONNECTIONS:
+                    addr, port = c.remote_address
+                    if f'{addr}:{port}' in msg['target']:
+                        targets.add(c)
+                broadcast(targets, msg['msg'])
 
     async def _main():
         txh = asyncio.create_task(_tx_handler())
@@ -42,6 +52,7 @@ def _websocket_process(rx_queue, tx_queue):
 
 
 def _connection_process(rx_queue, tx_queue):
+    from elements import Session
     CLIENTS = dict()
 
     while True:
@@ -52,12 +63,49 @@ def _connection_process(rx_queue, tx_queue):
         if msg['what'] == 'add' and 'ws' in msg:
             if msg['ws'] not in CLIENTS:
                 CLIENTS[msg['ws']] = dict()
+
         elif msg['what'] == 'del' and 'ws' in msg:
             CLIENTS.pop(msg['ws'], None)
-        elif msg['what'] == 'rec' and 'ws' in msg:
-            pass
-        elif msg['what'] == 'send' and msg['target'] == 'all':
-            tx_queue.put({'target': 'all', 'msg': msg['msg']})
+
+        elif msg['what'] == 'rec' and 'ws' in msg and 'msg' in msg and msg['ws'] in CLIENTS:
+            msg['msg'] = json.loads(msg['msg'])
+            if 'session' in msg['msg']:
+                s = Session.get(msg['msg']['session'])
+                if s['_id'] is None:
+                    continue
+                addr = msg['ws'].split(':')[0]
+                if len(s.validate(addr)) == 0:
+                    CLIENTS[msg['ws']]['user_id'] = s['user_id']
+                    CLIENTS[msg['ws']]['admin'] = s.admin()
+
+        elif msg['what'] == 'send' and 'target' in msg and 'msg' in msg:
+            # all connected websockets regardless of admin-interface users or kiosks
+            if msg['target'] == 'all':
+                tx_queue.put({'target': 'all', 'msg': msg['msg']})
+            # all logged in admin-interface users
+            elif msg['target'] == 'users':
+                t = list()
+                for c, p in CLIENTS.items():
+                    if 'user_id' in p:
+                        t.append(c)
+                if len(t) > 0:
+                    tx_queue.put({'target': t, 'msg': msg['msg']})
+            # all logged in admins
+            elif msg['target'] == 'admins':
+                t = list()
+                for c, p in CLIENTS.items():
+                    if 'admin' in p and p['admin']:
+                        t.append(c)
+                if len(t) > 0:
+                    tx_queue.put({'target': t, 'msg': msg['msg']})
+            # logged in owner and all admins
+            elif msg['target'] == 'owner' and 'owner_id' in msg:
+                t = list()
+                for c, p in CLIENTS.items():
+                    if 'user_id' in p and (p['admin'] or p['user_id'] == msg['owner_id']):
+                        t.append(c)
+                if len(t) > 0:
+                    tx_queue.put({'target': t, 'msg': msg['msg']})
 
 
 def start_server():
@@ -73,4 +121,4 @@ def start_server():
 def transmit_timeline_update(timeline):
     global com_tx_queue
     result = {'timeline': timeline.json()}
-    com_rx_queue.put({'what': 'send', 'target': 'all', 'msg': json.dumps(result)})
+    com_rx_queue.put({'what': 'send', 'target': 'users', 'msg': json.dumps(result)})

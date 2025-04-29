@@ -280,7 +280,7 @@ class SessionBase(ElementBase):
         user_id=ElementBase.addAttr(type=str, notnone=True)
     )
 
-    def validate(self):
+    def validate(self, request_addr=None):
         errors = dict()
         if not docDB.exists(self._user_cls.__name__, self['user_id']):
             errors['user_id'] = {'code': 4, 'desc': f"there is no {self._user_cls.__name__} with id '{self['user_id']}'"}
@@ -288,6 +288,9 @@ class SessionBase(ElementBase):
             errors['till'] = {'code': 10, 'desc': 'needs to be in the future'}
         if cherrypy.request:
             if not self['ip'] == get_client_ip():
+                errors['ip'] = {'code': 11, 'desc': 'does not match with the IP of request'}
+        else:
+            if not self['if'] == request_addr:
                 errors['ip'] = {'code': 11, 'desc': 'does not match with the IP of request'}
         if len(errors) > 0:
             self.delete()

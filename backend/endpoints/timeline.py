@@ -18,6 +18,7 @@ class TimelineEndpoint(ElementEndpointBase):
     @cherrypy.tools.json_in()
     @cherrypy.tools.json_out()
     def currentPos(self, element_id=None):
+        from helpers.wss import transmit_timeline_update
         if cherrypy.request.method == 'OPTIONS':
             cherrypy.response.headers['Allow'] = 'OPTIONS, PUT'
             cherrypy_cors.preflight(allowed_methods=['PUT'])
@@ -54,6 +55,8 @@ class TimelineEndpoint(ElementEndpointBase):
 
             val = int(int(data['current_pos']) % (len(t['screen_ids']) * 2))
             docDB.update('Timeline', t['_id'], {'$set': {'current_pos': val}})
+            t['current_pos'] = val
+            transmit_timeline_update(t)
 
             return val
         else:
