@@ -119,10 +119,30 @@ def start_server():
 
 
 def transmit_kiosk_update(kiosk):
-    result = {'kiosk': kiosk.json()}
+    result = {'kiosk': kiosk.json(), 'content': 'update'}
+    com_rx_queue.put({'what': 'send', 'target': 'all', 'msg': json.dumps(result)})
+
+
+def transmit_kiosk_delete(kiosk):
+    result = {'kiosk': kiosk.json(), 'content': 'delete'}
     com_rx_queue.put({'what': 'send', 'target': 'all', 'msg': json.dumps(result)})
 
 
 def transmit_timeline_update(timeline):
-    result = {'timeline': timeline.json()}
+    result = {'timeline': timeline.json(), 'content': 'update'}
+    com_rx_queue.put({'what': 'send', 'target': 'users', 'msg': json.dumps(result)})
+
+
+def transmit_timeline_delete(timeline):
+    result = {'timeline': timeline.json(), 'content': 'delete'}
+    com_rx_queue.put({'what': 'send', 'target': 'users', 'msg': json.dumps(result)})
+
+
+def transmit_screen_update(screen):
+    result = {'screen': screen.json(), 'content': 'update'}
+    com_rx_queue.put({'what': 'send', 'target': 'users', 'msg': json.dumps(result)})
+
+
+def transmit_screen_delete(screen):
+    result = {'screen': screen.json(), 'content': 'delete'}
     com_rx_queue.put({'what': 'send', 'target': 'users', 'msg': json.dumps(result)})

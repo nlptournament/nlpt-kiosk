@@ -72,7 +72,7 @@ export class DisplayComponent implements OnInit, OnDestroy {
     }
 
     wssRx(msg: any) {
-        if (Object.keys(msg).includes('kiosk')) {
+        if (Object.keys(msg).includes('kiosk') && Object.keys(msg).includes('content') && msg['content'] == 'update') {
             let k: Kiosk = <Kiosk>msg['kiosk'];
             if (this.kiosk.id == k.id && this.kiosk.timeline_id != k.timeline_id) {
                 this.kiosk = k;

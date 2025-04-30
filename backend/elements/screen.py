@@ -79,18 +79,24 @@ key() : str
             for k in variables_to_remove:
                 self['variables'].pop(k, None)
 
+    def save_post(self):
+        from helpers.wss import transmit_screen_update
+        transmit_screen_update(self)
+
     def delete_pre(self):
         if self.locked():
             return {'error': {'code': 2, 'desc': "can't be deleted as it is locked"}}
 
     def delete_post(self):
         from elements import TimelineTemplate, Timeline
+        from helpers.wss import transmit_screen_delete
         for t in [TimelineTemplate(t) for t in docDB.search_many('TimelineTemplate', {'screen_ids': self['_id']})]:
             t['screen_ids'].remove(self['_id'])
             t.save()
         for t in [Timeline(t) for t in docDB.search_many('Timeline', {'screen_ids': self['_id']})]:
             t['screen_ids'].remove(self['_id'])
             t.save()
+        transmit_screen_delete(self)
 
     def locked(self):
         from elements import Timeline

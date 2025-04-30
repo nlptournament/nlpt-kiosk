@@ -56,7 +56,10 @@ preset() : bool
                 self['start_time'] = None
 
     def save_post(self):
-        from helpers.wss import transmit_timeline_update
+        from helpers.wss import transmit_timeline_update, transmit_screen_update
+        from elements import Screen
+        for s in [Screen.get(s) for s in self['screen_ids']]:
+            transmit_screen_update(s)
         transmit_timeline_update(self)
 
     def delete_pre(self):
@@ -65,9 +68,11 @@ preset() : bool
 
     def delete_post(self):
         from elements import Preset
+        from helpers.wss import transmit_timeline_delete
         for p in [Preset(p) for p in docDB.search_many('Preset', {'template_ids': self['_id']})]:
             p['template_ids'].remove(self['_id'])
             p.save()
+        transmit_timeline_delete(self)
 
     def locked(self):
         from elements import Kiosk

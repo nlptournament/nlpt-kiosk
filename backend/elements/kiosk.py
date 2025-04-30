@@ -41,9 +41,25 @@ timeline_id : str | None
             errors['_id'] = {'code': 80, 'desc': "Timeline is part of a Preset and therefore can't be displayed"}
         return errors
 
+    def save_pre(self):
+        if self['_id'] is not None:
+            from_db = docDB.get(self.__class__.__name__, self['_id'])
+            if from_db is not None:
+                self._cache['old_timeline_id'] = from_db.get('timeline_id', None)
+
     def save_post(self):
-        from helpers.wss import transmit_kiosk_update
+        from helpers.wss import transmit_kiosk_update, transmit_timeline_update, transmit_screen_update
+        from elements import Timeline, Screen
         transmit_kiosk_update(self)
+        t = Timeline.get(self['timeline_id'])
+        for s in [Screen.get(s) for s in t['screen_ids']]:
+            transmit_screen_update(s)
+        transmit_timeline_update(t)
+        if 'old_timeline_id' in self._cache and self._cache['old_timeline_id'] is not None and not self._cache['old_timeline_id'] == self['timeline_id']:
+            t = Timeline.get(self._cache['old_timeline_id'])
+            for s in [Screen.get(s) for s in t['screen_ids']]:
+                transmit_screen_update(s)
+            transmit_timeline_update(t)
 
     def delete_pre(self):
         self['timeline_id'] = None
@@ -51,5 +67,7 @@ timeline_id : str | None
 
     def delete_post(self):
         from elements import Timeline
+        from helpers.wss import transmit_kiosk_delete
         for t in [Timeline(t) for t in docDB.search_many('Timeline', {'kiosk_id': self['_id']})]:
             t.delete()
+        transmit_kiosk_delete(self)

@@ -163,10 +163,8 @@ export class TimelineTemplateComponent implements OnInit {
                 .subscribe((result: any) => {
                     next: {
                         if (Object.keys(result).includes('updated')) {
-                            console.log('updated');
                             for (let timeline_id of result['updated']) {
                                 this.timelineEdited.emit(timeline_id);
-                                console.log(timeline_id);
                             }
                         }
                     }

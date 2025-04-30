@@ -80,7 +80,6 @@ export class AdminScreenComponent implements OnInit, OnDestroy {
         this.refreshTimelines();
         this.refreshPresets();
         this.wssSubscription = this.websocketService.getMessages().subscribe((msg) => this.wssRx(msg));
-        console.log(document.cookie.split(';'));
     }
 
     ngOnDestroy(): void {
@@ -89,11 +88,30 @@ export class AdminScreenComponent implements OnInit, OnDestroy {
     }
 
     wssRx(msg: any) {
-        if (Object.keys(msg).includes('timeline')) {
-            let t: Timeline = <Timeline>msg['timeline'];
-            if (t.id) {
-                this.timelines.set(t.id, t);
+        if (Object.keys(msg).includes('content')) {
+            if (Object.keys(msg).includes('kiosk')) {
+                let kiosk: Kiosk = <Kiosk>msg['kiosk'];
+                if (kiosk.id && msg['content'] == 'update')
+                    this.kiosks.set(kiosk.id, kiosk);
+                else if (kiosk.id && this.kiosks.has(kiosk.id) && msg['content'] == 'delete')
+                    this.kiosks.delete(kiosk.id);
+            }
+            if (Object.keys(msg).includes('timeline')) {
+                let tl: Timeline = <Timeline>msg['timeline'];
+                if (tl.id && msg['content'] == 'update' && !tl.preset)
+                    this.timelines.set(tl.id, tl);
+                else if (tl.id && this.timelines.has(tl.id) && (msg['content'] == 'delete' || tl.preset))
+                    this.timelines.delete(tl.id);
                 this.timelinesChanged = !this.timelinesChanged;
+            }
+            if (Object.keys(msg).includes('screen')) {
+                let screen: Screen = <Screen>msg['screen'];
+                if (screen.id && msg['content'] == 'update')
+                    this.screens.set(screen.id, screen);
+                else if (screen.id && this.screens.has(screen.id) && msg['content'] == 'delete') {
+                    this.screens.delete(screen.id);
+                    this.refreshScreenTemplates();
+                }
             }
         }
     }
@@ -265,23 +283,6 @@ export class AdminScreenComponent implements OnInit, OnDestroy {
     }
 
     screenEdited(event: string|null|undefined) {
-        if (event) {
-            this.screenService
-                .getScreen(event)
-                .subscribe({
-                    next: (screen: Screen) => {
-                        if (screen.id) this.screens.set(screen.id, screen);
-                    },
-                    error: (err: HttpErrorResponse) => {
-                        if (err.status == 404 && this.screens.has(event)) {
-                            this.refreshTimelineTemplates();
-                            this.screens.delete(event);
-                        }
-                        else
-                            this.errorHandler.handleError(err);
-                    }
-                });
-        }
     }
 
     timelineTemplateEdited(event: string|null|undefined) {
@@ -303,51 +304,9 @@ export class AdminScreenComponent implements OnInit, OnDestroy {
     }
 
     kioskEdited(event: string|null|undefined) {
-        if (event) {
-            this.kioskService
-                .getKiosk(event)
-                .subscribe({
-                    next: (kiosk: Kiosk) => {
-                        if (kiosk.id) {
-                            this.kiosks.set(kiosk.id, kiosk);
-                            this.timelineEdited(kiosk.timeline_id);
-                        }
-                    },
-                    error: (err: HttpErrorResponse) => {
-                        if (err.status == 404 && this.kiosks.has(event))
-                            this.kiosks.delete(event);
-                        else
-                            this.errorHandler.handleError(err);
-                    }
-                });
-        }
     }
 
     timelineEdited(event: string|null|undefined) {
-        if (event) {
-            this.timelineService
-                .getTimeline(event)
-                .subscribe({
-                    next: (tl: Timeline) => {
-                        if (tl.id) {
-                            if (tl.preset && this.timelines.has(tl.id)) this.timelines.delete(tl.id);
-                            if (!tl.preset) {
-                                this.timelines.set(tl.id, tl);
-                                for (let sid of tl.screen_ids) this.screenEdited(sid);
-                            }
-                            this.timelinesChanged = !this.timelinesChanged;
-                        }
-                    },
-                    error: (err: HttpErrorResponse) => {
-                        if (err.status == 404 && this.timelines.has(event)) {
-                            this.timelines.delete(event);
-                            this.timelinesChanged = !this.timelinesChanged;
-                        }
-                        else
-                            this.errorHandler.handleError(err);
-                    }
-                });
-        }
     }
 
     presetEdited(event: string|null|undefined) {
