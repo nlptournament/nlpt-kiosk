@@ -8,7 +8,7 @@
             </div>
             <div class="flex flex-wrap max-h-35% overflow-x-hidden overflow-y-scroll gap-2">
                 @for (screen of screens().values(); track screen.id) {
-                <element-screen [screen]="screen" [screenTemplates]="screenTemplates()" [users]="users()" [currentUser]="currentUser()" (editResult)="screenEdited.emit($event)"></element-screen>
+                <element-screen [screen]="screen" [screenTemplates]="screenTemplates()" [users]="users()" [currentUser]="currentUser()"></element-screen>
                 }
                 <div class="w-10% bg-add-card rounded-xl shadow-md flex items-center justify-center p-5">
                     <i class="pi pi-plus-circle !text-3xl hover:cursor-pointer hover:text-highlight" (click)="createScreen()"></i>

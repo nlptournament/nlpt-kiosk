@@ -20,7 +20,7 @@
     </div>
     <div class="flex flex-row gap-2">
         @for (sid of timelineTemplate().screen_ids; track sid) {
-        <element-screen [screen]="screens().get(sid)!" [screenTemplates]="screenTemplates()" [users]="users()" [currentUser]="currentUser()" (editResult)="screenEdited.emit($event)"></element-screen>
+        <element-screen [screen]="screens().get(sid)!" [screenTemplates]="screenTemplates()" [users]="users()" [currentUser]="currentUser()"></element-screen>
         }
         <div class="w-10% rounded-xl shadow-md flex items-center justify-center p-5" *ngIf="editActive">
             <i class="pi pi-plus-circle !text-3xl hover:cursor-pointer hover:text-highlight" *ngIf="!addScreenActive" (click)="addScreenActivate()"></i>

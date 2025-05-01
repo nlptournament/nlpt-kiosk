@@ -19,7 +19,6 @@ export class ScreensPanelComponent {
     screenTemplates = input.required<Map<string, ScreenTemplate>>();
     users = input.required<Map<string, User>>();
     currentUser = input.required<User>();
-    screenEdited = output<string|null|undefined>();
     isActive = model.required<boolean>();
 
     createScreenActive: boolean = false;
@@ -31,7 +30,6 @@ export class ScreensPanelComponent {
     }
 
     screenCreated(event: string|null|undefined) {
-        this.screenEdited.emit(event);
         this.createScreenActive = false;
     }
 

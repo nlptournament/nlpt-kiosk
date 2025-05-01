@@ -113,6 +113,20 @@ export class AdminScreenComponent implements OnInit, OnDestroy {
                     this.refreshScreenTemplates();
                 }
             }
+            if (Object.keys(msg).includes('preset')) {
+                let preset: Preset = <Preset>msg['preset'];
+                if (preset.id && msg['content'] == 'update')
+                    this.presets.set(preset.id, preset);
+                else if (preset.id && this.presets.has(preset.id) && msg['content'] == 'delete')
+                    this.presets.delete(preset.id);
+            }
+            if (Object.keys(msg).includes('timelinetemplate')) {
+                let timelinetemplate: TimelineTemplate = <TimelineTemplate>msg['timelinetemplate'];
+                if (timelinetemplate.id && msg['content'] == 'update')
+                    this.timelineTemplates.set(timelinetemplate.id, timelinetemplate);
+                else if (timelinetemplate.id && this.timelineTemplates.has(timelinetemplate.id) && msg['content'] == 'delete')
+                    this.timelineTemplates.delete(timelinetemplate.id);
+            }
         }
     }
 
@@ -282,56 +296,6 @@ export class AdminScreenComponent implements OnInit, OnDestroy {
             });
     }
 
-    screenEdited(event: string|null|undefined) {
-    }
-
-    timelineTemplateEdited(event: string|null|undefined) {
-        if (event) {
-            this.timelinetemplateService
-                .getTimelineTemplate(event)
-                .subscribe({
-                    next: (tt: TimelineTemplate) => {
-                        if (tt.id) this.timelineTemplates.set(tt.id, tt);
-                    },
-                    error: (err: HttpErrorResponse) => {
-                        if (err.status == 404 && this.timelineTemplates.has(event))
-                            this.timelineTemplates.delete(event);
-                        else
-                            this.errorHandler.handleError(err);
-                    }
-                });
-        }
-    }
-
-    kioskEdited(event: string|null|undefined) {
-    }
-
-    timelineEdited(event: string|null|undefined) {
-    }
-
-    presetEdited(event: string|null|undefined) {
-        if (event) {
-            this.presetService
-                .getPreset(event)
-                .subscribe({
-                    next: (preset: Preset) => {
-                        if (preset.id) {
-                            this.presets.set(preset.id, preset);
-                            for (let tlid of preset.timeline_ids) this.timelineEdited(tlid);
-                        }
-                        this.populateMenu();
-                    },
-                    error: (err: HttpErrorResponse) => {
-                        if (err.status == 404 && this.presets.has(event))
-                            this.presets.delete(event);
-                        else
-                            this.errorHandler.handleError(err);
-                        this.populateMenu();
-                    }
-                });
-        }
-    }
-
     timelinesSelected(event: KioskTlSelection) {
         if (event.next) this.selectedNextTimelines.set(event.kiosk_id, event.next);
         else if (this.selectedNextTimelines.has(event.kiosk_id)) this.selectedNextTimelines.delete(event.kiosk_id);
@@ -351,7 +315,6 @@ export class AdminScreenComponent implements OnInit, OnDestroy {
         this.kioskService
             .syncedApply(data)
             .subscribe((result: any) => {
-                for (let kiosk_id of Object.keys(data)) this.kioskEdited(kiosk_id);
                 this.selectedNextTimelines.clear();
                 this.populateMenu();
             });
@@ -368,7 +331,8 @@ export class AdminScreenComponent implements OnInit, OnDestroy {
             .createPreset(preset)
             .subscribe({
                 next: (result: any) => {
-                   if (Object.keys(result).includes('created')) this.presetEdited(result['created']);
+                   this.selectedPresetTimelines.clear();
+                   this.populateMenu();
                 }
             });
     }

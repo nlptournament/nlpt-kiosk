@@ -35,8 +35,6 @@ export class TimelineTemplateComponent implements OnInit {
     users = input.required<Map<string, User>>();
     currentUser = input.required<User>();
     editMode = input(false, {transform: booleanAttribute});
-    screenEdited = output<string|null|undefined>();
-    timelineEdited = output<string|null|undefined>();
     editResult = output<string|null|undefined>();
 
     editActive: boolean = false;
@@ -160,14 +158,6 @@ export class TimelineTemplateComponent implements OnInit {
         if (this.timelineTemplate().id)
             this.ttService
                 .updateTimelines(this.timelineTemplate().id!)
-                .subscribe((result: any) => {
-                    next: {
-                        if (Object.keys(result).includes('updated')) {
-                            for (let timeline_id of result['updated']) {
-                                this.timelineEdited.emit(timeline_id);
-                            }
-                        }
-                    }
-                });
+                .subscribe((result: any) => {});
     }
 }

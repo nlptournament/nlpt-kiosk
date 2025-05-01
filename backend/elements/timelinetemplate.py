@@ -21,11 +21,17 @@ update_timelines()
         screen_ids=ElementBase.addAttr(type=list, default=list(), notnone=True, fk='Screen')
     )
 
+    def save_post(self):
+        from helpers.wss import transmit_timelinetemplate_update
+        transmit_timelinetemplate_update(self)
+
     def delete_post(self):
         from elements import Timeline
+        from helpers.wss import transmit_timelinetemplate_delete
         for t in [Timeline(t) for t in docDB.search_many('Timeline', {'template_id': self['_id']})]:
             t['template_id'] = None
             t.save()
+        transmit_timelinetemplate_delete(self)
 
     def update_timelines(self):
         from elements import Timeline

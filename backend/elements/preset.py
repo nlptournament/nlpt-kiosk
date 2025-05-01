@@ -24,10 +24,19 @@ apply() : None
         common=ElementBase.addAttr(type=bool, default=False, notnone=True)
     )
 
+    def save_post(self):
+        from helpers.wss import transmit_preset_update, transmit_timeline_update
+        from elements import Timeline
+        transmit_preset_update(self)
+        for tl in [Timeline.get(tl) for tl in self['timeline_ids']]:
+            transmit_timeline_update(tl)
+
     def delete_post(self):
+        from helpers.wss import transmit_preset_delete
         from elements import Timeline
         for t in [Timeline.get(t) for t in self['timeline_ids']]:
             t.delete()
+        transmit_preset_delete(self)
 
     def apply(self):
         from elements import Timeline

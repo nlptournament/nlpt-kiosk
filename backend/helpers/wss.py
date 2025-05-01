@@ -146,3 +146,29 @@ def transmit_screen_update(screen):
 def transmit_screen_delete(screen):
     result = {'screen': screen.json(), 'content': 'delete'}
     com_rx_queue.put({'what': 'send', 'target': 'users', 'msg': json.dumps(result)})
+
+
+def transmit_preset_update(preset):
+    result = {'preset': preset.json(), 'content': 'update'}
+    if preset['common']:
+        com_rx_queue.put({'what': 'send', 'target': 'users', 'msg': json.dumps(result)})
+    else:
+        com_rx_queue.put({'what': 'send', 'target': 'owner', 'owner_id': preset['user_id'], 'msg': json.dumps(result)})
+
+
+def transmit_preset_delete(preset):
+    result = {'preset': preset.json(), 'content': 'delete'}
+    if preset['common']:
+        com_rx_queue.put({'what': 'send', 'target': 'users', 'msg': json.dumps(result)})
+    else:
+        com_rx_queue.put({'what': 'send', 'target': 'owner', 'owner_id': preset['user_id'], 'msg': json.dumps(result)})
+
+
+def transmit_timelinetemplate_update(timelinetemplate):
+    result = {'timelinetemplate': timelinetemplate.json(), 'content': 'update'}
+    com_rx_queue.put({'what': 'send', 'target': 'users', 'msg': json.dumps(result)})
+
+
+def transmit_timelinetemplate_delete(timelinetemplate):
+    result = {'timelinetemplate': timelinetemplate.json(), 'content': 'delete'}
+    com_rx_queue.put({'what': 'send', 'target': 'users', 'msg': json.dumps(result)})

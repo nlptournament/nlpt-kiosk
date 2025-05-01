@@ -29,8 +29,6 @@ export class PresetsPanelComponent implements OnInit {
     currentUser = input.required<User>();
     timelineTemplates = input.required<Map<string, TimelineTemplate>>();
     isActive = model.required<boolean>();
-    presetEdited = output<string|null|undefined>();
-    timelineEdited = output<string|null|undefined>();
 
     timelines: Map<string, Timeline> = new Map<string, Timeline>;
 

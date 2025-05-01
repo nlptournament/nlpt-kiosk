@@ -61,7 +61,7 @@
                             <i class="pi pi-list-check !text-2xl hover:cursor-pointer text-highlight" pTooltip="unselect from Preset creation" showDelay="300" tooltipPosition="right" (click)="selectTimeline(timeline.id)" *ngIf="presetTimelines.includes(timeline.id!)"></i>
                         </div>
                     </div>
-                    <element-timeline [timeline]="timeline" [screens]="screens()" [screenTemplates]="screenTemplates()" [users]="users()" [currentUser]="currentUser()" [timelineTemplates]="timelineTemplates()" (editResult)="timelineEdited.emit($event)"></element-timeline>
+                    <element-timeline [timeline]="timeline" [screens]="screens()" [screenTemplates]="screenTemplates()" [users]="users()" [currentUser]="currentUser()" [timelineTemplates]="timelineTemplates()"></element-timeline>
                 </div>
                 }
                 <div class="w-fill h-20 bg-add-card rounded-xl shadow-md flex items-center justify-center mb-2">

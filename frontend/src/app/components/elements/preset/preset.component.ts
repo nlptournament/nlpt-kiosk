@@ -48,7 +48,6 @@ export class PresetComponent implements OnInit {
     currentUser = input.required<User>();
     timelineTemplates = input.required<Map<string, TimelineTemplate>>();
     editResult = output<string|null|undefined>();
-    timelineEdited = output<string|null|undefined>();
 
     relevantTimelines: Map<string, Timeline[]> = new Map<string, Timeline[]>;
     editActive: boolean = false;
@@ -132,12 +131,6 @@ export class PresetComponent implements OnInit {
         if (this.preset().id)
             this.presetService
                 .applyPreset(this.preset().id!)
-                .subscribe((result: any) => {
-                    if (Object.keys(result).includes('created')) {
-                        for (let tlid of result['created']) {
-                            this.timelineEdited.emit(tlid);
-                        }
-                    }
-                });
+                .subscribe((result: any) => {});
     }
 }

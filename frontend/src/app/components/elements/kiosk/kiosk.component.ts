@@ -51,7 +51,6 @@ export class KioskComponent implements OnInit {
     screens = input.required<Map<string, Screen>>();
     screenTemplates = input.required<Map<string, ScreenTemplate>>();
     editResult = output<string|null|undefined>();
-    timelineEdited = output<string|null|undefined>();
     timelineSelection = output<KioskTlSelection>();
 
     relevantTimelines: Timeline[] = [];
@@ -156,13 +155,7 @@ export class KioskComponent implements OnInit {
             let tl: Timeline = <Timeline>{template_id: tt.id, kiosk_id: this.kiosk().id, screen_ids: tt.screen_ids};
             this.timelineService
                 .createTimeline(tl)
-                .subscribe((result: any) => {
-                    next: {
-                        if (Object.keys(result).includes('created')) {
-                            this.timelineEdited.emit(result['created']);
-                        }
-                    }
-                });
+                .subscribe((result: any) => {});
         }
         this.timelineCreateActive = false;
     }
@@ -177,6 +170,12 @@ export class KioskComponent implements OnInit {
                 if (this.presetTimelines.includes(tl_id)) this.presetTimelines.splice(this.presetTimelines.indexOf(tl_id), 1);
                 else this.presetTimelines.push(tl_id);
             }
+            let validTimelines: string[] = [];
+            for (let tl_id of this.presetTimelines) {
+                if (this.timelines().has(tl_id)) validTimelines.push(tl_id);
+            }
+            this.presetTimelines = validTimelines;
+            if (this.nextTimeline && !this.timelines().has(this.nextTimeline)) this.nextTimeline = undefined;
             let kts: KioskTlSelection = <KioskTlSelection>{
                 kiosk_id: this.kiosk().id,
                 next: this.nextTimeline,
@@ -188,14 +187,12 @@ export class KioskComponent implements OnInit {
 
     changeTimeline() {
         if (this.nextTimeline) {
-            let old_timeline_id = this.kiosk().timeline_id;
             this.kiosk().timeline_id = this.nextTimeline;
             this.kioskService
                 .updateKiosk(this.kiosk())
                 .subscribe({
                     next: (result: any) => {
                         this.editResult.emit(this.kiosk().id);
-                        this.timelineEdited.emit(old_timeline_id);
                         this.nextTimeline = undefined;
                     },
                     error: (err: HttpErrorResponse) => {
