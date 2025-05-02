@@ -73,8 +73,7 @@ def _connection_process(rx_queue, tx_queue):
                 s = Session.get(msg['msg']['session'])
                 if s['_id'] is None:
                     continue
-                addr = msg['ws'].split(':')[0]
-                if len(s.validate(addr)) == 0:
+                if s['complete']:
                     CLIENTS[msg['ws']]['user_id'] = s['user_id']
                     CLIENTS[msg['ws']]['admin'] = s.admin()
 

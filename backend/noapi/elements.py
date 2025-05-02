@@ -286,11 +286,11 @@ class SessionBase(ElementBase):
             errors['user_id'] = {'code': 4, 'desc': f"there is no {self._user_cls.__name__} with id '{self['user_id']}'"}
         if self['till'] <= int(datetime.now().timestamp()):
             errors['till'] = {'code': 10, 'desc': 'needs to be in the future'}
-        if cherrypy.request:
-            if not self['ip'] == get_client_ip():
-                errors['ip'] = {'code': 11, 'desc': 'does not match with the IP of request'}
-        else:
+        if request_addr is not None:
             if not self['if'] == request_addr:
+                errors['ip'] = {'code': 11, 'desc': 'does not match with the IP of request'}
+        elif cherrypy.request:
+            if not self['ip'] == get_client_ip():
                 errors['ip'] = {'code': 11, 'desc': 'does not match with the IP of request'}
         if len(errors) > 0:
             self.delete()

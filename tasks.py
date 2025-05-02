@@ -21,3 +21,35 @@ def stop_development(c):
 @task(pre=[stop_development], post=[start_development], name='dev-clean')
 def cleanup_development(c):
     pass
+
+
+@task(name='container-images-build', aliases=['cib', ])
+def build_container_images(c):
+    version = c.run('git describe', warn=True, hide=True)
+    version_arg = ''
+    if version.return_code > 0:
+        version = None
+    else:
+        version = version.stdout.strip().replace('v', '', 1).rsplit('-', 1)[0].replace('-', '.')
+        version_arg = f' --version {version}'
+
+    if version:
+        with open('backend/helpers/version.py', 'w') as f:
+            f.write(f"version = '{version}'")
+    c.run(f'cd backend; invoke container-image-build{version_arg}')
+    c.run('git restore backend/helpers/version.py')
+    c.run(f'cd frontend; invoke container-image-build{version_arg}')
+
+
+@task(name='container-images-push', aliases=['cip', ])
+def push_container_images(c):
+    version = c.run('git describe', warn=True, hide=True)
+    version_arg = ''
+    if version.return_code > 0:
+        version = None
+    else:
+        version = version.stdout.strip().replace('v', '', 1).rsplit('-', 1)[0].replace('-', '.')
+        version_arg = f' --version {version}'
+
+    c.run(f'cd backend; invoke container-image-push{version_arg}')
+    c.run(f'cd frontend; invoke container-image-push{version_arg}')

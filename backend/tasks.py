@@ -29,3 +29,17 @@ def generate_testdata(c):
 
     Kiosk({'name': 'testkiosk1'}).save()
     Kiosk({'name': 'testkiosk2'}).save()
+
+
+@task(name='container-image-build')
+def build_container_image(c, version=None):
+    c.run('sudo docker build -t nilsost/nlpt-kiosk-controller-backend:latest .')
+    if version is not None:
+        c.run(f'sudo docker tag nilsost/nlpt-kiosk-controller-backend:latest nilsost/nlpt-kiosk-controller-backend:{version}')
+
+
+@task(name='container-image-push')
+def push_container_image(c, version=None):
+    if version is not None:
+        c.run(f'sudo docker push nilsost/nlpt-kiosk-controller-backend:{version}')
+    c.run('sudo docker push nilsost/nlpt-kiosk-controller-backend:latest')

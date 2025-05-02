@@ -1,0 +1,38 @@
+version: '3.6'
+
+services:
+  backend:
+    image: nilsost/nlpt-kiosk-controller-backend:${TAS_VERSION:-latest}
+    depends_on:
+      - mongodb
+    environment:
+      - MONGO_HOST=mongodb
+    ports:
+      - ${BIND_IP:-0.0.0.0}:8765:8765
+
+  frontend:
+    image: nilsost/nlpt-kiosk-controller-frontend:${TAS_VERSION:-latest}
+    depends_on:
+      - backend
+
+  haproxy:
+    image: haproxy:lts-alpine
+    depends_on:
+      - backend
+      - frontend
+    ports:
+      - ${BIND_IP:-0.0.0.0}:80:80
+      - ${BIND_IP:-0.0.0.0}:443:443
+      - ${MONITORING_IP:-0.0.0.0}:8404:8404
+    sysctls:
+      - net.ipv4.ip_unprivileged_port_start=0
+    volumes:
+      - ./haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro
+
+  mongodb:
+    image: mongo:4.4
+    volumes:
+      - mongo_data:/data/db:rw
+
+volumes:
+  mongo_data:
