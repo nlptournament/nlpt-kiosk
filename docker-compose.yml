@@ -12,8 +12,6 @@ services:
 
   frontend:
     image: nilsost/nlpt-kiosk-controller-frontend:${TAS_VERSION:-latest}
-    depends_on:
-      - backend
 
   haproxy:
     image: haproxy:lts-alpine
@@ -33,6 +31,15 @@ services:
     image: mongo:4.4
     volumes:
       - mongo_data:/data/db:rw
+
+  timeserver:
+    image: cturra/ntp:latest
+    restart: always
+    ports:
+      - ${BIND_IP:-0.0.0.0}:123:123/udp
+    environment:
+      - NTP_SERVERS=de.pool.ntp.org
+      - TZ=Europe/Berlin
 
 volumes:
   mongo_data:
