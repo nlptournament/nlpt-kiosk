@@ -54,6 +54,7 @@ if __name__ == '__main__':
     conf = {}
     cherrypy_cors.install()
     cherrypy.config.update({
+        'engine.autoreload.on': False,
         'server.socket_host': '0.0.0.0',
         'server.socket_port': Setting.value('server_port'),
         'cors.expose.on': True,

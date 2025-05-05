@@ -108,12 +108,12 @@ def _connection_process(rx_queue, tx_queue):
 
 
 def start_server():
-    global ws_process, conn_process, com_queue
+    global ws_process, conn_process
     if ws_process is None:
-        ws_process = Process(target=_websocket_process, args=(com_rx_queue, com_tx_queue, ))
+        ws_process = Process(target=_websocket_process, args=(com_rx_queue, com_tx_queue, ), daemon=True)
         ws_process.start()
     if conn_process is None:
-        conn_process = Process(target=_connection_process, args=(com_rx_queue, com_tx_queue))
+        conn_process = Process(target=_connection_process, args=(com_rx_queue, com_tx_queue), daemon=True)
         conn_process.start()
 
 
