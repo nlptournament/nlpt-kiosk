@@ -3,6 +3,8 @@ import { environment } from '../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { User } from '../interfaces/user';
+import { Md5 } from 'ts-md5';
+import * as CryptoJS from 'crypto-js';
 
 @Injectable({
   providedIn: 'root'
@@ -27,10 +29,21 @@ export class UserService {
         return this.http.get<User>(this.userUrl + 'me/', {withCredentials:true});
     }
 
-    public updatePw(id: string, pw: string): Observable<any> {
-        let user = {
-            'pw': pw
+    public updatePw(id: string, old_pw: string, new_pw: string): Observable<any> {
+        let key = CryptoJS.MD5(old_pw);
+        let iv = CryptoJS.lib.WordArray.random(16);
+        var cipher = CryptoJS.AES.encrypt(new_pw, key, {
+            iv: iv,
+            mode: CryptoJS.mode.CBC,
+            padding: CryptoJS.pad.Pkcs7
+            });
+
+        let result = {
+            'iv': iv.toString(),
+            'pw': cipher.ciphertext.toString(),
+            'cs': CryptoJS.MD5(key.toString() + iv.toString() + cipher.ciphertext.toString()).toString()
         }
-        return this.http.patch<any>(this.userUrl + id + '/', user, {withCredentials:true});
+
+        return this.http.put<any>(this.userUrl + '/password/' + id + '/', result, {withCredentials:true});
     }
 }

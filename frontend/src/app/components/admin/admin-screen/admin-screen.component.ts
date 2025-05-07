@@ -140,6 +140,13 @@ export class AdminScreenComponent implements OnInit, OnDestroy {
                 }
             },
             {
+                label: 'Passwort',
+                icon: 'pi pi-sign-out',
+                command: () => {
+                    this.userService.updatePw('1234', '123456', 'this is some random garbage to get some encryption').subscribe(() => {});
+                }
+            },
+            {
                 label: 'Manage Screens',
                 icon: 'pi pi-file',
                 command: () => {
