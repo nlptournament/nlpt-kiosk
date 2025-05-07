@@ -1,0 +1,29 @@
+<p-dialog [modal]="true" appendTo="body" [visible]="isActive()">
+    <ng-template #headless>
+        <div class="max-w-52% p-2 pt-1">
+            <div class="w-fill flex flex-row justify-between items-start gap-5 mb-6">
+                <div>&nbsp;</div>
+                <div class="text-2xl">Change your Password</div>
+                <i class="pi pi-times !text-1xl hover:cursor-pointer hover:text-danger" (click)="isActive.set(false)"></i>
+            </div>
+            <div class="flex flex-col justify-center items-center gap-7">
+                <p-floatlabel>
+                    <p-password [(ngModel)]="old_pw" inputId="old_pw" [feedback]="false" [toggleMask]="true" />
+                    <label for="old_pw">Old Password</label>
+                </p-floatlabel>
+                <p-floatlabel>
+                    <p-password [(ngModel)]="new_pw_1" inputId="new_pw_1" [feedback]="false" [toggleMask]="true" />
+                    <label for="new_pw_1">New Password</label>
+                </p-floatlabel>
+                <p-floatlabel>
+                    <p-password [(ngModel)]="new_pw_2" inputId="new_pw_2" [feedback]="false" [toggleMask]="true" />
+                    <label for="new_pw_2">repeat New Password</label>
+                </p-floatlabel>
+            </div>
+            <div class="w-fill flex flex-row justify-between items-center gap-5 m-2 mt-5">
+                <div class="text-1xl text-danger">{{ error_msg }}</div>
+                <p-button label="Submit" (onClick)="submitChange()" />
+            </div>
+        </div>
+    </ng-template>
+</p-dialog>

@@ -13,3 +13,6 @@
 
 <!-- PRESETS PANEL MODAL -->
 <panel-presets [presets]="presets" [kiosks]="kiosks" [screens]="screens" [screenTemplates]="screenTemplates" [users]="users" [currentUser]="currentUser" [timelineTemplates]="timelineTemplates" [(isActive)]="panelPresetsActive" *ngIf="panelPresetsActive"></panel-presets>
+
+<!-- UPDATE PW MODAL -->
+ <update-pw [currentUser]="currentUser" [(isActive)]="updatePwActive" *ngIf="updatePwActive"></update-pw>

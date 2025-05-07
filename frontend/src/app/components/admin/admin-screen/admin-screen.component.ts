@@ -24,6 +24,7 @@ import { KioskComponent } from '../../elements/kiosk/kiosk.component';
 import { ScreensPanelComponent } from '../screens-panel/screens-panel.component';
 import { TimelineTemplatesPanelComponent } from '../timeline-templates-panel/timeline-templates-panel.component';
 import { PresetsPanelComponent } from '../presets-panel/presets-panel.component';
+import { UpdatePwComponent } from '../update-pw/update-pw.component';
 
 import { MenuItem } from 'primeng/api';
 import { MenubarModule } from 'primeng/menubar';
@@ -33,7 +34,7 @@ import { WebSocketService } from '../../../services/web-socket.service';
 
 @Component({
   selector: 'app-admin-screen',
-  imports: [CommonModule, MenubarModule, KioskComponent, ScreensPanelComponent, TimelineTemplatesPanelComponent, PresetsPanelComponent],
+  imports: [CommonModule, MenubarModule, KioskComponent, ScreensPanelComponent, TimelineTemplatesPanelComponent, PresetsPanelComponent, UpdatePwComponent],
   templateUrl: './admin-screen.component.html',
   styleUrl: './admin-screen.component.scss'
 })
@@ -53,6 +54,7 @@ export class AdminScreenComponent implements OnInit, OnDestroy {
     panelScreensActive: boolean = false;
     panelTimelineTemplatesActive: boolean = false;
     panelPresetsActive: boolean = false;
+    updatePwActive: boolean = false;
     timelinesChanged: boolean = false;
     selectedNextTimelines: Map<string, string> = new Map<string, string>;
     selectedPresetTimelines: Map<string, string[]> = new Map<string, string[]>;
@@ -133,18 +135,33 @@ export class AdminScreenComponent implements OnInit, OnDestroy {
     populateMenu() {
         this.menuItems = [
             {
-                label: 'Logout',
-                icon: 'pi pi-sign-out',
-                command: () => {
-                    this.router.navigate(['/logout']);
-                }
-            },
-            {
-                label: 'Passwort',
-                icon: 'pi pi-sign-out',
-                command: () => {
-                    this.userService.updatePw('1234', '123456', 'this is some random garbage to get some encryption').subscribe(() => {});
-                }
+                label: 'User',
+                icon: 'pi pi-user',
+                items: [
+                    {
+                        label: 'Logout',
+                        icon: 'pi pi-sign-out',
+                        command: () => {
+                            this.router.navigate(['/logout']);
+                        }
+                    },
+                    {
+                        label: 'Change Password',
+                        icon: 'pi pi-key',
+                        command: () => {
+                            this.updatePwActive = true;
+                        }
+                    },
+                    {
+                        label: 'Manage',
+                        icon: 'pi pi-users',
+                        disabled: true,
+                        visible: this.currentUser?.admin,
+                        command: () => {
+                            this.syncedCurrentTimelineApply();
+                        }
+                    }
+                ]
             },
             {
                 label: 'Manage Screens',

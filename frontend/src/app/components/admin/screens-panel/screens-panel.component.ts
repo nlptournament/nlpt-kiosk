@@ -1,4 +1,4 @@
-import { Component, input, model, output } from '@angular/core';
+import { Component, input, model } from '@angular/core';
 
 import { ScreenTemplate } from '../../../interfaces/screen-template';
 import { User } from '../../../interfaces/user';
