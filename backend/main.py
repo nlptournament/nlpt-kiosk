@@ -1,9 +1,9 @@
 import cherrypy
 import cherrypy_cors
 from noapi import docDB, ElementEndpointBase
-from noapi.endpoints import SettingEndpointBase, LoginEndpointBase
-from elements import Setting, Session, ScreenTemplate, Screen
-from endpoints import UserEndpoint, TimelineTemplateEndpoint, PresetEndpoint, KioskEndpoint, TimelineEndpoint
+from noapi.endpoints import SettingEndpointBase, LoginEndpointBase, UserEndpointBase
+from elements import Setting, Session, User, ScreenTemplate, Screen
+from endpoints import TimelineTemplateEndpoint, PresetEndpoint, KioskEndpoint, TimelineEndpoint
 from helpers.versioning import run as versioning_run
 from helpers.wss import start_server as start_wss_server
 
@@ -30,6 +30,11 @@ class SettingEndpoint(SettingEndpointBase):
 
 class LoginEndpoint(LoginEndpointBase):
     _session_cls = Session
+
+
+class UserEndpoint(UserEndpointBase):
+    _session_cls = Session
+    _element = User
 
 
 class ScreenTemplateEndpoint(ElementEndpointBase):

@@ -41,6 +41,8 @@ _all_updateable : list | None
     If None, Endpoint is not available for unauthorized Element updates.
 _all_delete : bool
     if set to True all (unauthorized) Users are allowed to delete Elements on Endpoint (by default only admins and owners are allowed to delete)
+_not_readable : list
+    List of attr-names, that are deleted from GET responses (e.g. useful for passwords that shouldn't be exposed)
 _not_updateable : list
     List of attr-names, that are deleted from PATCH requests but passed trough on POST requests
 _ro_attr : list
@@ -58,6 +60,7 @@ _ro_attr : list
     _all_createable = None
     _all_updateable = None
     _all_delete = False
+    _not_readable = list()
     _not_updateable = list()
     _ro_attr = list()
 
@@ -70,6 +73,8 @@ _ro_attr : list
         if is_other and self._other_readable is not None:
             allowed_attr += self._other_readable
         for k in list([k for k in attr.keys() if k not in allowed_attr]):
+            attr.pop(k, None)
+        for k in self._not_readable:
             attr.pop(k, None)
         return attr
 
@@ -440,5 +445,146 @@ class LoginEndpointBase(object):
             return {'logout': 'done'}
         else:
             cherrypy.response.headers['Allow'] = 'OPTIONS, GET, POST, PUT'
+            cherrypy.response.status = 405
+            return {'error': 'method not allowed'}
+
+
+class UserEndpointBase(ElementEndpointBase):
+    _session_cls = None  # Set this to a child-class of SessionBase in your deriveing class
+    _element = None  # Set this to a child-class of UserBase in your deriveing class
+    _owner_attr = '_id'
+    _other_readable = list(['id', 'login', 'admin'])
+    _not_readable = list(['pw'])
+
+    @cherrypy.expose()
+    @cherrypy.tools.json_in()
+    @cherrypy.tools.json_out()
+    def me(self):
+        """
+Used to identify the User, that is logged in a session
+Just returns the user_id stored in the Session, that is used for the request
+        """
+        if cherrypy.request.method == 'OPTIONS':
+            cherrypy.response.headers['Allow'] = 'OPTIONS, GET'
+            cherrypy_cors.preflight(allowed_methods=['GET'])
+            return
+        elif cherrypy.request.method == 'GET':
+            is_authorized = False
+            cookie = cherrypy.request.cookie.get(self._session_cls.cookie_name)
+            if cookie:
+                session = self._session_cls.get(cookie.value)
+                if len(session.validate_base()) == 0:
+                    is_authorized = True
+
+            if not is_authorized:
+                cherrypy.response.status = 401
+                return {'error': 'not authorized'}
+            return self._element.get(session['user_id']).json()
+        else:
+            cherrypy.response.headers['Allow'] = 'OPTIONS, GET'
+            cherrypy.response.status = 405
+            return {'error': 'method not allowed'}
+
+    @cherrypy.expose()
+    @cherrypy.tools.json_in()
+    @cherrypy.tools.json_out()
+    def password(self, element_id=None):
+        """
+Used to update the password of a User in a save (encryped) way
+Allowed is, that Users are able to update their own password and admins are allowed to update any Users password
+
+element_id is required as part of the URL, as this is the User whos password is updated
+
+the following data have to be transmitted in payload (json dictionary):
+    iv: some random generated Initialization Vector, that is fed into AES-CBC algorithm
+    pw: the encrypted new password, to be set for the User
+        for encryption is used AES in CBC mode, with pkcs7 padding
+        the algorithem is fed with the previos mentioned iv and as key the MD5 hashed password, of the User doing the request, is used
+    cs: a checksum to validate the correct key is used by the backend to decrypt the new password
+        the checksum is a MD5 hash over the following concatenated string: md5-hash(old_password) + iv + encrypted(new_password)
+        """
+        element = None
+        if element_id is not None:
+            element = self._element.get(element_id)
+        if cherrypy.request.method == 'OPTIONS':
+            if element is None:
+                cherrypy.response.headers['Allow'] = 'OPTIONS'
+                cherrypy_cors.preflight(allowed_methods=[])
+                return
+            else:
+                cherrypy.response.headers['Allow'] = 'OPTIONS, PUT'
+                cherrypy_cors.preflight(allowed_methods=['PUT'])
+                return
+
+        if element['_id'] is None:
+            cherrypy.response.status = 404
+            return {'error': f'id {element_id} not found'}
+
+        is_authorized = False
+        is_admin = False
+        is_owner = False
+        cookie = cherrypy.request.cookie.get(self._session_cls.cookie_name)
+        if cookie:
+            session = self._session_cls.get(cookie.value)
+        else:
+            session = self._session_cls.get(None)
+        if len(session.validate_base()) == 0:
+            is_authorized = True
+            is_admin = session.admin()
+            is_owner = session['user_id'] == element['_id']
+
+        if not is_authorized:
+            cherrypy.response.status = 401
+            return {'error': 'not authorized'}
+
+        if not is_admin and not is_owner:
+            cherrypy.response.status = 403
+            return {'error': 'access not allowed'}
+
+        # PUT
+        if cherrypy.request.method == 'PUT':
+            import hashlib
+            from Crypto.Cipher import AES
+            from Crypto.Util.Padding import unpad
+            attr = cherrypy.request.json
+            if not isinstance(attr, dict):
+                cherrypy.response.status = 400
+                return {'error': 'Submitted data need to be of type dict'}
+            elif len(attr) == 0:
+                cherrypy.response.status = 400
+                return {'error': 'data is needed to be submitted'}
+            for req_attr in ['iv', 'pw', 'cs']:
+                if req_attr not in attr:
+                    cherrypy.response.status = 400
+                    return {'error': 'missing data'}
+
+            key = hashlib.md5()
+            key.update(self._element.get(session['user_id'])['pw'].encode('utf-8'))
+            key = key.hexdigest().lower()
+
+            checksum = hashlib.md5()
+            checksum.update(key.encode('utf-8'))
+            checksum.update(attr['iv'].encode('utf-8'))
+            checksum.update(attr['pw'].encode('utf-8'))
+            checksum = checksum.hexdigest().lower()
+            if not checksum == attr['cs']:
+                cherrypy.response.status = 400
+                return {'error': 'checksum not valid'}
+
+            key = bytes.fromhex(key)
+            iv = bytes.fromhex(attr['iv'])
+            pw = bytes.fromhex(attr['pw'])
+            cipher = AES.new(key, AES.MODE_CBC, iv)
+            pw = unpad(cipher.decrypt(pw), AES.block_size, style='pkcs7')
+
+            element['pw'] = pw.decode('utf-8')
+            element.save()
+
+            return {'ok': 'updated password'}
+        else:
+            if element is None:
+                cherrypy.response.headers['Allow'] = 'OPTIONS'
+            else:
+                cherrypy.response.headers['Allow'] = 'OPTIONS, PUT'
             cherrypy.response.status = 405
             return {'error': 'method not allowed'}
