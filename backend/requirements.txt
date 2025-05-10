@@ -1,5 +1,6 @@
 cherrypy
 cherrypy-cors
+pycryptodome
 pymongo
 requests
 websockets
