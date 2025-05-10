@@ -139,6 +139,10 @@ export class AdminScreenComponent implements OnInit, OnDestroy {
                 icon: 'pi pi-user',
                 items: [
                     {
+                        label: this.currentUser?.login,
+                        disabled: true
+                    },
+                    {
                         label: 'Logout',
                         icon: 'pi pi-sign-out',
                         command: () => {
@@ -153,7 +157,7 @@ export class AdminScreenComponent implements OnInit, OnDestroy {
                         }
                     },
                     {
-                        label: 'Manage',
+                        label: 'Manage Users',
                         icon: 'pi pi-users',
                         disabled: true,
                         visible: this.currentUser?.admin,
