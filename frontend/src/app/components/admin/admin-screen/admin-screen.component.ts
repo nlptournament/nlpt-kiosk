@@ -24,6 +24,7 @@ import { KioskComponent } from '../../elements/kiosk/kiosk.component';
 import { ScreensPanelComponent } from '../screens-panel/screens-panel.component';
 import { TimelineTemplatesPanelComponent } from '../timeline-templates-panel/timeline-templates-panel.component';
 import { PresetsPanelComponent } from '../presets-panel/presets-panel.component';
+import { UsersPanelComponent } from '../users-panel/users-panel.component';
 import { UpdatePwComponent } from '../update-pw/update-pw.component';
 
 import { MenuItem } from 'primeng/api';
@@ -34,7 +35,7 @@ import { WebSocketService } from '../../../services/web-socket.service';
 
 @Component({
   selector: 'app-admin-screen',
-  imports: [CommonModule, MenubarModule, KioskComponent, ScreensPanelComponent, TimelineTemplatesPanelComponent, PresetsPanelComponent, UpdatePwComponent],
+  imports: [CommonModule, MenubarModule, KioskComponent, ScreensPanelComponent, TimelineTemplatesPanelComponent, PresetsPanelComponent, UsersPanelComponent, UpdatePwComponent],
   templateUrl: './admin-screen.component.html',
   styleUrl: './admin-screen.component.scss'
 })
@@ -54,6 +55,7 @@ export class AdminScreenComponent implements OnInit, OnDestroy {
     panelScreensActive: boolean = false;
     panelTimelineTemplatesActive: boolean = false;
     panelPresetsActive: boolean = false;
+    panelUsersActive: boolean = false;
     updatePwActive: boolean = false;
     timelinesChanged: boolean = false;
     selectedNextTimelines: Map<string, string> = new Map<string, string>;
@@ -129,6 +131,13 @@ export class AdminScreenComponent implements OnInit, OnDestroy {
                 else if (timelinetemplate.id && this.timelineTemplates.has(timelinetemplate.id) && msg['content'] == 'delete')
                     this.timelineTemplates.delete(timelinetemplate.id);
             }
+            if (Object.keys(msg).includes('user')) {
+                let user: User = <User>msg['user'];
+                if (user.id && msg['content'] == 'update')
+                    this.users.set(user.id, user);
+                else if (user.id && this.users.has(user.id) && msg['content'] == 'delete')
+                    this.users.delete(user.id);
+            }
         }
     }
 
@@ -159,10 +168,9 @@ export class AdminScreenComponent implements OnInit, OnDestroy {
                     {
                         label: 'Manage Users',
                         icon: 'pi pi-users',
-                        disabled: true,
                         visible: this.currentUser?.admin,
                         command: () => {
-                            this.syncedCurrentTimelineApply();
+                            this.panelUsersActive = true;
                         }
                     }
                 ]

@@ -25,6 +25,18 @@ export class UserService {
         return this.http.get<User[]>(this.userUrl, {withCredentials:true});
     }
 
+    public updateUser(user: User): Observable<any> {
+        return this.http.patch<any>(this.userUrl + user.id + '/', user, {withCredentials:true});
+    }
+
+    public createUser(user: User): Observable<any> {
+        return this.http.post<any>(this.userUrl, user, {withCredentials:true});
+    }
+
+    public deleteUser(id: string): Observable<any> {
+        return this.http.delete<any>(this.userUrl + id + '/', {withCredentials:true});
+    }
+
     public getMe(): Observable<User> {
         return this.http.get<User>(this.userUrl + 'me/', {withCredentials:true});
     }
