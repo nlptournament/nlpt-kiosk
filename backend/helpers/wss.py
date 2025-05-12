@@ -171,3 +171,13 @@ def transmit_timelinetemplate_update(timelinetemplate):
 def transmit_timelinetemplate_delete(timelinetemplate):
     result = {'timelinetemplate': timelinetemplate.json(), 'content': 'delete'}
     com_rx_queue.put({'what': 'send', 'target': 'users', 'msg': json.dumps(result)})
+
+
+def transmit_user_update(user):
+    result = {'user': user.json(), 'content': 'update'}
+    com_rx_queue.put({'what': 'send', 'target': 'users', 'msg': json.dumps(result)})
+
+
+def transmit_user_delete(user):
+    result = {'user': user.json(), 'content': 'delete'}
+    com_rx_queue.put({'what': 'send', 'target': 'users', 'msg': json.dumps(result)})

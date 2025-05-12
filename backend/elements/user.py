@@ -3,6 +3,10 @@ from noapi.elements import UserBase
 
 
 class User(UserBase):
+    def save_post(self):
+        from helpers.wss import transmit_user_update
+        transmit_user_update(self)
+
     def delete_pre(self):
         from elements import Screen
         for s in [Screen(s) for s in docDB.search_many('Screen', {'user_id': self['_id']})]:
@@ -11,6 +15,7 @@ class User(UserBase):
 
     def delete_post(self):
         from elements import Session, TimelineTemplate, Screen, Kiosk, Preset
+        from helpers.wss import transmit_user_delete
         for s in [Session(s) for s in docDB.search_many('Session', {'user_id': self['_id']})]:
             s.delete()
         for p in [Preset(p) for p in docDB.search_many('Preset', {'user_id': self['_id']})]:
@@ -20,5 +25,6 @@ class User(UserBase):
         for s in [Screen(s) for s in docDB.search_many('Screen', {'user_id': self['_id']})]:
             s.delete()
         for k in [Kiosk(k) for k in docDB.search_many('Kiosk', {'added_by_id': self['_id']})]:
-            k.added_by_id = None
+            k['added_by_id'] = None
             k.save()
+        transmit_user_delete(self)
