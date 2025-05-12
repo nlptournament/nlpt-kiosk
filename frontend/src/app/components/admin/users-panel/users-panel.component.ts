@@ -15,4 +15,10 @@ export class UsersPanelComponent {
     users = input.required<Map<string, User>>();
     currentUser = input.required<User>();
     isActive = model.required<boolean>();
+
+    isVisible: boolean = true;
+
+    closeDialog() {
+        this.isActive.set(false);
+    }
 }

@@ -1,10 +1,10 @@
-<p-dialog [modal]="true" appendTo="body" [visible]="isActive()">
+<p-dialog [modal]="true" appendTo="body" [(visible)]="isVisible" [dismissableMask]="true" (onHide)="closeDialog()">
     <ng-template #headless>
         <div class="p-2 pt-1">
             <div class="w-fill flex flex-row justify-between items-start gap-5 mb-2">
                 <div>&nbsp;</div>
                 <div class="text-2xl">Timelines Manager</div>
-                <i class="pi pi-times !text-1xl hover:cursor-pointer hover:text-danger" (click)="isActive.set(false)"></i>
+                <i class="pi pi-times !text-1xl hover:cursor-pointer hover:text-danger" (click)="closeDialog()"></i>
             </div>
             <div class="flex flex-col max-w-80% max-h-35% overflow-scroll gap-2">
                 @for (tt of timelineTemplates().values(); track tt.id) {

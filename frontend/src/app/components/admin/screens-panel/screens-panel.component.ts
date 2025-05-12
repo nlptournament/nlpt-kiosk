@@ -21,6 +21,7 @@ export class ScreensPanelComponent {
     currentUser = input.required<User>();
     isActive = model.required<boolean>();
 
+    isVisible: boolean = true;
     createScreenActive: boolean = false;
     createScreenDummy: Screen = <Screen>{};
 
@@ -31,6 +32,10 @@ export class ScreensPanelComponent {
 
     screenCreated(event: string|null|undefined) {
         this.createScreenActive = false;
+    }
+
+    closeDialog() {
+        this.isActive.set(false);
     }
 
 }

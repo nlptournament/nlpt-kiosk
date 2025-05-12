@@ -72,14 +72,14 @@
     </p-iftalabel>
 
     <p-iftalabel class="w-full mb-2">
-        <p-inputnumber [(ngModel)]="screen().duration" inputId="duration" mode="decimal" [min]="1" suffix="s" locale="de-DE" [disabled]="!screenTemplates().get(screen().template_id!)!.endless" />
+        <p-inputnumber [(ngModel)]="screen().duration" inputId="duration" mode="decimal" [min]="1" suffix="s" locale="de-DE" [disabled]="!screen().template_id || !screenTemplates().get(screen().template_id!)!.endless" />
         <label for="duration">Duration</label>
     </p-iftalabel>
 
-    <p-selectbutton [options]="selectableLoops" inputId="loop" [(ngModel)]="screen().loop" optionLabel="name" optionValue="code" [disabled]="screenTemplates().get(screen().template_id!)!.endless" class="mb-2" />
+    <p-selectbutton [options]="selectableLoops" inputId="loop" [(ngModel)]="screen().loop" optionLabel="name" optionValue="code" [disabled]="!screen().template_id || screenTemplates().get(screen().template_id!)!.endless" class="mb-2" />
 
     <p-iftalabel class="w-full mb-2">
-        <p-inputnumber [(ngModel)]="screen().repeat" inputId="repeat" mode="decimal" [showButtons]="true" [min]="0" suffix=" times" locale="de-DE" [disabled]="screenTemplates().get(screen().template_id!)!.endless || screen().loop" />
+        <p-inputnumber [(ngModel)]="screen().repeat" inputId="repeat" mode="decimal" [showButtons]="true" [min]="0" suffix=" times" locale="de-DE" [disabled]="!screen().template_id || screenTemplates().get(screen().template_id!)!.endless || screen().loop" />
         <label for="repeat">Repeat</label>
     </p-iftalabel>
 

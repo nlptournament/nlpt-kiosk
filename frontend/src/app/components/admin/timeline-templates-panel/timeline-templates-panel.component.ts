@@ -23,6 +23,7 @@ export class TimelineTemplatesPanelComponent {
     currentUser = input.required<User>();
     isActive = model.required<boolean>();
 
+    isVisible: boolean = true;
     createTtDummy: TimelineTemplate = <TimelineTemplate>{};
     createTtActive: boolean = false;
 
@@ -33,5 +34,9 @@ export class TimelineTemplatesPanelComponent {
 
     ttCreated(event: string|null|undefined) {
         this.createTtActive = false;
+    }
+
+    closeDialog() {
+        this.isActive.set(false);
     }
 }

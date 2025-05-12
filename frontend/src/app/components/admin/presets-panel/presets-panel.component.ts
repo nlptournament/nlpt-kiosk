@@ -30,6 +30,7 @@ export class PresetsPanelComponent implements OnInit {
     timelineTemplates = input.required<Map<string, TimelineTemplate>>();
     isActive = model.required<boolean>();
 
+    isVisible: boolean = true;
     timelines: Map<string, Timeline> = new Map<string, Timeline>;
 
     constructor(
@@ -52,5 +53,9 @@ export class PresetsPanelComponent implements OnInit {
                 }
             });
         this.timelines = tll;
+    }
+
+    closeDialog() {
+        this.isActive.set(false);
     }
 }
