@@ -1,4 +1,4 @@
-import { Component, input, output } from '@angular/core';
+import { booleanAttribute, Component, input, OnInit, output } from '@angular/core';
 import { User } from '../../../interfaces/user';
 import { UserService } from '../../../services/user.service';
 
@@ -18,9 +18,10 @@ import { ButtonModule } from 'primeng/button';
   templateUrl: './user.component.html',
   styleUrl: './user.component.scss'
 })
-export class UserComponent {
+export class UserComponent implements OnInit {
     user = input.required<User>();
     currentUser = input.required<User>();
+    editMode = input(false, {transform: booleanAttribute});
     editResult = output<string|null|undefined>();
 
     editActive: boolean = false;
@@ -33,6 +34,10 @@ export class UserComponent {
     constructor(
         private userService: UserService
     ) { }
+
+    ngOnInit(): void {
+        this.editActive = this.editMode();
+    }
 
     editClose() {
         this.editResult.emit(this.user().id);
@@ -47,12 +52,19 @@ export class UserComponent {
                     next: this.editClose();
                 });
         }
+        else {
+            this.userService
+                .createUser(this.user())
+                .subscribe((result: any) => {
+                    next: this.editClose();
+                });
+        }
     }
 
     deleteUser() {
         if (this.user().id) {
             this.userService
-                .deleteUser(this.user().id)
+                .deleteUser(this.user().id!)
                 .subscribe((result: any) => {
                     next: this.editClose();
                 });
@@ -69,15 +81,17 @@ export class UserComponent {
             this.error_msg = "Your Password can't be empty";
             return;
         }
-        this.userService
-            .updatePw(this.user().id, this.old_pw, this.new_pw)
-            .subscribe({
-                next: () => {
-                    this.pwChangeActive = false;
-                },
-                error: () => {
-                    this.error_msg = "Your Password invalid";
-                }
-            });
+        if (this.user().id) {
+            this.userService
+                .updatePw(this.user().id!, this.old_pw, this.new_pw)
+                .subscribe({
+                    next: () => {
+                        this.pwChangeActive = false;
+                    },
+                    error: () => {
+                        this.error_msg = "Your Password invalid";
+                    }
+                });
+        }
     }
 }

@@ -232,7 +232,7 @@ export class AdminScreenComponent implements OnInit, OnDestroy {
             .subscribe({
                 next: (users: User[]) => {
                     let ul: Map<string, User> = new Map<string, User>;
-                    for (let user of users) ul.set(user.id, user);
+                    for (let user of users) if (user.id) ul.set(user.id, user);
                     this.users = ul;
                 },
                 error: (err: HttpErrorResponse) => {

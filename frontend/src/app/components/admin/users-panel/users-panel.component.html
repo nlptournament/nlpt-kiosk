@@ -1,6 +1,6 @@
 <p-dialog [modal]="true" appendTo="body" [(visible)]="isVisible" [dismissableMask]="true" (onHide)="closeDialog()">
     <ng-template #headless>
-        <div class="max-w-52% p-2 pt-1">
+        <div class="max-w-52% p-3 pt-1">
             <div class="w-fill flex flex-row justify-between items-start gap-5 mb-2">
                 <div>&nbsp;</div>
                 <div class="text-2xl">User Manager</div>
@@ -10,6 +10,10 @@
                 @for (user of users().values(); track user.id) {
                 <element-user [user]="user" [currentUser]="currentUser()"></element-user>
                 }
+                <element-user [user]="dummyUser" [currentUser]="currentUser()" [editMode]="true" (editResult)="createdUser()" *ngIf="dummyUser"></element-user>
+                <div class="w-fill h-14 bg-add-card rounded-xl shadow-md flex items-center justify-center" *ngIf="!dummyUser">
+                    <i class="pi pi-plus-circle !text-3xl hover:cursor-pointer hover:text-highlight" (click)="createUser()"></i>
+                </div>
             </div>
         </div>
     </ng-template>

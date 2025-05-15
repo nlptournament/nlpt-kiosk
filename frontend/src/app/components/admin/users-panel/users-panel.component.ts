@@ -17,8 +17,17 @@ export class UsersPanelComponent {
     isActive = model.required<boolean>();
 
     isVisible: boolean = true;
+    dummyUser: User | undefined = undefined;
 
     closeDialog() {
         this.isActive.set(false);
+    }
+
+    createUser() {
+        this.dummyUser = <User>{login: "", pw: "dummy", admin: false}
+    }
+
+    createdUser() {
+        this.dummyUser = undefined;
     }
 }

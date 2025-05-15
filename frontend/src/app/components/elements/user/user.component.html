@@ -29,7 +29,7 @@
                     <label for="old_pw">Your Password</label>
                 </p-floatlabel>
                 <p-floatlabel>
-                    <p-password [(ngModel)]="new_pw" inputId="new_pw" [feedback]="false" [toggleMask]="true" />
+                    <p-password [(ngModel)]="new_pw" inputId="new_pw" [feedback]="false" [toggleMask]="true" (keyup.enter)="submitPassword()" />
                     <label for="new_pw">New Password</label>
                 </p-floatlabel>
             </div>

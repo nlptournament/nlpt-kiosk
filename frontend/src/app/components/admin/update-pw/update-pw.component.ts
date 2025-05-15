@@ -43,15 +43,17 @@ export class UpdatePwComponent {
             this.error_msg = "Old Password can't be empty";
             return;
         }
-        this.userService
-            .updatePw(this.currentUser().id, this.old_pw, this.new_pw_1)
-            .subscribe({
-                next: () => {
-                    this.isActive.set(false);
-                },
-                error: () => {
-                    this.error_msg = "Old Password invalid";
-                }
-            });
+        if (this.currentUser().id) {
+            this.userService
+                .updatePw(this.currentUser().id!, this.old_pw, this.new_pw_1)
+                .subscribe({
+                    next: () => {
+                        this.isActive.set(false);
+                    },
+                    error: () => {
+                        this.error_msg = "Old Password invalid";
+                    }
+                });
+        }
     }
 }
