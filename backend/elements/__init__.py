@@ -7,3 +7,4 @@ from .timelinetemplate import TimelineTemplate
 from .timeline import Timeline
 from .kiosk import Kiosk
 from .preset import Preset
+from .media import Media

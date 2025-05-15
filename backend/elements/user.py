@@ -14,7 +14,7 @@ class User(UserBase):
                 return {'error': {'code': 1, 'desc': 'at least one locked Screen is using this User'}}
 
     def delete_post(self):
-        from elements import Session, TimelineTemplate, Screen, Kiosk, Preset
+        from elements import Session, TimelineTemplate, Screen, Kiosk, Preset, Media
         from helpers.wss import transmit_user_delete
         for s in [Session(s) for s in docDB.search_many('Session', {'user_id': self['_id']})]:
             s.delete()
@@ -27,4 +27,7 @@ class User(UserBase):
         for k in [Kiosk(k) for k in docDB.search_many('Kiosk', {'added_by_id': self['_id']})]:
             k['added_by_id'] = None
             k.save()
+        for m in [Media(m) for m in docDB.search_many('Media', {'user_id': self['_id']})]:
+            m['user_id'] = None
+            m.save()
         transmit_user_delete(self)
