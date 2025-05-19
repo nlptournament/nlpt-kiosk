@@ -69,7 +69,14 @@
 
   * **80**: *(timeline_id)* Timeline is part of a Preset and therefore can't be displayed
 
-# element delete error-codes
+### element delete error-codes
 
   * **1**: at least one locked Screen is using this <element-name\>
   * **2**: can't be deleted as it is locked
+
+## Media
+
+*reserved range **8x** for individual errors*
+
+  * **5**: *(src_type)* needs to be one of: [0, 1]
+  * **5**: *(type)* needs to be one of: [0, 1, 2]

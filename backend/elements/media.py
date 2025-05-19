@@ -13,3 +13,19 @@ Do some description
         user_id=ElementBase.addAttr(type=str, default=None, fk='User'),
         common=ElementBase.addAttr(type=bool, default=True, notnone=True)
     )
+
+    def validate(self):
+        errors = dict()
+        if self['src_type'] not in range(2):
+            errors['src_type'] = {'code': 5, 'desc': 'needs to be one of: [0, 1]'}
+        if self['type'] not in range(3):
+            errors['type'] = {'code': 5, 'desc': 'needs to be one of: [0, 1, 2]'}
+        return errors
+
+    def save_post(self):
+        from helpers.wss import transmit_media_update
+        transmit_media_update(self)
+
+    def delete_post(self):
+        from helpers.wss import transmit_media_delete
+        transmit_media_delete(self)
