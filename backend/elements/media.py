@@ -28,4 +28,8 @@ Do some description
 
     def delete_post(self):
         from helpers.wss import transmit_media_delete
+        if self['src_type'] == 1:
+            from helpers.s3 import media_delete, media_exists
+            if media_exists(self['_id']):
+                media_delete(self['_id'])
         transmit_media_delete(self)
