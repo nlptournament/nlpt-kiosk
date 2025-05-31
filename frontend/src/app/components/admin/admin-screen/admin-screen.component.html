@@ -14,6 +14,9 @@
 <!-- PRESETS PANEL MODAL -->
 <panel-presets [presets]="presets" [kiosks]="kiosks" [screens]="screens" [screenTemplates]="screenTemplates" [users]="users" [currentUser]="currentUser" [timelineTemplates]="timelineTemplates" [(isActive)]="panelPresetsActive" *ngIf="panelPresetsActive"></panel-presets>
 
+<!-- MEDIA PANEL MODAL -->
+<panel-media [medias]="medias" [users]="users" [currentUser]="currentUser" [(isActive)]="panelMediaActive" *ngIf="panelMediaActive"></panel-media>
+
 <!-- USERS PANEL MODAL -->
 <panel-users [users]="users" [currentUser]="currentUser" [(isActive)]="panelUsersActive" *ngIf="panelUsersActive"></panel-users>
 

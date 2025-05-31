@@ -184,10 +184,10 @@ def transmit_user_delete(user):
 
 
 def transmit_media_update(media):
-    result = {'user': media.json(), 'content': 'update'}
+    result = {'media': media.json(), 'content': 'update'}
     com_rx_queue.put({'what': 'send', 'target': 'owner', 'owner_id': media['user_id'], 'msg': json.dumps(result)})
 
 
 def transmit_media_delete(media):
-    result = {'user': media.json(), 'content': 'delete'}
+    result = {'media': media.json(), 'content': 'delete'}
     com_rx_queue.put({'what': 'send', 'target': 'users', 'msg': json.dumps(result)})

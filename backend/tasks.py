@@ -5,7 +5,7 @@ import time
 @task(name='testdata')
 def generate_testdata(c):
     from noapi import docDB
-    from elements import Screen, User, TimelineTemplate, Kiosk
+    from elements import Screen, User, TimelineTemplate, Kiosk, Setting, Media
     admin_user_id = docDB.search_one('User', {'login': 'admin'})['_id']
     test_user_id = User({'login': 'testuser', 'admin': False, 'pw': 'password'}).save()['created']
     s = Screen({'desc': 'Some TMNF-TAS screen', 'duration': 30})
@@ -29,6 +29,13 @@ def generate_testdata(c):
 
     Kiosk({'name': 'testkiosk1'}).save()
     Kiosk({'name': 'testkiosk2'}).save()
+
+    s = Setting.get('s3_host')
+    s['value'] = 'loclahost'
+    s.save()
+
+    m = Media({'desc': 'testfile', 'src_type': 1, 'type': 0, 'user_id': admin_user_id})
+    m.save()
 
 
 @task(name='container-image-build')

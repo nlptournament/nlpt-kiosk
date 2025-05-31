@@ -25,17 +25,20 @@ import { ScreensPanelComponent } from '../screens-panel/screens-panel.component'
 import { TimelineTemplatesPanelComponent } from '../timeline-templates-panel/timeline-templates-panel.component';
 import { PresetsPanelComponent } from '../presets-panel/presets-panel.component';
 import { UsersPanelComponent } from '../users-panel/users-panel.component';
+import { MediaPanelComponent } from '../media-panel/media-panel.component';
 import { UpdatePwComponent } from '../update-pw/update-pw.component';
 
 import { MenuItem } from 'primeng/api';
 import { MenubarModule } from 'primeng/menubar';
 import { Subscription } from 'rxjs';
 import { WebSocketService } from '../../../services/web-socket.service';
+import { MediaService } from '../../../services/media.service';
+import { Media } from '../../../interfaces/media';
 
 
 @Component({
   selector: 'app-admin-screen',
-  imports: [CommonModule, MenubarModule, KioskComponent, ScreensPanelComponent, TimelineTemplatesPanelComponent, PresetsPanelComponent, UsersPanelComponent, UpdatePwComponent],
+  imports: [CommonModule, MenubarModule, KioskComponent, ScreensPanelComponent, TimelineTemplatesPanelComponent, PresetsPanelComponent, UsersPanelComponent, MediaPanelComponent, UpdatePwComponent],
   templateUrl: './admin-screen.component.html',
   styleUrl: './admin-screen.component.scss'
 })
@@ -49,12 +52,14 @@ export class AdminScreenComponent implements OnInit, OnDestroy {
     kiosks: Map<string, Kiosk> = new Map<string, Kiosk>;
     timelines: Map<string, Timeline> = new Map<string, Timeline>;
     presets: Map<string, Preset> = new Map<string, Preset>;
+    medias: Map<string, Media> = new Map<string, Media>;
 
     wssSubscription: Subscription | undefined;
 
     panelScreensActive: boolean = false;
     panelTimelineTemplatesActive: boolean = false;
     panelPresetsActive: boolean = false;
+    panelMediaActive: boolean = true;
     panelUsersActive: boolean = false;
     updatePwActive: boolean = false;
     timelinesChanged: boolean = false;
@@ -71,7 +76,8 @@ export class AdminScreenComponent implements OnInit, OnDestroy {
         private timelinetemplateService: TimelineTemplateService,
         private kioskService: KioskService,
         private timelineService: TimelineService,
-        private presetService: PresetService
+        private presetService: PresetService,
+        private mediaService: MediaService
     ) { }
 
     ngOnInit(): void {
@@ -83,6 +89,7 @@ export class AdminScreenComponent implements OnInit, OnDestroy {
         this.refreshKiosks();
         this.refreshTimelines();
         this.refreshPresets();
+        this.refreshMedia();
         this.wssSubscription = this.websocketService.getMessages().subscribe((msg) => this.wssRx(msg));
     }
 
@@ -137,6 +144,13 @@ export class AdminScreenComponent implements OnInit, OnDestroy {
                     this.users.set(user.id, user);
                 else if (user.id && this.users.has(user.id) && msg['content'] == 'delete')
                     this.users.delete(user.id);
+            }
+            if (Object.keys(msg).includes('media')) {
+                let media: Media = <Media>msg['media'];
+                if (media.id && msg['content'] == 'update')
+                    this.medias.set(media.id, media);
+                else if (media.id && this.medias.has(media.id) && msg['content'] == 'delete')
+                    this.medias.delete(media.id);
             }
         }
     }
@@ -195,6 +209,13 @@ export class AdminScreenComponent implements OnInit, OnDestroy {
                 disabled: this.presets.size == 0,
                 command: () => {
                     this.panelPresetsActive = true;
+                }
+            },
+            {
+                label: 'Manage Media',
+                icon: 'pi pi-list',
+                command: () => {
+                    this.panelMediaActive = true;
                 }
             },
             {
@@ -325,6 +346,21 @@ export class AdminScreenComponent implements OnInit, OnDestroy {
                     for (let p of presets) if (p.id) pl.set(p.id, p);
                     this.presets = pl;
                     this.populateMenu();
+                },
+                error: (err: HttpErrorResponse) => {
+                    this.errorHandler.handleError(err);
+                }
+            });
+    }
+
+    refreshMedia() {
+        this.mediaService
+            .getMedias()
+            .subscribe({
+                next: (medias: Media[]) => {
+                    let ml: Map<string, Media> = new Map<string, Media>;
+                    for (let m of medias) if (m.id) ml.set(m.id, m);
+                    this.medias = ml;
                 },
                 error: (err: HttpErrorResponse) => {
                     this.errorHandler.handleError(err);

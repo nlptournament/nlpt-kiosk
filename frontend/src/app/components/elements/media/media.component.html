@@ -1,0 +1,87 @@
+<div class="p-4 pt-1 pb-1 w-10% bg-screen-card rounded-xl shadow-md flex flex-col items-center text-center text-1xl">
+    <div class="flex flex-row w-10% justify-between pr-2 pl-2 mb-1">
+        <div class="flex flex-row gap-1">
+            <i class="pi pi-circle-off !text-1xl" pTooltip="only visible to owner" showDelay="300" tooltipPosition="right" *ngIf="!media().common"></i>
+            <i class="pi pi-circle-on !text-1xl" pTooltip="visible to anyone" showDelay="300" tooltipPosition="right" *ngIf="media().common"></i>
+        </div>
+        <div class="flex flex-row gap-1">
+            <i class="pi pi-user !text-1xl"></i>
+            <div *ngIf="media().user_id">{{ users().get(media().user_id!)!.login }}</div>
+            <div *ngIf="!media().user_id">???</div>
+        </div>
+        <div class="flex flex-row gap-2">
+            <i class="pi pi-pencil !text-1xl hover:cursor-pointer hover:text-highlight" (click)="editActive = true" *ngIf="currentUser().admin || media().user_id == currentUser().id"></i>
+        </div>
+    </div>
+
+    <div class="flex flex-row text-highlight">
+        <div>{{ media().desc }}</div>
+    </div>
+
+    <div class="flex flex-row">
+        <div>{{ mediaType[media().type] }}</div>
+    </div>
+
+    <div class="flex flex-row">
+        <div>{{ mediaSrcType[media().src_type] }}</div>
+    </div>
+
+    <div class="flex flex-row" *ngIf="media().src_type != 1">
+        <div>{{ media().src }}</div>
+    </div>
+
+    <div class="flex flex-col" *ngIf="media().src_type == 1 && media().src && media().src != ''">
+        <div *ngFor="let line of media().src.split(';')">{{ line }}</div>
+    </div>
+</div>
+
+<!-- EDIT MODAL -->
+<p-dialog [modal]="true" appendTo="body" [(visible)]="editActive" [dismissableMask]="true" (onHide)="editClose()" *ngIf="editActive">
+    <ng-template #headless>
+        <div class="p-4 pt-2 pb-3 bg-card rounded-xl shadow-md flex flex-col items-left">
+            <div class="w-full text-right mb-1">
+                <i class="pi pi-times hover:cursor-pointer hover:text-danger" (click)="editClose()"></i>
+            </div>
+
+            <p-iftalabel class="w-full mb-2">
+                <input pInputText id="desc" [(ngModel)]="media().desc" autocomplete="off" class="w-full" autofocus />
+                <label for="desc">Description</label>
+            </p-iftalabel>
+
+            <p-iftalabel class="w-full mb-2">
+                <p-select [(ngModel)]="media().user_id" inputId="user_id" [options]="selectableUsers" optionValue="code" optionLabel="name" styleClass="w-full" [disabled]="!currentUser().admin" />
+                <label for="user_id">Owner</label>
+            </p-iftalabel>
+
+            <p-selectbutton [options]="selectableCommons" inputId="common" [(ngModel)]="media().common" optionLabel="name" optionValue="code" class="mb-2" />
+
+            <p-iftalabel class="w-full mb-2">
+                <p-select [(ngModel)]="media().type" inputId="type" [options]="selectableTypes" optionValue="code" optionLabel="name" styleClass="w-full" />
+                <label for="type">Type</label>
+            </p-iftalabel>
+
+            <p-iftalabel class="w-full mb-2">
+                <p-select [(ngModel)]="media().src_type" inputId="src_type" [options]="selectableSrcTypes" optionValue="code" optionLabel="name" styleClass="w-full" [disabled]="media().src != ''" />
+                <label for="src_type">Storage</label>
+            </p-iftalabel>
+
+            <p-iftalabel class="w-full mb-2" *ngIf="media().src_type == 0">
+                <input pInputText id="src" [(ngModel)]="media().src" autocomplete="off" class="w-full" />
+                <label for="src">URL</label>
+            </p-iftalabel>
+
+            <div class="w-full flex justify-start mb-2" *ngIf="media().src_type == 1">
+                <p-fileupload mode="basic" chooseLabel="Upload" chooseIcon="pi pi-upload" maxFileSize="104857600" (onSelect)="mediaFileSelected($event)" />
+            </div>
+
+            <div class="w-full mb-2" *ngIf="media().src_type == 1 && media().src != ''">
+                Current: {{ media().src.split(';')[0] }}
+            </div>
+
+            <div class="w-full flex justify-between">
+                <p-button label="Delete" severity="danger" (onClick)="deleteMedia()" />
+                <p-button label="Save" (onClick)="saveMedia()" />
+            </div>
+        </div>
+    </ng-template>
+</p-dialog>

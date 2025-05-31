@@ -1,0 +1,19 @@
+<p-dialog [modal]="true" appendTo="body" [(visible)]="isVisible" [dismissableMask]="true" (onHide)="closeDialog()">
+    <ng-template #headless>
+        <div class="max-w-52% p-2 pt-1">
+            <div class="w-fill flex flex-row justify-between items-start gap-5 mb-2">
+                <div>&nbsp;</div>
+                <div class="text-2xl">Media Manager</div>
+                <i class="pi pi-times !text-1xl hover:cursor-pointer hover:text-danger" (click)="closeDialog()"></i>
+            </div>
+            <div class="flex flex-wrap max-h-35% overflow-x-hidden overflow-y-scroll gap-2">
+                @for (media of medias().values(); track media.id) {
+                <element-media [media]="media" [users]="users()" [currentUser]="currentUser()"></element-media>
+                }
+                <div class="w-10% bg-add-card rounded-xl shadow-md flex items-center justify-center p-5">
+                    <i class="pi pi-plus-circle !text-3xl hover:cursor-pointer hover:text-highlight" (click)="createMedia()"></i>
+                </div>
+            </div>
+        </div>
+    </ng-template>
+</p-dialog>
