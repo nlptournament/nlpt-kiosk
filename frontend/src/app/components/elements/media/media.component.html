@@ -1,4 +1,4 @@
-<div class="p-4 pt-1 pb-1 w-10% bg-screen-card rounded-xl shadow-md flex flex-col items-center text-center text-1xl">
+<div class="p-4 pt-1 pb-1 w-10% bg-screen-card rounded-xl shadow-md flex flex-col items-center text-center text-1xl" *ngIf="!editMode()">
     <div class="flex flex-row w-10% justify-between pr-2 pl-2 mb-1">
         <div class="flex flex-row gap-1">
             <i class="pi pi-circle-off !text-1xl" pTooltip="only visible to owner" showDelay="300" tooltipPosition="right" *ngIf="!media().common"></i>
@@ -26,12 +26,12 @@
         <div>{{ mediaSrcType[media().src_type] }}</div>
     </div>
 
-    <div class="flex flex-row" *ngIf="media().src_type != 1">
+    <div class="flex flex-row leading-4 mt-2" *ngIf="media().src_type != 1">
         <div>{{ media().src }}</div>
     </div>
 
-    <div class="flex flex-col" *ngIf="media().src_type == 1 && media().src && media().src != ''">
-        <div *ngFor="let line of media().src.split(';')">{{ line }}</div>
+    <div class="flex flex-col leading-4 mt-2" *ngIf="media().src_type == 1 && media().src && media().src != ''">
+        <div class="mt-1" *ngFor="let line of media().src.split(';')">{{ line }}</div>
     </div>
 </div>
 

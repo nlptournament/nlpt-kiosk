@@ -20,8 +20,17 @@ export class MediaPanelComponent {
     isActive = model.required<boolean>();
 
     isVisible: boolean = true;
+    createMediaActive: boolean = false;
+    createMediaDummy: Media = <Media>{};
 
-    createMedia() {}
+    createMedia() {
+        this.createMediaDummy = <Media>{user_id: this.currentUser().id, common: true, src_type: 1, type: 0, src: '', desc: ''};
+        this.createMediaActive = true;
+    }
+
+    createdMedia(event: string|null|undefined) {
+        this.createMediaActive = false;
+    }
 
     closeDialog() {
         this.isActive.set(false);

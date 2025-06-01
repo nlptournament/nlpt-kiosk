@@ -1,4 +1,4 @@
-import { Component, input, OnInit, output } from '@angular/core';
+import { booleanAttribute, Component, input, OnInit, output } from '@angular/core';
 
 import { Media, MediaSrcType, MediaType } from '../../../interfaces/media';
 import { User } from '../../../interfaces/user';
@@ -42,6 +42,7 @@ export class MediaComponent implements OnInit {
     users = input.required<Map<string, User>>();
     currentUser = input.required<User>();
     editResult = output<string|null|undefined>();
+    editMode = input(false, {transform: booleanAttribute});
 
     mediaSrcType = MediaSrcType;
     mediaType = MediaType;
@@ -62,6 +63,7 @@ export class MediaComponent implements OnInit {
         this.selectableCommons.push(<selectableCommon>{code: false, 'name': 'just4owner'});
         this.createSelectableUsers();
         this.createSelectableTypes();
+        this.editActive = this.editMode();
     }
 
     createSelectableTypes() {
@@ -118,8 +120,8 @@ export class MediaComponent implements OnInit {
                 this.mediaService
                     .createMedia(this.media())
                     .subscribe({
-                        next: (result: Media) => {
-                            this.media().id = result.id;
+                        next: (result: any) => {
+                            this.media().id = result.created;
                             this.uploadMediaFile();
                         }
                     });
@@ -142,6 +144,13 @@ export class MediaComponent implements OnInit {
         else this.editClose();
     }
 
-    deleteMedia() {}
+    deleteMedia() {
+        if (this.media().id)
+            this.mediaService
+                .deleteMedia(this.media().id)
+                .subscribe((result: any) => {
+                    this.editClose();
+                });
+    }
 
 }

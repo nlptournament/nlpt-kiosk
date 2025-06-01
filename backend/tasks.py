@@ -31,7 +31,7 @@ def generate_testdata(c):
     Kiosk({'name': 'testkiosk2'}).save()
 
     s = Setting.get('s3_host')
-    s['value'] = 'loclahost'
+    s['value'] = 'localhost'
     s.save()
 
     m = Media({'desc': 'testfile', 'src_type': 1, 'type': 0, 'user_id': admin_user_id})
