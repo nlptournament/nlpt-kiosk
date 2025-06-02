@@ -59,7 +59,7 @@ export class AdminScreenComponent implements OnInit, OnDestroy {
     panelScreensActive: boolean = false;
     panelTimelineTemplatesActive: boolean = false;
     panelPresetsActive: boolean = false;
-    panelMediaActive: boolean = true;
+    panelMediaActive: boolean = false;
     panelUsersActive: boolean = false;
     updatePwActive: boolean = false;
     timelinesChanged: boolean = false;
@@ -204,18 +204,18 @@ export class AdminScreenComponent implements OnInit, OnDestroy {
                 }
             },
             {
+                label: 'Manage Media',
+                icon: 'pi pi-images',
+                command: () => {
+                    this.panelMediaActive = true;
+                }
+            },
+            {
                 label: 'Manage Presets',
                 icon: 'pi pi-list',
                 disabled: this.presets.size == 0,
                 command: () => {
                     this.panelPresetsActive = true;
-                }
-            },
-            {
-                label: 'Manage Media',
-                icon: 'pi pi-list',
-                command: () => {
-                    this.panelMediaActive = true;
                 }
             },
             {

@@ -3,7 +3,26 @@ from noapi import ElementBase
 
 class Media(ElementBase):
     """
-Do some description
+Media objects are a container for providing images, animations oder videos so Screens, that can handle them
+
+desc : str
+    some useful description
+src_type : int (default: 0)
+    defines where the media-file is stored, needs to be one of:
+        0: generic web URL
+        1: internal S3 storage
+src : str
+    in case of src_type == 0 this field stores the web-URL of media-file
+    in case of src_type == 1 this field contains some meta-information about media-file (should not be modified by User)
+type : int (default: 0)
+    defines the class of Media, needs to be one of:
+        0: static image
+        1: animated image
+        2: video
+user_id : str | None
+    creator/owner of Media, gets None if the corresponding User is deleted
+common : bool (default: True)
+    if True Media is available to all Users, if False only available to owner and admins
     """
     _attrdef = dict(
         desc=ElementBase.addAttr(type=str, default='', notnone=True),
