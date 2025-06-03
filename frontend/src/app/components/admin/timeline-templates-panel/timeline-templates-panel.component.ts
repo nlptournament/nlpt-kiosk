@@ -4,6 +4,7 @@ import { TimelineTemplate } from '../../../interfaces/timeline-template';
 import { ScreenTemplate } from '../../../interfaces/screen-template';
 import { User } from '../../../interfaces/user';
 import { Screen } from '../../../interfaces/screen';
+import { Media } from '../../../interfaces/media';
 
 import { CommonModule } from '@angular/common';
 import { TimelineTemplateComponent } from '../../elements/timeline-template/timeline-template.component';
@@ -19,6 +20,7 @@ export class TimelineTemplatesPanelComponent {
     timelineTemplates = input.required<Map<string, TimelineTemplate>>();
     screens = input.required<Map<string, Screen>>();
     screenTemplates = input.required<Map<string, ScreenTemplate>>();
+    medias = input.required<Map<string, Media>>();
     users = input.required<Map<string, User>>();
     currentUser = input.required<User>();
     isActive = model.required<boolean>();

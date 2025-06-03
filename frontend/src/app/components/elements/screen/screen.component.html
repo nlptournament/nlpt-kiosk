@@ -30,10 +30,11 @@
 
     <div class="flex flex-col" *ngIf="(overrideDetails || showDetails()) && variables.size > 0">
         <div class="flex flex-row gap-1" *ngFor="let v of variables | keyvalue">
-            <i class="pi pi-sliders-h !text-1xl"></i>
+            <i class="pi pi-sliders-h !text-1xl" pTooltip="{{ v.value.desc }}" tooltipPosition="left" showDelay="10"></i>
             <div>{{ v.key }}</div>
             <div *ngIf="v.value.type == 'ts'">{{ v.value.val | date:'dd.MM.yy HH:mm:ss' }}</div>
-            <div *ngIf="v.value.type != 'ts'">{{ v.value.type == 'str' && v.value.val == '' ? '---' : v.value.val }}</div>
+            <div *ngIf="v.value.type.startsWith('media')">{{ medias().get(v.value.val)!.desc }}</div>
+            <div *ngIf="v.value.type != 'ts' && !v.value.type.startsWith('media')">{{ v.value.type == 'str' && v.value.val == '' ? '---' : v.value.val }}</div>
         </div>
     </div>
 
@@ -84,11 +85,12 @@
     </p-iftalabel>
 
     <p-iftalabel class="w-full mb-2" *ngFor="let v of variables | keyvalue">
-        <input pInputText id="{{v.key}}" [(ngModel)]="v.value.val" autocomplete="off" *ngIf="v.value.type == 'str'" />
-        <p-inputnumber [(ngModel)]="v.value.val" inputId="{{v.key}}" mode="decimal" locale="de-DE" *ngIf="v.value.type == 'int'" />
-        <p-datepicker [(ngModel)]="v.value.val" inputId="{{v.key}}" dateFormat="dd.mm.yy" [showTime]="true" [showSeconds]="true" *ngIf="v.value.type == 'ts'" />
-        <p-inputnumber [(ngModel)]="v.value.val" inputId="{{v.key}}" mode="decimal" [minFractionDigits]="2" [maxFractionDigits]="5" locale="de-DE" *ngIf="v.value.type == 'float'" />
-        <p-toggleswitch [(ngModel)]="v.value.val" inputId="{{v.key}}" *ngIf="v.value.type == 'bool'" />
+        <input pInputText id="{{v.key}}" [(ngModel)]="v.value.val" autocomplete="off" pTooltip="{{ v.value.desc }}" tooltipPosition="left" showDelay="10" *ngIf="v.value.type == 'str'" />
+        <p-inputnumber [(ngModel)]="v.value.val" inputId="{{v.key}}" mode="decimal" locale="de-DE" pTooltip="{{ v.value.desc }}" tooltipPosition="left" showDelay="10" *ngIf="v.value.type == 'int'" />
+        <p-datepicker [(ngModel)]="v.value.val" inputId="{{v.key}}" dateFormat="dd.mm.yy" [showTime]="true" [showSeconds]="true" pTooltip="{{ v.value.desc }}" tooltipPosition="left" showDelay="10" *ngIf="v.value.type == 'ts'" />
+        <p-inputnumber [(ngModel)]="v.value.val" inputId="{{v.key}}" mode="decimal" [minFractionDigits]="2" [maxFractionDigits]="5" locale="de-DE" pTooltip="{{ v.value.desc }}" tooltipPosition="left" showDelay="10" *ngIf="v.value.type == 'float'" />
+        <p-toggleswitch [(ngModel)]="v.value.val" inputId="{{v.key}}" pTooltip="{{ v.value.desc }}" tooltipPosition="left" showDelay="10" *ngIf="v.value.type == 'bool'" />
+        <p-select [(ngModel)]="v.value.val" inputId="{{v.key}}" [options]="selectableMedias.get(v.key)" optionValue="code" optionLabel="name" styleClass="w-full" pTooltip="{{ v.value.desc }}" tooltipPosition="left" showDelay="10" *ngIf="v.value.type.startsWith('media')" />
         <label for="{{v.key}}">{{v.key}}</label>
     </p-iftalabel>
 
@@ -101,6 +103,6 @@
 <!-- EDIT MODAL -->
 <p-dialog [modal]="true" appendTo="body" [(visible)]="editActive">
     <ng-template #headless>
-        <element-screen [screen]="screen()" [screenTemplates]="screenTemplates()" [users]="users()" [currentUser]="currentUser()" [editMode]="true" (editResult)="editClosed($event)" *ngIf="editActive"></element-screen>
+        <element-screen [screen]="screen()" [screenTemplates]="screenTemplates()" [medias]="medias()" [users]="users()" [currentUser]="currentUser()" [editMode]="true" (editResult)="editClosed($event)" *ngIf="editActive"></element-screen>
     </ng-template>
 </p-dialog>

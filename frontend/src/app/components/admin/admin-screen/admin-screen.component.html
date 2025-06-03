@@ -1,18 +1,18 @@
 <p-menubar class="!text-1xl" [model]="menuItems"></p-menubar>
 <div class="flex flex-wrap p-2 gap-2">
     @for (kiosk of kiosks.values(); track kiosk.id) {
-    <element-kiosk [kiosk]="kiosk" [users]="users" [currentUser]="currentUser" [timelineTemplates]="timelineTemplates" [timelines]="timelines" [screens]="screens" [screenTemplates]="screenTemplates" [timelinesChanged]="timelinesChanged" (timelineSelection)="timelinesSelected($event)"></element-kiosk>
+    <element-kiosk [kiosk]="kiosk" [users]="users" [currentUser]="currentUser" [timelineTemplates]="timelineTemplates" [timelines]="timelines" [medias]="medias" [screens]="screens" [screenTemplates]="screenTemplates" [timelinesChanged]="timelinesChanged" (timelineSelection)="timelinesSelected($event)"></element-kiosk>
     }
 </div>
 
 <!-- SCREENS PANEL MODAL -->
-<panel-screens [screens]="screens" [screenTemplates]="screenTemplates" [users]="users" [currentUser]="currentUser" [(isActive)]="panelScreensActive" *ngIf="panelScreensActive"></panel-screens>
+<panel-screens [screens]="screens" [screenTemplates]="screenTemplates" [medias]="medias" [users]="users" [currentUser]="currentUser" [(isActive)]="panelScreensActive" *ngIf="panelScreensActive"></panel-screens>
 
 <!-- TIMELINETEMPLATES PANEL MODAL -->
-<panel-timeline-templates [timelineTemplates]="timelineTemplates" [screens]="screens" [screenTemplates]="screenTemplates" [users]="users" [currentUser]="currentUser" [(isActive)]="panelTimelineTemplatesActive" *ngIf="panelTimelineTemplatesActive"></panel-timeline-templates>
+<panel-timeline-templates [timelineTemplates]="timelineTemplates" [screens]="screens" [screenTemplates]="screenTemplates" [medias]="medias" [users]="users" [currentUser]="currentUser" [(isActive)]="panelTimelineTemplatesActive" *ngIf="panelTimelineTemplatesActive"></panel-timeline-templates>
 
 <!-- PRESETS PANEL MODAL -->
-<panel-presets [presets]="presets" [kiosks]="kiosks" [screens]="screens" [screenTemplates]="screenTemplates" [users]="users" [currentUser]="currentUser" [timelineTemplates]="timelineTemplates" [(isActive)]="panelPresetsActive" *ngIf="panelPresetsActive"></panel-presets>
+<panel-presets [presets]="presets" [kiosks]="kiosks" [screens]="screens" [screenTemplates]="screenTemplates" [medias]="medias" [users]="users" [currentUser]="currentUser" [timelineTemplates]="timelineTemplates" [(isActive)]="panelPresetsActive" *ngIf="panelPresetsActive"></panel-presets>
 
 <!-- MEDIA PANEL MODAL -->
 <panel-media [medias]="medias" [users]="users" [currentUser]="currentUser" [(isActive)]="panelMediaActive" *ngIf="panelMediaActive"></panel-media>

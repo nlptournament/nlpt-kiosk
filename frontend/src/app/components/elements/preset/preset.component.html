@@ -35,7 +35,7 @@
                     <ng-container *ngIf="kiosks().get(kiosk_id)!.desc != ''">&nbsp;- {{ kiosks().get(kiosk_id)!.desc }}</ng-container>
                 </div>
                 @for (timeline of relevantTimelines.get(kiosk_id); track timeline.id) {
-                <element-timeline [timeline]="timeline" [screens]="screens()" [screenTemplates]="screenTemplates()" [users]="users()" [currentUser]="currentUser()" [timelineTemplates]="timelineTemplates()" [roMode]="true"></element-timeline>
+                <element-timeline [timeline]="timeline" [screens]="screens()" [screenTemplates]="screenTemplates()" [users]="users()" [currentUser]="currentUser()" [medias]="medias()" [timelineTemplates]="timelineTemplates()" [roMode]="true"></element-timeline>
                 }
             </div>
             }

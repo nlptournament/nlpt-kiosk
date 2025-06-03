@@ -7,6 +7,7 @@ import { ScreenTemplate } from '../../../interfaces/screen-template';
 import { User } from '../../../interfaces/user';
 import { Screen } from '../../../interfaces/screen';
 import { TimelineTemplate } from '../../../interfaces/timeline-template';
+import { Media } from '../../../interfaces/media';
 
 import { TimelineComponent } from '../timeline/timeline.component';
 
@@ -44,6 +45,7 @@ export class PresetComponent implements OnInit {
     timelines = input.required<Map<string, Timeline>>();
     screens = input.required<Map<string, Screen>>();
     screenTemplates = input.required<Map<string, ScreenTemplate>>();
+    medias = input.required<Map<string, Media>>();
     users = input.required<Map<string, User>>();
     currentUser = input.required<User>();
     timelineTemplates = input.required<Map<string, TimelineTemplate>>();

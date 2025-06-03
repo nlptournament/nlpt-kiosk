@@ -1,7 +1,12 @@
 import { booleanAttribute, Component, input, OnChanges, OnInit, output, SimpleChanges } from '@angular/core';
+
+import { ScreenService } from '../../../services/screen.service';
+
 import { Screen } from '../../../interfaces/screen';
 import { ScreenTemplate } from '../../../interfaces/screen-template';
 import { User } from '../../../interfaces/user';
+import { Media } from '../../../interfaces/media';
+
 import { CommonModule } from '@angular/common';
 import { Dialog } from 'primeng/dialog';
 import { FormsModule } from '@angular/forms';
@@ -14,7 +19,6 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { SelectButtonModule } from 'primeng/selectbutton';
 import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { DatePickerModule } from 'primeng/datepicker';
-import { ScreenService } from '../../../services/screen.service';
 
 interface variableDef {
     val: any;
@@ -38,6 +42,11 @@ interface selectableUser {
     name: string;
 }
 
+interface selectableMedia {
+    code: string;
+    name: string;
+}
+
 @Component({
   selector: 'element-screen',
   imports: [CommonModule, Dialog, FormsModule, InputTextModule, IftaLabelModule, ButtonModule, SelectModule, TooltipModule, InputNumberModule, SelectButtonModule, ToggleSwitchModule, DatePickerModule],
@@ -49,6 +58,7 @@ export class ScreenComponent implements OnInit, OnChanges {
     screenTemplates = input.required<Map<string, ScreenTemplate>>();
     users = input.required<Map<string, User>>();
     currentUser = input.required<User>();
+    medias = input.required<Map<string, Media>>();
     showDetails = input(false, {transform: booleanAttribute});
     editMode = input(false, {transform: booleanAttribute});
     roMode = input(false, {transform: booleanAttribute});
@@ -60,6 +70,7 @@ export class ScreenComponent implements OnInit, OnChanges {
     selectableTemplates: selectableTemplate[] = [];
     selectableLoops: selectableLoop[] = [];
     selectableUsers: selectableUser[] = [];
+    selectableMedias: Map<string, selectableMedia[]> = new Map<string, selectableMedia[]>;
 
     constructor(
         private screenService: ScreenService
@@ -84,6 +95,7 @@ export class ScreenComponent implements OnInit, OnChanges {
     extractVariables() {
         if (this.screen().variables && this.screen().template_id && this.screenTemplates().has(this.screen().template_id!)) {
             let v: Map<string, variableDef> = new Map<string, variableDef>;
+            let sm: Map<string, selectableMedia[]> = new Map<string, selectableMedia[]>;
             let st: ScreenTemplate = this.screenTemplates().get(this.screen().template_id!)!;
             for (let key of Object.keys(st.variables_def)) {
                 if (Object.keys(st.variables_def[key]).includes('ro') && st.variables_def[key]['ro'] == true) continue;  // skip ro variables
@@ -96,10 +108,20 @@ export class ScreenComponent implements OnInit, OnChanges {
                     if (o.val && Number(o.val)) o.val = new Date(Number(o.val) * 1000);
                     else o.val = new Date(Date.now());
                 }
+                if (o.type.startsWith('media')) {
+                    let sml: selectableMedia[] = [];
+                    let media_types: number[] = [];
+                    for (let mts of o.type.replace('media', '')) media_types.push(parseInt(mts));
+                    if (media_types.length == 0) media_types = [0, 1, 2];
+                    for (let media of this.medias().values()) {
+                        if (media_types.includes(media.type)) sml.push(<selectableMedia>{code: media.id, name: media.desc})
+                    }
+                    sm.set(key, sml);
+                }
                 v.set(key, o);
             }
-            Object.keys
             this.variables = v;
+            this.selectableMedias = sm;
         }
     }
 

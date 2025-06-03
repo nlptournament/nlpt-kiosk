@@ -6,6 +6,7 @@ import { ScreenTemplate } from '../../../interfaces/screen-template';
 import { User } from '../../../interfaces/user';
 import { Screen } from '../../../interfaces/screen';
 import { TimelineTemplate } from '../../../interfaces/timeline-template';
+import { Media } from '../../../interfaces/media';
 
 import { PresetComponent } from '../../elements/preset/preset.component';
 
@@ -25,6 +26,7 @@ export class PresetsPanelComponent implements OnInit {
     kiosks = input.required<Map<string, Kiosk>>();
     screens = input.required<Map<string, Screen>>();
     screenTemplates = input.required<Map<string, ScreenTemplate>>();
+    medias = input.required<Map<string, Media>>();
     users = input.required<Map<string, User>>();
     currentUser = input.required<User>();
     timelineTemplates = input.required<Map<string, TimelineTemplate>>();

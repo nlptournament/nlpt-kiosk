@@ -5,6 +5,7 @@ import { User } from '../../../interfaces/user';
 import { Screen } from '../../../interfaces/screen';
 import { ScreenComponent } from '../screen/screen.component';
 import { TimelineTemplate } from '../../../interfaces/timeline-template';
+import { Media } from '../../../interfaces/media';
 import { CommonModule } from '@angular/common';
 import { SliderModule } from 'primeng/slider';
 import { FormsModule } from '@angular/forms';
@@ -21,6 +22,7 @@ export class TimelineComponent {
     timeline = input.required<Timeline>();
     screens = input.required<Map<string, Screen>>();
     screenTemplates = input.required<Map<string, ScreenTemplate>>();
+    medias = input.required<Map<string, Media>>();
     users = input.required<Map<string, User>>();
     currentUser = input.required<User>();
     timelineTemplates = input.required<Map<string, TimelineTemplate>>();

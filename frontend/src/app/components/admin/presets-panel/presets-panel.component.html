@@ -8,7 +8,7 @@
             </div>
             <div class="flex flex-col max-w-80% max-h-35% overflow-scroll gap-2">
                 @for (preset of presets().values(); track preset.id) {
-                    <element-preset [preset]="preset" [kiosks]="kiosks()" [timelines]="timelines" [screens]="screens()" [screenTemplates]="screenTemplates()" [users]="users()" [currentUser]="currentUser()" [timelineTemplates]="timelineTemplates()"></element-preset>
+                    <element-preset [preset]="preset" [kiosks]="kiosks()" [timelines]="timelines" [screens]="screens()" [screenTemplates]="screenTemplates()" [medias]="medias()" [users]="users()" [currentUser]="currentUser()" [timelineTemplates]="timelineTemplates()"></element-preset>
                 }
             </div>
         </div>

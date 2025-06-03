@@ -42,7 +42,12 @@ variables_def : dict
         'int': int,
         'ts': int,
         'float': float,
-        'bool': bool
+        'bool': bool,
+        'media': str,    # any type of Media
+        'media0': str,   # Media of type 0
+        'media1': str,   # Media of type 1
+        'media2': str,   # Media of type 2
+        'media01': str   # Media of type 0 or 1
     }
 
     def validate(self):

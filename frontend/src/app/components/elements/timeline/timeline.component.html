@@ -19,7 +19,7 @@
     </div>
     <div class="flex flex-row gap-2">
         @for (sid of timeline().screen_ids; track sid) {
-        <element-screen [screen]="screens().get(sid)!" [screenTemplates]="screenTemplates()" [users]="users()" [currentUser]="currentUser()" [roMode]="true"></element-screen>
+        <element-screen [screen]="screens().get(sid)!" [screenTemplates]="screenTemplates()" [medias]="medias()" [users]="users()" [currentUser]="currentUser()" [roMode]="true"></element-screen>
         }
     </div>
     <p-slider class="w-full mt-2 mb-1 pl-1 pr-1" pTooltip="start position" showDelay="300" tooltipPosition="bottom" [(ngModel)]="timeline().start_pos" [disabled]="!editActive" [min]="0" [max]="timeline().screen_ids.length" *ngIf="!timeline().locked" />

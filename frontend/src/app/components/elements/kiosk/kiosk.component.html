@@ -37,7 +37,7 @@
     </div>
 
     <div class="flex flex-col gap-1">
-        <element-timeline class="w-fit border border-highlight rounded-xl" [timeline]="timelines().get(kiosk().timeline_id!)!" [screens]="screens()" [screenTemplates]="screenTemplates()" [users]="users()" [currentUser]="currentUser()" [timelineTemplates]="timelineTemplates()" *ngIf="kiosk().timeline_id"></element-timeline>
+        <element-timeline class="w-fit border border-highlight rounded-xl" [timeline]="timelines().get(kiosk().timeline_id!)!" [screens]="screens()" [screenTemplates]="screenTemplates()" [medias]="medias()" [users]="users()" [currentUser]="currentUser()" [timelineTemplates]="timelineTemplates()" *ngIf="kiosk().timeline_id"></element-timeline>
         <div class="w-fill h-20 border border-highlight bg-timeline-card rounded-xl shadow-md flex items-center justify-center text-2xl p-3" *ngIf="!kiosk().timeline_id">No Timeline is displayed</div>
         <div class="flex flex-col bg-screen-card rounded-xl shadow-md p-2 pt-0 pb-0">
             <div class="flex flex-row justify-end" *ngIf="timelinesExpanded">
@@ -61,7 +61,7 @@
                             <i class="pi pi-list-check !text-2xl hover:cursor-pointer text-highlight" pTooltip="unselect from Preset creation" showDelay="300" tooltipPosition="right" (click)="selectTimeline(timeline.id)" *ngIf="presetTimelines.includes(timeline.id!)"></i>
                         </div>
                     </div>
-                    <element-timeline [timeline]="timeline" [screens]="screens()" [screenTemplates]="screenTemplates()" [users]="users()" [currentUser]="currentUser()" [timelineTemplates]="timelineTemplates()"></element-timeline>
+                    <element-timeline [timeline]="timeline" [screens]="screens()" [screenTemplates]="screenTemplates()" [users]="users()" [currentUser]="currentUser()" [medias]="medias()" [timelineTemplates]="timelineTemplates()"></element-timeline>
                 </div>
                 }
                 <div class="w-fill h-20 bg-add-card rounded-xl shadow-md flex items-center justify-center mb-2">

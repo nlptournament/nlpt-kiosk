@@ -8,7 +8,7 @@
             </div>
             <div class="flex flex-col max-w-80% max-h-35% overflow-scroll gap-2">
                 @for (tt of timelineTemplates().values(); track tt.id) {
-                    <element-timeline-template [timelineTemplate]="tt" [screens]="screens()" [screenTemplates]="screenTemplates()" [users]="users()" [currentUser]="currentUser()"></element-timeline-template>
+                    <element-timeline-template [timelineTemplate]="tt" [screens]="screens()" [screenTemplates]="screenTemplates()" [medias]="medias()" [users]="users()" [currentUser]="currentUser()"></element-timeline-template>
                 }
                 <div class="w-fill h-28 bg-add-card rounded-xl shadow-md flex items-center justify-center">
                     <i class="pi pi-plus-circle !text-3xl hover:cursor-pointer hover:text-highlight" (click)="createTt()"></i>
@@ -21,6 +21,6 @@
 <!-- CREATE TIMELINETEMPLATE MODAL -->
 <p-dialog [modal]="true" appendTo="body" [(visible)]="createTtActive">
     <ng-template #headless>
-        <element-timeline-template [timelineTemplate]="createTtDummy" [screens]="screens()" [screenTemplates]="screenTemplates()" [users]="users()" [currentUser]="currentUser()" [editMode]="true" (editResult)="ttCreated($event)" *ngIf="createTtActive"></element-timeline-template>
+        <element-timeline-template [timelineTemplate]="createTtDummy" [screens]="screens()" [screenTemplates]="screenTemplates()" [medias]="medias()" [users]="users()" [currentUser]="currentUser()" [editMode]="true" (editResult)="ttCreated($event)" *ngIf="createTtActive"></element-timeline-template>
     </ng-template>
 </p-dialog>

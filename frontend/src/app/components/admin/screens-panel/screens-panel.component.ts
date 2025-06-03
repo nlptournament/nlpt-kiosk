@@ -3,6 +3,7 @@ import { Component, input, model } from '@angular/core';
 import { ScreenTemplate } from '../../../interfaces/screen-template';
 import { User } from '../../../interfaces/user';
 import { Screen } from '../../../interfaces/screen';
+import { Media } from '../../../interfaces/media';
 
 import { CommonModule } from '@angular/common';
 import { ScreenComponent } from '../../elements/screen/screen.component';
@@ -19,6 +20,7 @@ export class ScreensPanelComponent {
     screenTemplates = input.required<Map<string, ScreenTemplate>>();
     users = input.required<Map<string, User>>();
     currentUser = input.required<User>();
+    medias = input.required<Map<string, Media>>();
     isActive = model.required<boolean>();
 
     isVisible: boolean = true;

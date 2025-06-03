@@ -208,3 +208,15 @@ def system_screentemplates():
             'key': 'logo-starfield', 'name': 'Starfield Logo',
             'desc': 'NLPT logo with animated starfield around',
             'endless': True, 'duration': None, 'variables_def': vardef}).save()
+    # Background Image
+    if ScreenTemplate.count({'name': 'Background Image'}) == 0:
+        vardef = dict({
+            'image': {'type': 'media01', 'desc': 'Media element to be displayed in background, needs to be of type 0 or 1'},
+            'text_above': {'type': 'str', 'default': '', 'desc': 'upper line of text'},
+            'text_below': {'type': 'str', 'default': '', 'desc': 'lower line of text'},
+            'text_space': {'type': 'int', 'default': 0, 'desc': 'space between the two lines of text'}
+        })
+        ScreenTemplate({
+            'key': 'background-image', 'name': 'Background Image',
+            'desc': 'Image Media displayed in background, with the option to display text on top',
+            'endless': True, 'duration': None, 'variables_def': vardef}).save()

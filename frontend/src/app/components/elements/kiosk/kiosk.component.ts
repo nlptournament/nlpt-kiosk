@@ -2,6 +2,7 @@ import { Component, effect, input, OnInit, output } from '@angular/core';
 import { User } from '../../../interfaces/user';
 import { Kiosk, KioskTlSelection } from '../../../interfaces/kiosk';
 import { TimelineTemplate } from '../../../interfaces/timeline-template';
+import { Media } from '../../../interfaces/media';
 import { CommonModule } from '@angular/common';
 import { KioskService } from '../../../services/kiosk.service';
 import { Dialog } from 'primeng/dialog';
@@ -50,6 +51,7 @@ export class KioskComponent implements OnInit {
     timelinesChanged = input<boolean>(false);
     screens = input.required<Map<string, Screen>>();
     screenTemplates = input.required<Map<string, ScreenTemplate>>();
+    medias = input.required<Map<string, Media>>();
     editResult = output<string|null|undefined>();
     timelineSelection = output<KioskTlSelection>();
 
