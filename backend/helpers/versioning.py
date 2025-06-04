@@ -214,6 +214,7 @@ def system_screentemplates():
             'image': {'type': 'media01', 'desc': 'Media element to be displayed in background, needs to be of type 0 or 1'},
             'text_above': {'type': 'str', 'default': '', 'desc': 'upper line of text'},
             'text_below': {'type': 'str', 'default': '', 'desc': 'lower line of text'},
+            'text_color': {'type': 'str', 'default': '', 'desc': '(html) color of the text lines, foreground color is used if not set'},
             'text_space': {'type': 'int', 'default': 0, 'desc': 'space between the two lines of text'}
         })
         ScreenTemplate({

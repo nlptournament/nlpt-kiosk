@@ -11,6 +11,7 @@
     <div class="mx-auto max-h-screen overflow-hidden w-fill flex flex-col h-screen items-center justify-center" *ngIf="screenDP.active">
         <screen-announcements [isActive]="screenDP.active" *ngIf="screenDP.screen.key == 'announcements'"></screen-announcements>
         <screen-logo-starfield [isActive]="screenDP.active" [variables]="screenDP.screen.variables" *ngIf="screenDP.screen.key == 'logo-starfield'"></screen-logo-starfield>
+        <screen-background-image [isActive]="screenDP.active" [variables]="screenDP.screen.variables" *ngIf="screenDP.screen.key == 'background-image'"></screen-background-image>
         <screen-player-counts [isActive]="screenDP.active" *ngIf="screenDP.screen.key == 'player-counts'"></screen-player-counts>
         <screen-tas [isActive]="screenDP.active" *ngIf="screenDP.screen.key == 'tas'"></screen-tas>
         <screen-timer [isActive]="screenDP.active" [variables]="screenDP.screen.variables" (finished)="loadNextScreen(true)" *ngIf="screenDP.screen.key == 'timer'"></screen-timer>

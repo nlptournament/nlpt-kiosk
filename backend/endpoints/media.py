@@ -5,7 +5,6 @@ import json
 from cherrypy.lib import file_generator
 from noapi import ElementEndpointBase
 from elements import Media, Session
-from helpers.s3 import media_upload, media_get, media_exists
 
 
 class MediaEndpoint(ElementEndpointBase):
@@ -64,6 +63,7 @@ class MediaEndpoint(ElementEndpointBase):
 
             size = 0
             with tempfile.TemporaryFile() as tmp_file:
+                from helpers.s3 import media_upload
                 while True:
                     data = upload.file.read(8192)
                     if not data:
@@ -81,6 +81,7 @@ class MediaEndpoint(ElementEndpointBase):
             return json.dumps({'uploaded': f"{element['src']} to {element['_id']}"}).encode('utf-8')
 
         elif cherrypy.request.method == 'GET':
+            from helpers.s3 import media_get, media_exists
             if not media_exists(element['_id']):
                 cherrypy.response.status = 404
                 return json.dumps({'error': 'file not found in storage'}).encode('utf-8')

@@ -1,0 +1,9 @@
+<div class="mx-auto h-screen w-screen overflow-hidden bg-no-repeat bg-center bg-contain flex flex-col items-center justify-center" style="background-image: url('{{ image_url }}');" *ngIf="isActive()">
+    <div class="text-text text-9xl" *ngIf="text_upper && !text_color">{{ text_upper }}</div>
+    <div class="text-9xl" style="color: {{ text_color }}" *ngIf="text_upper && text_color">{{ text_upper }}</div>
+
+    <div class="h-4 p-0 m-0" *ngFor="let line of text_spaceing"></div>
+
+    <div class="text-text text-9xl" *ngIf="text_lower && !text_color">{{ text_lower }}</div>
+    <div class="text-9xl" style="color: {{ text_color }}" *ngIf="text_lower && text_color">{{ text_lower }}</div>
+</div>

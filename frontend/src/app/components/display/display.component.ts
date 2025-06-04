@@ -8,6 +8,7 @@ import { Screen } from '../../interfaces/screen';
 import { KioskService } from '../../services/kiosk.service';
 import { TimelineService } from '../../services/timeline.service';
 import { ScreenService } from '../../services/screen.service';
+import { WebSocketService } from '../../services/web-socket.service';
 
 import { CommonModule } from '@angular/common';
 import { AnnouncementsComponent } from '../screens/announcements/announcements.component';
@@ -15,7 +16,7 @@ import { LogoStarfieldComponent } from '../screens/logo-starfield/logo-starfield
 import { PlayerCountsComponent } from '../screens/player-counts/player-counts.component';
 import { TasComponent } from '../screens/tas/tas.component';
 import { TimerComponent } from '../screens/timer/timer.component';
-import { WebSocketService } from '../../services/web-socket.service';
+import { BackgroundImageComponent } from '../screens/background-image/background-image.component';
 
 
 interface screenDP {
@@ -26,7 +27,7 @@ interface screenDP {
 
 @Component({
   selector: 'app-display',
-  imports: [CommonModule, AnnouncementsComponent, LogoStarfieldComponent, PlayerCountsComponent, TasComponent, TimerComponent],
+  imports: [CommonModule, AnnouncementsComponent, LogoStarfieldComponent, PlayerCountsComponent, TasComponent, TimerComponent, BackgroundImageComponent],
   templateUrl: './display.component.html',
   styleUrl: './display.component.scss'
 })

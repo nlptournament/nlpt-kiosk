@@ -57,9 +57,7 @@ timeline_id : str | None
         transmit_timeline_update(t)
         if 'old_timeline_id' in self._cache and self._cache['old_timeline_id'] is not None and not self._cache['old_timeline_id'] == self['timeline_id']:
             t = Timeline.get(self._cache['old_timeline_id'])
-            for s in [Screen.get(s) for s in t['screen_ids']]:
-                transmit_screen_update(s)
-            transmit_timeline_update(t)
+            t.save()
 
     def delete_pre(self):
         self['timeline_id'] = None
