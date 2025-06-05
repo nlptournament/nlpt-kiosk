@@ -17,6 +17,7 @@ import { PlayerCountsComponent } from '../screens/player-counts/player-counts.co
 import { TasComponent } from '../screens/tas/tas.component';
 import { TimerComponent } from '../screens/timer/timer.component';
 import { BackgroundImageComponent } from '../screens/background-image/background-image.component';
+import { VideoPlayerComponent } from '../screens/video-player/video-player.component';
 
 
 interface screenDP {
@@ -27,7 +28,7 @@ interface screenDP {
 
 @Component({
   selector: 'app-display',
-  imports: [CommonModule, AnnouncementsComponent, LogoStarfieldComponent, PlayerCountsComponent, TasComponent, TimerComponent, BackgroundImageComponent],
+  imports: [CommonModule, AnnouncementsComponent, LogoStarfieldComponent, PlayerCountsComponent, TasComponent, TimerComponent, BackgroundImageComponent, VideoPlayerComponent],
   templateUrl: './display.component.html',
   styleUrl: './display.component.scss'
 })

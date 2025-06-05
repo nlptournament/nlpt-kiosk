@@ -4,7 +4,7 @@
         <div class="flex flex-row gap-2">
             <div class="flex flex-row gap-1">
                 <i class="pi pi-clock !text-1xl"></i>
-                {{ screen().duration ? screen().duration + 's' : '?' }}
+                {{ screen().duration ? screen().duration + 's' : (screenTemplates().get(screen().template_id!)!.endless ? '&infin;' : '?') }}
             </div>
             <div class="flex flex-row gap-1">
                 <i class="pi pi-replay !text-1xl"></i>

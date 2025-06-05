@@ -221,3 +221,12 @@ def system_screentemplates():
             'key': 'background-image', 'name': 'Background Image',
             'desc': 'Image Media displayed in background, with the option to display text on top',
             'endless': True, 'duration': None, 'variables_def': vardef}).save()
+    # Video
+    if ScreenTemplate.count({'name': 'Video'}) == 0:
+        vardef = dict({
+            'video': {'type': 'media2', 'desc': 'Media element to be played'}
+        })
+        ScreenTemplate({
+            'key': 'video-player', 'name': 'Video',
+            'desc': 'Video is played fullscreen',
+            'endless': False, 'duration': None, 'variables_def': vardef}).save()
