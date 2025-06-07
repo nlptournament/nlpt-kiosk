@@ -6,7 +6,23 @@ Wie man einen RaspberryPi konfiguriert um ihn als Display für NLPT-Kiosk-Contro
 
 SD-Karte mit einem Raspberrypi-OS flashen (inkl Desktop, darf ruhig irgendwas leichtgewichtiges sein). PI booten und Netzwerk konfigurieren.
 
-WICHTIG!!! : Dran denken im Browser auto-play für videos zu erlauben
+## Chromium
+
+CORS deaktivieren: `--user-data-dir="/tmp/chrome-dev-data" --disable-web-security`
+
+auto-play für videos zu erlauben : `--autoplay-policy=no-user-gesture-required`
+
+Vollständiger Startbefehl zum testen:
+
+```
+chromium-browser http://localhost:4200/?name=testkiosk1 --no-first-run --autoplay-policy=no-user-gesture-required --user-data-dir="/tmp/chrome-dev-data" --disable-web-security
+```
+
+Prod Befehl:
+
+```
+chromium-browser http://localhost:4200/?name=testkiosk1 --kiosk --noerrdialogs --disable-infobars --no-first-run --enable-features=OverlayScrollbar --start-maximized --autoplay-policy=no-user-gesture-required --user-data-dir="/tmp/chrome-dev-data" --disable-web-security
+```
 
 ## NTP Server einrichten
 

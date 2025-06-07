@@ -16,5 +16,6 @@ export enum MediaSrcType {
 export enum MediaType {
     'static image',
     'animated image',
-    'video'
+    'video',
+    'stream'
 }

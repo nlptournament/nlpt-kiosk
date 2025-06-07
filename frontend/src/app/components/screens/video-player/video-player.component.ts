@@ -1,4 +1,4 @@
-import { Component, ElementRef, input, output, SimpleChanges, ViewChild } from '@angular/core';
+import { Component, input, output, SimpleChanges } from '@angular/core';
 
 import { CommonModule } from '@angular/common';
 import { MediaService } from '../../../services/media.service';
@@ -11,13 +11,11 @@ import { Media } from '../../../interfaces/media';
   styleUrl: './video-player.component.scss'
 })
 export class VideoPlayerComponent {
-    @ViewChild('video') videoElement: ElementRef | undefined;
-
     isActive = input.required<boolean>();
     variables = input.required<any>();
     finished = output<null>();
 
-    video_id: string = '';
+    media_id: string = '';
 
     constructor(
         private mediaService: MediaService
@@ -37,21 +35,21 @@ export class VideoPlayerComponent {
             .getMedia(this.variables()['video'])
             .subscribe({
                 next: (media: Media) => {
-                    var myVideo: any = document.getElementById("video");
-                    this.video_id = media.id;
+                    var myVideo: any = document.getElementById("player");
+                    this.media_id = media.id;
                     myVideo.src = this.mediaService.getMediaUrl(media);
                     myVideo.currentTime = 0;
                     this.startPlaying();
                 },
                 error: () => {
-                    this.video_id = '';
+                    this.media_id = '';
                 }
             });
     }
 
     startPlaying() {
-        if (this.isActive() && this.video_id != '') {
-            var myVideo: any = document.getElementById("video");
+        if (this.isActive() && this.media_id != '') {
+            var myVideo: any = document.getElementById("player");
             if (myVideo.paused) myVideo.play();
         }
     }

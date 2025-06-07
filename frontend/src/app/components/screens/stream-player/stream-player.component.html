@@ -1,5 +1,5 @@
 <div class="mx-auto h-screen w-screen overflow-hidden flex flex-col items-center justify-center" >
-    <video id="player" width="100%" preload="auto" (ended)="finished.emit(null)">
+    <video #player class="video-js" width="100%" preload="auto">
         Your browser does not support HTML video.
     </video>
 </div>

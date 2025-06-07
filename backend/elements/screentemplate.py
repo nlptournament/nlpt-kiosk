@@ -47,6 +47,7 @@ variables_def : dict
         'media0': str,   # Media of type 0
         'media1': str,   # Media of type 1
         'media2': str,   # Media of type 2
+        'media3': str,   # Media of type 3
         'media01': str   # Media of type 0 or 1
     }
 

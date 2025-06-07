@@ -230,3 +230,12 @@ def system_screentemplates():
             'key': 'video-player', 'name': 'Video',
             'desc': 'Video is played fullscreen',
             'endless': False, 'duration': None, 'variables_def': vardef}).save()
+    # Stream
+    if ScreenTemplate.count({'name': 'Stream'}) == 0:
+        vardef = dict({
+            'stream': {'type': 'media3', 'desc': 'Media element to be played'}
+        })
+        ScreenTemplate({
+            'key': 'stream-player', 'name': 'Stream',
+            'desc': 'Stream is played fullscreen',
+            'endless': True, 'duration': None, 'variables_def': vardef}).save()
