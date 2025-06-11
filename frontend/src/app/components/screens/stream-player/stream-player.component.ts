@@ -1,4 +1,4 @@
-import { Component, ElementRef, input, SimpleChanges, ViewChild } from '@angular/core';
+import { Component, ElementRef, input, OnChanges, OnDestroy, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 
 import { MediaService } from '../../../services/media.service';
 import { Media } from '../../../interfaces/media';
@@ -12,7 +12,7 @@ import Player from 'video.js/dist/types/player';
   templateUrl: './stream-player.component.html',
   styleUrl: './stream-player.component.scss'
 })
-export class StreamPlayerComponent {
+export class StreamPlayerComponent implements OnInit, OnChanges, OnDestroy {
     @ViewChild('player', {static: true}) playerElement: ElementRef | undefined;
     player: Player | undefined;
 
@@ -35,6 +35,10 @@ export class StreamPlayerComponent {
         if (Object.keys(changes).includes('isActive')) this.startPlaying();
     }
 
+    ngOnDestroy(): void {
+        if (this.player) this.player.dispose();
+    }
+
     extractVariables() {
         this.mediaService
             .getMedia(this.variables()['stream'])
@@ -43,7 +47,6 @@ export class StreamPlayerComponent {
                     this.media_id = media.id;
                     if (this.player) {
                         this.player.src({src: this.mediaService.getMediaUrl(media), type: "application/x-mpegURL"});
-                        this.player.currentTime(0);
                         this.startPlaying();
                     }
                 },
