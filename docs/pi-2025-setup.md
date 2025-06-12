@@ -4,7 +4,45 @@ Wie man einen RaspberryPi konfiguriert um ihn als Display für NLPT-Kiosk-Contro
 
 ## Grundkonfiguration
 
-SD-Karte mit einem Raspberrypi-OS flashen (inkl Desktop, darf ruhig irgendwas leichtgewichtiges sein). PI booten und Netzwerk konfigurieren.
+SD-Karte mit einem Raspberrypi-OS flashen (inkl Desktop, darf ruhig irgendwas leichtgewichtiges sein).  
+Pi booten und Netzwerk konfigurieren.
+
+```bash
+sudo apt update
+sudo apt -y install lightdm chromium-browser
+
+sudo raspi-config
+```
+
+Auto Login aktivieren: `System Options -> Boot / Auto Login -> Desktop Autologin`  
+In `Localisation Options`die Zeitzone und Tastatur setzen  
+Über `Interface Options` dann `VNC` den VNC-Server aktivieren
+
+> [!NOTE]
+> Es funktioniert nur RealVNC auf der Client-Seite, andere VNC-Viewer beschweren sich über die Rechte
+
+### Alternativ von Kommandozeile
+
+```bash
+sudo raspi-config nonint do_change_locale de_DE.UTF-8 UTF-8
+sudo raspi-config nonint do_change_timezone Europe/Berlin
+
+sudo raspi-config nonint do_vnc 0  # ja 0 aktiviert es, laut doku
+
+sudo raspi-config nonint do_boot_behaviour B4
+```
+
+## Autostart von Chromium
+
+`sudo nano .config/wayfire.ini`
+
+Um die folgenden Zeilen **ergänzen**
+
+```
+chromium = chromium-browser http://kiosk.nlpt.network/?name=bpi1 --kiosk --noerrdialogs --disable-infobars --no-first-run --ozone-platform=wayland --enable-features=OverlayScrollbar --start-maximized --autoplay-policy=no-user-gesture-required --user-data-dir="/tmp/chrome-kiosk-data" --disable-web-security
+screensaver = false
+dpms = false
+```
 
 ## Chromium
 
