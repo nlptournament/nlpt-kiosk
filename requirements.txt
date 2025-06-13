@@ -1,4 +1,5 @@
 -r backend/requirements.txt
+-r pisetup.txt
 bpython
 invoke
 pre-commit

@@ -1,0 +1,94 @@
+- name: Setup RaspberryPis to serve as a Kiosk
+  hosts: beamerpis
+  become: true
+
+  tasks:
+    - name: check wayland is enabled
+      ansible.builtin.command: raspi-config nonint is_wayfire
+      ignore_errors: true
+      register: wayland
+      changed_when: wayland.rc != 0
+
+    - name: enable wayland
+      ansible.builtin.command: raspi-config nonint do_wayland W2
+      when: wayland.rc != 0
+      notify: Reboot Pi
+
+
+    - name: check autologin is enabled
+      ansible.builtin.command: raspi-config nonint get_autologin
+      register: autologin
+      when: wayland.rc == 0
+      changed_when: autologin.rc != 0
+
+    - name: enable autologin to desktop
+      ansible.builtin.command: raspi-config nonint do_boot_behaviour B4
+      when: wayland.rc == 0 and autologin.stdout != "0"
+      notify: Reboot Pi
+
+
+    - name: check timezone
+      ansible.builtin.command: cat /etc/timezone
+      register: timezone
+      changed_when: timezone.rc != 0
+
+    - name: change timezone
+      ansible.builtin.command: raspi-config nonint do_change_timezone Europe/Berlin
+      when: timezone.stdout != "Europe/Berlin"
+      notify: Reboot Pi
+
+
+    - name: check vnc-vnc is enabled
+      ansible.builtin.command: raspi-config nonint get_vnc
+      register: vnc
+      when: wayland.rc == 0
+      changed_when: vnc.rc != 0
+
+    - name: enable vnc-server
+      ansible.builtin.command: raspi-config nonint do_vnc 0
+      when: wayland.rc == 0 and vnc.stdout != "0"
+
+
+    - name: hide-cursor plugin config
+      ansible.builtin.copy:
+        src: files/hide-cursor.xml
+        dest: /usr/share/wayfire/metadata/hide-cursor.xml
+        owner: root
+        group: root
+        mode: '0644'
+
+    - name: hide-cursor plugin binary
+      ansible.builtin.copy:
+        src: files/libhide-cursor.so
+        dest: /usr/lib/aarch64-linux-gnu/wayfire/libhide-cursor.so
+        owner: root
+        group: root
+        mode: '0755'
+
+
+    - name: copy ntp (client) configuration
+      template:
+        src: templates/timesyncd.conf.j2
+        dest: /etc/systemd/timesyncd.conf
+      when: timezone.stdout == "Europe/Berlin"
+      notify: Restart Timesynced
+
+
+    - name: copy wayfire configuration
+      template:
+        src: templates/wayfire.ini.j2
+        dest: /home/pi/.config/wayfire.ini
+        owner: pi
+        group: pi
+        mode: '0644'
+      notify: Reboot Pi
+
+  handlers:
+    - name: Restart Timesynced
+      service:
+        name: systemd-timesyncd
+        state: restarted
+
+    - name: Reboot Pi
+      ansible.builtin.reboot:
+        msg: "Rebooting machine do to Ansible run"
