@@ -3,7 +3,7 @@ import cherrypy_cors
 from noapi import docDB, ElementEndpointBase
 from noapi.endpoints import SettingEndpointBase, LoginEndpointBase, UserEndpointBase
 from elements import Setting, Session, User, ScreenTemplate, Screen
-from endpoints import TimelineTemplateEndpoint, PresetEndpoint, KioskEndpoint, TimelineEndpoint, MediaEndpoint
+from endpoints import TimelineTemplateEndpoint, PresetEndpoint, KioskEndpoint, TimelineEndpoint, MediaEndpoint, AnnouncementsEndpoint
 from helpers.versioning import run as versioning_run
 from helpers.wss import start_server as start_wss_server
 
@@ -20,6 +20,7 @@ class API():
         self.kiosk = KioskEndpoint()
         self.preset = PresetEndpoint()
         self.media = MediaEndpoint()
+        self.announcements = AnnouncementsEndpoint()
 
 
 class SettingEndpoint(SettingEndpointBase):

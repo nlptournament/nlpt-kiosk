@@ -1,4 +1,4 @@
-from noapi import ElementBase
+from noapi import ElementBase, docDB
 
 
 class Media(ElementBase):
@@ -33,6 +33,14 @@ common : bool (default: True)
         user_id=ElementBase.addAttr(type=str, default=None, fk='User'),
         common=ElementBase.addAttr(type=bool, default=True, notnone=True)
     )
+
+    @classmethod
+    def get_by_filename(cls, name):
+        result = cls()
+        fromdb = docDB.search_one(cls.__name__, {'src_type': 1, 'src': {'$regex': f'^{name}'}})
+        if fromdb is not None:
+            result._attr = fromdb
+        return result
 
     def validate(self):
         errors = dict()
