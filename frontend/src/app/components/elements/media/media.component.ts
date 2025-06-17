@@ -1,4 +1,4 @@
-import { booleanAttribute, Component, input, OnInit, output } from '@angular/core';
+import { booleanAttribute, Component, input, OnChanges, OnInit, output, SimpleChanges } from '@angular/core';
 
 import { Media, MediaSrcType, MediaType } from '../../../interfaces/media';
 import { User } from '../../../interfaces/user';
@@ -37,7 +37,7 @@ interface selectableType {
   templateUrl: './media.component.html',
   styleUrl: './media.component.scss'
 })
-export class MediaComponent implements OnInit {
+export class MediaComponent implements OnInit, OnChanges {
     media =  input.required<Media>();
     users = input.required<Map<string, User>>();
     currentUser = input.required<User>();
@@ -53,6 +53,7 @@ export class MediaComponent implements OnInit {
     selectableUsers: selectableUser[] = [];
     selectableSrcTypes: selectableType[] = [];
     selectableTypes: selectableType[] = [];
+    mediaUri: string = '';
 
     constructor(
         private mediaService: MediaService
@@ -63,7 +64,12 @@ export class MediaComponent implements OnInit {
         this.selectableCommons.push(<selectableCommon>{code: false, 'name': 'just4owner'});
         this.createSelectableUsers();
         this.createSelectableTypes();
+        this.mediaUri = this.mediaService.getMediaUrl(this.media());
         this.editActive = this.editMode();
+    }
+
+    ngOnChanges(changes: SimpleChanges): void {
+        if (Object.keys(changes).includes('media')) this.mediaUri = this.mediaService.getMediaUrl(this.media());
     }
 
     createSelectableTypes() {
