@@ -40,12 +40,16 @@ export class MediaService {
         return this.http.post<any>(this.mediaUrl + id + '/s3/', formData, {withCredentials:true});
     }
 
-    public getMediaUrl(media: Media): string {
-        if (media.src_type == 1) {
-            return this.mediaUrl + media.id + '/s3/';
+    public getMediaUrl(media: Media | undefined = undefined, s3_id: string | undefined = undefined): string {
+        if (media) {
+            if (media.src_type == 1) {
+                return this.mediaUrl + media.id + '/s3/';
+            }
+            else {
+                return media.src;
+            }
         }
-        else {
-            return media.src;
-        }
+        if (s3_id) return this.mediaUrl + s3_id + '/s3/';
+        return '';
     }
 }

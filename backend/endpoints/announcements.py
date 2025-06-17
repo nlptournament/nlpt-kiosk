@@ -33,6 +33,7 @@ class AnnouncementsEndpoint(object):
                 for a in requests.get(src_uri).json()['data']:
                     if a['enabled']:
                         anno = dict()
+                        anno['id'] = a['id']
                         anno['layout'] = a['layout'] if a['layout'] in ['ffa', 'danger', 'default'] else 'default'
                         anno['title'] = a['title']
                         anno['msg'] = a['message']
