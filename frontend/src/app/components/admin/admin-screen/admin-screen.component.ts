@@ -34,11 +34,12 @@ import { Subscription } from 'rxjs';
 import { WebSocketService } from '../../../services/web-socket.service';
 import { MediaService } from '../../../services/media.service';
 import { Media } from '../../../interfaces/media';
+import { SettingsPanelComponent } from '../settings-panel/settings-panel.component';
 
 
 @Component({
   selector: 'app-admin-screen',
-  imports: [CommonModule, MenubarModule, KioskComponent, ScreensPanelComponent, TimelineTemplatesPanelComponent, PresetsPanelComponent, UsersPanelComponent, MediaPanelComponent, UpdatePwComponent],
+  imports: [CommonModule, MenubarModule, KioskComponent, ScreensPanelComponent, TimelineTemplatesPanelComponent, PresetsPanelComponent, UsersPanelComponent, MediaPanelComponent, UpdatePwComponent, SettingsPanelComponent],
   templateUrl: './admin-screen.component.html',
   styleUrl: './admin-screen.component.scss'
 })
@@ -61,6 +62,7 @@ export class AdminScreenComponent implements OnInit, OnDestroy {
     panelPresetsActive: boolean = false;
     panelMediaActive: boolean = false;
     panelUsersActive: boolean = false;
+    panelSettingsActive: boolean = false;
     updatePwActive: boolean = false;
     timelinesChanged: boolean = false;
     selectedNextTimelines: Map<string, string> = new Map<string, string>;
@@ -185,6 +187,14 @@ export class AdminScreenComponent implements OnInit, OnDestroy {
                         visible: this.currentUser?.admin,
                         command: () => {
                             this.panelUsersActive = true;
+                        }
+                    },
+                    {
+                        label: 'Settings',
+                        icon: 'pi pi-cog',
+                        visible: this.currentUser?.admin,
+                        command: () => {
+                            this.panelSettingsActive = true;
                         }
                     }
                 ]

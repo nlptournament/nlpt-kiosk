@@ -1,0 +1,22 @@
+<p-dialog [modal]="true" appendTo="body" [(visible)]="isVisible" [dismissableMask]="true" (onHide)="closeDialog()">
+    <ng-template #headless>
+        <div class="max-w-52% p-3 pt-1">
+            <div class="w-fill flex flex-row justify-between items-start gap-5 mb-2">
+                <div>&nbsp;</div>
+                <div class="text-2xl">Settings Manager</div>
+                <i class="pi pi-times !text-1xl hover:cursor-pointer hover:text-danger" (click)="closeDialog()"></i>
+            </div>
+            <div class="flex flex-col max-h-35% overflow-x-hidden overflow-y-scroll gap-4">
+                @for (setting of settings; track setting.id) {
+                <div>
+                    <div class="text-highlight">{{ setting.id }}</div>
+                    <input pInputText [(ngModel)]="setting.value" autocomplete="off" [disabled]="setting.ro" *ngIf="setting.type == 'str'" />
+                    <p-inputnumber [(ngModel)]="setting.value" mode="decimal" [useGrouping]="false" [maxFractionDigits]="0" locale="de-DE" [disabled]="setting.ro" *ngIf="setting.type == 'int'" />
+                    <div>{{ setting.desc }}</div>
+                </div>
+                }
+                <p-button label="Save" (onClick)="saveSettings()" />
+            </div>
+        </div>
+    </ng-template>
+</p-dialog>
