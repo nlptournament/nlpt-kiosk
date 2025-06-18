@@ -9,12 +9,13 @@ import { FormsModule } from '@angular/forms';
 import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
 import { InputNumberModule } from 'primeng/inputnumber';
+import { ToggleSwitchModule } from 'primeng/toggleswitch';
 
 const anno_uri_default = "https://dev.nlpt.online/api/announcements?token=";
 
 @Component({
   selector: 'panel-settings',
-  imports: [CommonModule, Dialog, FormsModule, InputTextModule, ButtonModule, InputNumberModule],
+  imports: [CommonModule, Dialog, FormsModule, InputTextModule, ButtonModule, InputNumberModule, ToggleSwitchModule],
   templateUrl: './settings-panel.component.html',
   styleUrl: './settings-panel.component.scss'
 })
@@ -39,7 +40,7 @@ export class SettingsPanelComponent implements OnInit {
                     for (let setting of settings) {
                         if (setting.id == 'anno_src_uri' && (!setting.value || setting.value == '')) setting.value = anno_uri_default;
                     }
-                    this.settings = settings.sort((a, b) => (a.id > b.id) ? 1 : ((a.id < b.id) ? -1 : 0));
+                    this.settings = settings.sort((a, b) => a.order - b.order);
                 },
                 error: (err: HttpErrorResponse) => {
                     this.errorHandler.handleError(err);

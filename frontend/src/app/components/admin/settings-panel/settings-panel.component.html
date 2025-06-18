@@ -12,6 +12,7 @@
                     <div class="text-highlight">{{ setting.id }}</div>
                     <input pInputText [(ngModel)]="setting.value" autocomplete="off" [disabled]="setting.ro" *ngIf="setting.type == 'str'" />
                     <p-inputnumber [(ngModel)]="setting.value" mode="decimal" [useGrouping]="false" [maxFractionDigits]="0" locale="de-DE" [disabled]="setting.ro" *ngIf="setting.type == 'int'" />
+                    <p-toggleswitch [(ngModel)]="setting.value" [disabled]="setting.ro" *ngIf="setting.type == 'bool'" />
                     <div>{{ setting.desc }}</div>
                 </div>
                 }

@@ -174,6 +174,7 @@ class SettingBase(ElementBase):
     _attrdef = dict(
         type=ElementBase.addAttr(default='str', notnone=True),
         value=ElementBase.addAttr(type=object, default=None),
+        order=ElementBase.addAttr(type=int, default=0, notnone=True),
         desc=ElementBase.addAttr(default='', notnone=True)
     )
 
@@ -189,6 +190,7 @@ class SettingBase(ElementBase):
     key is the "name" of value, value is a dict itself containing the following keys:
       type: as sting, one key of the dict _valid_types (see above)
       value: the default value (might be None)
+      order: integer defining the sort-order (of all Settings) in frontend
       desc: string describing the purpose of the setting
     example:
       'server_port': {'type': 'int', 'value': 8000, 'desc': 'Port the backend should be listening on'}
