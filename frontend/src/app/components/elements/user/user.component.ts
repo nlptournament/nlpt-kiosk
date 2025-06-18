@@ -94,4 +94,8 @@ export class UserComponent implements OnInit {
                 });
         }
     }
+
+    toClipboard(text: string | null | undefined) {
+        if (text) navigator.clipboard.writeText(text);
+    }
 }

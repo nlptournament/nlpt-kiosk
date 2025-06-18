@@ -15,7 +15,7 @@
             </div>
             <div class="flex flex-wrap w-fit max-h-35% overflow-x-hidden overflow-y-scroll gap-2">
                 @for (media of medias().values(); track media.id) {
-                <element-media [media]="media" [users]="users()" [currentUser]="currentUser()" *ngIf="(filterType == null || filterType == media.type) && (filterSrcType == null || filterSrcType == media.src_type) && (filterUser == null || filterUser == media.user_id) && (filterCommon == null || filterCommon == media.common)"></element-media>
+                <element-media [media]="media" [users]="users()" [currentUser]="currentUser()" *ngIf="(currentUser().admin || media.common || media.user_id == currentUser().id) && (filterType == null || filterType == media.type) && (filterSrcType == null || filterSrcType == media.src_type) && (filterUser == null || filterUser == media.user_id) && (filterCommon == null || filterCommon == media.common)"></element-media>
                 }
                 <element-media [media]="createMediaDummy" [users]="users()" [currentUser]="currentUser()" [editMode]="true" (editResult)="createdMedia($event)" *ngIf="createMediaActive"></element-media>
                 <div class="w-10% bg-add-card rounded-xl shadow-md flex items-center justify-center p-5">
