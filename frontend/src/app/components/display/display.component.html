@@ -2,6 +2,10 @@
     <div class="text-3xl">define name of this Kiosk by adding URL-parameter name (?name=kioskname)</div>
 </div>
 
+<div class="mx-auto max-h-screen overflow-hidden w-fill flex flex-col h-screen items-center justify-center" *ngIf="showNoNewKiosks">
+    <div class="text-3xl">registration of new Kiosks is disabled by admin</div>
+</div>
+
 <div class="mx-auto max-h-screen overflow-hidden w-fill flex flex-col h-screen items-center justify-center" *ngIf="kiosk && !kiosk.timeline_id">
     <div class="text-6xl text-highlight">{{ kiosk.name }}</div>
     <div class="text-5xl">awaiting data from server</div>

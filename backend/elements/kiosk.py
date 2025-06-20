@@ -26,14 +26,16 @@ timeline_id : str | None
     )
 
     @classmethod
-    def id_by_name(cls, name):
+    def id_by_name(cls, name, allow_create=False):
         fromdb = docDB.search_one(cls.__name__, {'name': name})
         if fromdb is not None:
             return fromdb['_id']
-        else:
+        elif allow_create:
             k = cls()
             k['name'] = name
             return k.save()['created']
+        else:
+            return None
 
     def validate(self):
         errors = dict()

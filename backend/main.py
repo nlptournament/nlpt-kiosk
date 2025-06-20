@@ -29,7 +29,8 @@ class SettingEndpoint(SettingEndpointBase):
     _session_cls = Session
     _all_readable = ['version', 'wss_port']
     _admin_writeable = [
-        'server_port', 'wss_port', 's3_host', 's3_port', 's3_access_key', 's3_access_secret', 'anno_src_uri', 'anno_img_user_id', 'mock_anno', 'mock_pc'
+        'server_port', 'new_kiosks', 'wss_port', 's3_host', 's3_port', 's3_access_key', 's3_access_secret',
+        'anno_src_uri', 'anno_img_user_id', 'mock_anno', 'mock_pc'
     ]
 
 

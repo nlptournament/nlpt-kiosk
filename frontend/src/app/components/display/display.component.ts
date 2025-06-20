@@ -19,6 +19,8 @@ import { TimerComponent } from '../screens/timer/timer.component';
 import { BackgroundImageComponent } from '../screens/background-image/background-image.component';
 import { VideoPlayerComponent } from '../screens/video-player/video-player.component';
 import { StreamPlayerComponent } from '../screens/stream-player/stream-player.component';
+import { ErrorHandlerService } from '../../services/error-handler.service';
+import { HttpErrorResponse } from '@angular/common/http';
 
 
 interface screenDP {
@@ -44,12 +46,14 @@ export class DisplayComponent implements OnInit, OnDestroy {
     loadNextScreenTimerSubscription: Subscription | undefined;
 
     showMissingName: boolean = false;
+    showNoNewKiosks: boolean = false;
 
     constructor(
         private websocketService: WebSocketService,
         private kioskService: KioskService,
         private timelineService: TimelineService,
-        private screenService: ScreenService
+        private screenService: ScreenService,
+        private errorHandler: ErrorHandlerService
     ) { }
 
     ngOnInit(): void {
@@ -57,14 +61,20 @@ export class DisplayComponent implements OnInit, OnDestroy {
         if (myName)
             this.kioskService
                 .getMyId(myName)
-                .subscribe((id: string) => {
-                    this.kioskService
-                        .getKiosk(id)
-                        .subscribe((kiosk: Kiosk) => {
-                            this.kiosk = kiosk;
-                            this.refreshTimeline();
-                            this.wssSubscription = this.websocketService.getMessages().subscribe((msg) => this.wssRx(msg));
-                        });
+                .subscribe({
+                    next: (id: string) => {
+                        this.kioskService
+                            .getKiosk(id)
+                            .subscribe((kiosk: Kiosk) => {
+                                this.kiosk = kiosk;
+                                this.refreshTimeline();
+                                this.wssSubscription = this.websocketService.getMessages().subscribe((msg) => this.wssRx(msg));
+                            });
+                    },
+                    error: (err: HttpErrorResponse) => {
+                        this.errorHandler.handleError(err);
+                        if (err.status === 405) this.showNoNewKiosks = true;
+                    }
                 });
         else this.showMissingName = true;
     }

@@ -3,7 +3,7 @@ import cherrypy_cors
 import time
 import math
 from noapi import ElementEndpointBase
-from elements import Session, Kiosk
+from elements import Session, Kiosk, Setting
 
 
 class KioskEndpoint(ElementEndpointBase):
@@ -30,7 +30,12 @@ class KioskEndpoint(ElementEndpointBase):
                 cherrypy.response.status = 404
                 return {'error': 'name is needed'}
 
-            return self._element.id_by_name(element_id)
+            kiosk_id = self._element.id_by_name(element_id, allow_create=Setting.value('new_kiosks'))
+            if kiosk_id is None:
+                cherrypy.response.status = 405
+                return {'error': 'creation of new Kiosk requests is not allowed'}
+            else:
+                return kiosk_id
         else:
             cherrypy.response.headers['Allow'] = 'OPTIONS, PUT'
             cherrypy.response.status = 405
