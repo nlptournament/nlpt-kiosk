@@ -3,7 +3,7 @@ import cherrypy_cors
 from noapi import docDB, ElementEndpointBase
 from noapi.endpoints import SettingEndpointBase, LoginEndpointBase, UserEndpointBase
 from elements import Setting, Session, User, ScreenTemplate, Screen
-from endpoints import TimelineTemplateEndpoint, PresetEndpoint, KioskEndpoint, TimelineEndpoint, MediaEndpoint, AnnouncementsEndpoint
+from endpoints import TimelineTemplateEndpoint, PresetEndpoint, KioskEndpoint, TimelineEndpoint, MediaEndpoint, AnnouncementsEndpoint, PlayercountsEndpoint
 from helpers.versioning import run as versioning_run
 from helpers.wss import start_server as start_wss_server
 
@@ -21,13 +21,16 @@ class API():
         self.preset = PresetEndpoint()
         self.media = MediaEndpoint()
         self.announcements = AnnouncementsEndpoint()
+        self.playercounts = PlayercountsEndpoint()
 
 
 class SettingEndpoint(SettingEndpointBase):
     _setting_cls = Setting
     _session_cls = Session
     _all_readable = ['version', 'wss_port']
-    _admin_writeable = ['server_port', 'wss_port', 's3_host', 's3_port', 's3_access_key', 's3_access_secret', 'anno_src_uri', 'anno_img_user_id', 'mock_anno']
+    _admin_writeable = [
+        'server_port', 'wss_port', 's3_host', 's3_port', 's3_access_key', 's3_access_secret', 'anno_src_uri', 'anno_img_user_id', 'mock_anno', 'mock_pc'
+    ]
 
 
 class LoginEndpoint(LoginEndpointBase):

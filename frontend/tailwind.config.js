@@ -21,6 +21,8 @@ module.exports = {
             'anno-ffa': '#666666',
             'anno-default': '#111111',
             'anno-danger': '#7f1d1d',
+            'playercount-warn': '#d9a62c',
+            'playercount-max': '#7f1d1d',
             'danger': '#7f1d1d',
             'kiosk-card': '#888888',
             'screen-card': '#777777',

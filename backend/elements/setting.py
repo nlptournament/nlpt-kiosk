@@ -12,5 +12,6 @@ class Setting(SettingBase):
         's3_access_secret': {'order': 6,  'type': 'str',  'value': 'password', 'desc': 'Password for S3 connection'},
         'anno_src_uri':     {'order': 7,  'type': 'str',  'value': None,       'desc': 'NLPT.online source URI from where the Announcements are pulled'},
         'anno_img_user_id': {'order': 8,  'type': 'str',  'value': None,       'desc': 'user_id of User who is owning Media for Announcements Screen'},
-        'mock_anno':        {'order': 20, 'type': 'bool', 'value': False,      'desc': 'if enabled Announcements-Endpoint delivers mockup-data'}
+        'mock_anno':        {'order': 20, 'type': 'bool', 'value': False,      'desc': 'if enabled Announcements-Endpoint delivers mockup-data'},
+        'mock_pc':          {'order': 21, 'type': 'bool', 'value': False,      'desc': 'if enabled PlayerCounts-Endpoint delivers mockup-data'}
     }

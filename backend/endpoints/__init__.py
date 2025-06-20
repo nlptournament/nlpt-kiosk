@@ -4,3 +4,4 @@ from .kiosk import KioskEndpoint
 from .timeline import TimelineEndpoint
 from .media import MediaEndpoint
 from .announcements import AnnouncementsEndpoint
+from .playerpounts import PlayercountsEndpoint

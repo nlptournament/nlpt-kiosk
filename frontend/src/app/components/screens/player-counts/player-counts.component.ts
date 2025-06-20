@@ -1,5 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { Component, input, OnInit } from '@angular/core';
+import { Component, input, OnDestroy, OnInit } from '@angular/core';
+import { PlayercountService } from '../../../services/playercount.service';
+import { Subscription, timer } from 'rxjs';
+import { Playercount } from '../../../interfaces/playercount';
 
 @Component({
   selector: 'screen-player-counts',
@@ -7,33 +10,34 @@ import { Component, input, OnInit } from '@angular/core';
   templateUrl: './player-counts.component.html',
   styleUrl: './player-counts.component.scss'
 })
-export class PlayerCountsComponent implements OnInit {
+export class PlayerCountsComponent implements OnInit, OnDestroy {
     isActive = input.required<boolean>();
+
+    refreshPlayercountsTimer = timer(10000, 10000);
+    refreshPlayercountsTimerSubscription: Subscription | undefined;
 
     counts: any[] = [];
 
-    ngOnInit(): void {
-        this.counts.push({'name': 'Server3', 'count': 2, 'game': 'UT2k4'});
-        this.counts.push({'name': 'Server2', 'count': 2, 'game': 'UT2k4'});
-        this.counts.push({'name': 'Server1', 'count': 2, 'game': 'UT2k4'});
-        this.counts.push({'name': 'Server1', 'count': 3, 'game': 'UT3'});
-        this.counts.push({'name': 'Server4', 'count': 0, 'game': 'UT3'});
-        this.counts.push({'name': 'Server2', 'count': 3, 'game': 'UT3'});
-        this.counts.push({'name': 'Server3', 'count': 3, 'game': 'UT3'});
-        this.counts.push({'name': 'Server3', 'count': 2, 'game': 'Battlefield2'});
-        this.counts.push({'name': 'Server2', 'count': 3, 'game': 'Battlefield2'});
-        this.counts.push({'name': 'Server1', 'count': 1, 'game': 'Battlefield2'});
-        this.counts.push({'name': 'OpenWorld', 'count': 0, 'game': 'Minecraft'});
-        this.counts.push({'name': 'Tournament', 'count': 10, 'game': 'Minecraft'});
-        this.counts.push({'name': 'Server1', 'count': 0, 'game': 'CoD4'});
-        this.counts.push({'name': 'Server2', 'count': 0, 'game': 'CoD4'});
-        this.counts.push({'name': 'Server3', 'count': 0, 'game': 'CoD4'});
-        this.counts.push({'name': 'Server1', 'count': 2, 'game': 'CoD2'});
-        this.counts.push({'name': 'Server2', 'count': 2, 'game': 'CoD2'});
-        this.counts.push({'name': 'Server3', 'count': 2, 'game': 'CoD2'});
-        this.counts.push({'name': 'NLPT', 'count': 69, 'game': 'Mordhau'});
-        this.counts.push({'name': 'Geheimbasis', 'count': 3, 'game': 'Left4Dead2'});
+    constructor(
+      private playercountService: PlayercountService
+    ) {}
 
-        this.counts = this.counts.sort((a, b) => (a.game > b.game ? 1 : (a.game < b.game ? -1 : (a.name > b.name ? 1 : (a.name < b.name ? -1 : 0)))));
+    ngOnInit(): void {
+        this.refreshPlayercounts();
+        this.refreshPlayercountsTimerSubscription = this.refreshPlayercountsTimer.subscribe(() => this.refreshPlayercounts());
+    }
+
+    ngOnDestroy(): void {
+        this.refreshPlayercountsTimerSubscription?.unsubscribe();
+    }
+
+    refreshPlayercounts() {
+      this.playercountService
+          .getPlayercounts().subscribe({
+              next: (playercounts: Playercount[]) => {
+                  this.counts = playercounts;
+              },
+              error: () => {}
+          });
     }
 }
