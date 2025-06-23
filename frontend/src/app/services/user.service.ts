@@ -41,6 +41,14 @@ export class UserService {
         return this.http.get<User>(this.userUrl + 'me/', {withCredentials:true});
     }
 
+    public addHide(user_id: string, element_id: string): Observable<any> {
+        return this.http.put<any>(this.userUrl + user_id + '/hide_add/', {'element_id': element_id}, {withCredentials:true});
+    }
+
+    public delHide(user_id: string, element_id: string): Observable<any> {
+        return this.http.put<any>(this.userUrl + user_id + '/hide_del/', {'element_id': element_id}, {withCredentials:true});
+    }
+
     public updatePw(id: string, old_pw: string, new_pw: string): Observable<any> {
         let key = CryptoJS.MD5(old_pw);
         let iv = CryptoJS.lib.WordArray.random(16);

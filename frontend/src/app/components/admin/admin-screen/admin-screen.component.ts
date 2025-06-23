@@ -68,6 +68,7 @@ export class AdminScreenComponent implements OnInit, OnDestroy {
     selectedNextTimelines: Map<string, string> = new Map<string, string>;
     selectedPresetTimelines: Map<string, string[]> = new Map<string, string[]>;
     dummyKiosk: Kiosk | undefined;
+    showHiddenKiosks: boolean = false;
 
     constructor(
         private errorHandler: ErrorHandlerService,
@@ -145,8 +146,10 @@ export class AdminScreenComponent implements OnInit, OnDestroy {
             }
             if (Object.keys(msg).includes('user')) {
                 let user: User = <User>msg['user'];
-                if (user.id && msg['content'] == 'update')
+                if (user.id && msg['content'] == 'update') {
                     this.users.set(user.id, user);
+                    if (this.currentUser.id == user.id) this.currentUser = user;
+                }
                 else if (user.id && this.users.has(user.id) && msg['content'] == 'delete')
                     this.users.delete(user.id);
             }
@@ -182,6 +185,24 @@ export class AdminScreenComponent implements OnInit, OnDestroy {
                         icon: 'pi pi-key',
                         command: () => {
                             this.updatePwActive = true;
+                        }
+                    },
+                    {
+                        label: 'Show hidden Kiosks',
+                        icon: 'pi pi-eye',
+                        visible: !this.showHiddenKiosks,
+                        command: () => {
+                            this.showHiddenKiosks = true;
+                            this.populateMenu();
+                        }
+                    },
+                    {
+                        label: 'Suppress hidden Kiosks',
+                        icon: 'pi pi-eye-slash',
+                        visible: this.showHiddenKiosks,
+                        command: () => {
+                            this.showHiddenKiosks = false;
+                            this.populateMenu();
                         }
                     },
                     {

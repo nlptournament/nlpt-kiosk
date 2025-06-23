@@ -32,6 +32,8 @@
         </div>
         <div class="flex flex-row gap-2">
             <a class="pi pi-external-link !text-1xl hover:cursor-pointer hover:text-highlight" pTooltip="open Kiosk's display in new window" showDelay="300" tooltipPosition="bottom" href="{{ selfUri }}" target="_blank"></a>
+            <i class="pi pi-eye !text-1xl hover:cursor-pointer hover:text-highlight" pTooltip="hide Kiosk" showDelay="300" tooltipPosition="bottom" (click)="kioskHide()" *ngIf="!currentUser().hidden_elements.includes(kiosk().id)"></i>
+            <i class="pi pi-eye-slash !text-1xl hover:cursor-pointer hover:text-highlight" pTooltip="unhide (show) Kiosk" showDelay="300" tooltipPosition="bottom" (click)="kioskUnhide()" *ngIf="currentUser().hidden_elements.includes(kiosk().id)"></i>
             <i class="pi pi-pencil !text-1xl hover:cursor-pointer hover:text-highlight" pTooltip="edit" showDelay="300" tooltipPosition="bottom" (click)="editOpen()" *ngIf="currentUser().admin || currentUser().id == kiosk().added_by_id"></i>
             <i class="pi pi-save !text-1xl hover:cursor-pointer hover:text-highlight" pTooltip="apply next Timeline as current Timeline" showDelay="300" tooltipPosition="bottom" (click)="changeTimeline()" *ngIf="nextTimeline"></i>
         </div>

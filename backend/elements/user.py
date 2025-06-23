@@ -3,6 +3,8 @@ from noapi.elements import UserBase
 
 
 class User(UserBase):
+    UserBase._attrdef['hidden_elements'] = UserBase.addAttr(type=list, default=[], notnone=True)
+
     def save_post(self):
         from helpers.wss import transmit_user_update
         transmit_user_update(self)

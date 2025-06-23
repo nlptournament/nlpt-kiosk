@@ -71,7 +71,8 @@ class ElementBase(object):
         result = cls()
         fromdb = docDB.get(cls.__name__, id)
         if fromdb is not None:
-            result._attr = fromdb
+            for k, v in fromdb.items():
+                result._attr[k] = v
         return result
 
     @classmethod

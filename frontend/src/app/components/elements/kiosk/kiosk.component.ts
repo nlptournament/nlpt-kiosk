@@ -15,6 +15,7 @@ import { ButtonModule } from 'primeng/button';
 import { Timeline } from '../../../interfaces/timeline';
 import { TimelineComponent } from '../timeline/timeline.component';
 import { TimelineService } from '../../../services/timeline.service';
+import { UserService } from '../../../services/user.service';
 import { ScreenTemplate } from '../../../interfaces/screen-template';
 import { Screen } from '../../../interfaces/screen';
 import { TooltipModule } from 'primeng/tooltip';
@@ -71,7 +72,8 @@ export class KioskComponent implements OnInit {
     constructor (
         private errorHandler: ErrorHandlerService,
         private kioskService: KioskService,
-        private timelineService: TimelineService
+        private timelineService: TimelineService,
+        private userService: UserService
     ) {
         effect(() => {
             if ((this.timelinesChanged() || !this.timelinesChanged()) && this.timelines() && this.kiosk()) this.refreshTimelines();
@@ -82,7 +84,6 @@ export class KioskComponent implements OnInit {
         this.selectableCommons.push(<selectableCommon>{code: true, 'name': 'available2everyone'});
         this.selectableCommons.push(<selectableCommon>{code: false, 'name': 'just4owner'});
         if (this.kiosk().id) this.selfUri = window.location.origin + '?name=' + this.kiosk().name;
-        console.log(this.selfUri);
         if(this.editMode()) this.editOpen();
     }
 
@@ -122,6 +123,14 @@ export class KioskComponent implements OnInit {
             .subscribe((result: any) => {
                 next: this.editResult.emit(this.kiosk().id);
             });
+    }
+
+    kioskHide() {
+        if (this.currentUser().id) this.userService.addHide(this.currentUser().id!, this.kiosk().id).subscribe();
+    }
+
+    kioskUnhide() {
+        if (this.currentUser().id) this.userService.delHide(this.currentUser().id!, this.kiosk().id).subscribe();
     }
 
     kioskSave() {
