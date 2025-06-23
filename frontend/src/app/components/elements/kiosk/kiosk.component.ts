@@ -1,4 +1,4 @@
-import { Component, effect, input, OnInit, output } from '@angular/core';
+import { booleanAttribute, Component, effect, input, OnInit, output } from '@angular/core';
 import { User } from '../../../interfaces/user';
 import { Kiosk, KioskTlSelection } from '../../../interfaces/kiosk';
 import { TimelineTemplate } from '../../../interfaces/timeline-template';
@@ -15,6 +15,7 @@ import { ButtonModule } from 'primeng/button';
 import { Timeline } from '../../../interfaces/timeline';
 import { TimelineComponent } from '../timeline/timeline.component';
 import { TimelineService } from '../../../services/timeline.service';
+import { UserService } from '../../../services/user.service';
 import { ScreenTemplate } from '../../../interfaces/screen-template';
 import { Screen } from '../../../interfaces/screen';
 import { TooltipModule } from 'primeng/tooltip';
@@ -54,6 +55,7 @@ export class KioskComponent implements OnInit {
     medias = input.required<Map<string, Media>>();
     editResult = output<string|null|undefined>();
     timelineSelection = output<KioskTlSelection>();
+    editMode = input(false, {transform: booleanAttribute});
 
     relevantTimelines: Timeline[] = [];
     editActive: boolean = false;
@@ -65,11 +67,13 @@ export class KioskComponent implements OnInit {
     selectedTimelineTemplate: string = "";
     nextTimeline: string | undefined;
     presetTimelines: string[] = [];
+    selfUri: string = '';
 
     constructor (
         private errorHandler: ErrorHandlerService,
         private kioskService: KioskService,
-        private timelineService: TimelineService
+        private timelineService: TimelineService,
+        private userService: UserService
     ) {
         effect(() => {
             if ((this.timelinesChanged() || !this.timelinesChanged()) && this.timelines() && this.kiosk()) this.refreshTimelines();
@@ -79,6 +83,8 @@ export class KioskComponent implements OnInit {
     ngOnInit(): void {
         this.selectableCommons.push(<selectableCommon>{code: true, 'name': 'available2everyone'});
         this.selectableCommons.push(<selectableCommon>{code: false, 'name': 'just4owner'});
+        if (this.kiosk().id) this.selfUri = window.location.origin + '?name=' + this.kiosk().name;
+        if(this.editMode()) this.editOpen();
     }
 
     createSelectableUsers() {
@@ -119,18 +125,39 @@ export class KioskComponent implements OnInit {
             });
     }
 
+    kioskHide() {
+        if (this.currentUser().id) this.userService.addHide(this.currentUser().id!, this.kiosk().id).subscribe();
+    }
+
+    kioskUnhide() {
+        if (this.currentUser().id) this.userService.delHide(this.currentUser().id!, this.kiosk().id).subscribe();
+    }
+
     kioskSave() {
-        this.kioskService
-            .updateKiosk(this.kiosk())
-            .subscribe({
-                next: (result: any) => {
-                    if (this.editActive) this.editClose();
-                    else this.editResult.emit(this.kiosk().id);
-                },
-                error: (err: HttpErrorResponse) => {
-                    this.errorHandler.handleError(err);
-                }
-            });
+        if (this.kiosk().id)
+            this.kioskService
+                .updateKiosk(this.kiosk())
+                .subscribe({
+                    next: (result: any) => {
+                        if (this.editActive) this.editClose();
+                        else this.editResult.emit(this.kiosk().id);
+                    },
+                    error: (err: HttpErrorResponse) => {
+                        this.errorHandler.handleError(err);
+                    }
+                });
+        else
+            this.kioskService
+                .createKiosk(this.kiosk())
+                .subscribe({
+                    next: (result: any) => {
+                        if (this.editActive) this.editClose();
+                        else this.editResult.emit(this.kiosk().id);
+                    },
+                    error: (err: HttpErrorResponse) => {
+                        this.errorHandler.handleError(err);
+                    }
+                });
     }
 
     editOpen() {

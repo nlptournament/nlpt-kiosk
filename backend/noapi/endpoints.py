@@ -65,6 +65,8 @@ _ro_attr : list
     _ro_attr = list()
 
     def _filter_attrs4read(self, attr, is_other=False, is_owner=False, is_admin=False):
+        for k in self._not_readable:
+            attr.pop(k, None)
         if is_owner or is_admin:
             return attr
         allowed_attr = list()
@@ -73,8 +75,6 @@ _ro_attr : list
         if is_other and self._other_readable is not None:
             allowed_attr += self._other_readable
         for k in list([k for k in attr.keys() if k not in allowed_attr]):
-            attr.pop(k, None)
-        for k in self._not_readable:
             attr.pop(k, None)
         return attr
 
@@ -479,7 +479,7 @@ Just returns the user_id stored in the Session, that is used for the request
             if not is_authorized:
                 cherrypy.response.status = 401
                 return {'error': 'not authorized'}
-            return self._element.get(session['user_id']).json()
+            return self._filter_attrs4read(attr=self._element.get(session['user_id']).json(), is_owner=True)
         else:
             cherrypy.response.headers['Allow'] = 'OPTIONS, GET'
             cherrypy.response.status = 405

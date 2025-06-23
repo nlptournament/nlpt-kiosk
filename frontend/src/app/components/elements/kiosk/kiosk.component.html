@@ -16,14 +16,14 @@
 </div>
 
 <!-- DISPLAY MODE -->
-<div class="w-fit max-w-90% bg-kiosk-card rounded-xl shadow-md flex flex-col text-1xl p-2 pt-1" *ngIf="kiosk().added_by_id && (kiosk().common || currentUser().admin || kiosk().added_by_id == currentUser().id)">
+<div class="w-fit max-w-90% bg-kiosk-card rounded-xl shadow-md flex flex-col text-1xl p-2 pt-1" *ngIf="!editMode() && kiosk().added_by_id && (kiosk().common || currentUser().admin || kiosk().added_by_id == currentUser().id)">
     <div class="flex flex-row justify-between items-start gap-5 mb-1">
         <div class="flex flex-row items-center gap-1">
             <i class="pi pi-circle-off !text-1xl" pTooltip="only visible to owner" showDelay="300" tooltipPosition="right" *ngIf="!kiosk().common"></i>
             <i class="pi pi-circle-on !text-1xl" pTooltip="visible to anyone" showDelay="300" tooltipPosition="right" *ngIf="kiosk().common"></i>
             <div class="flex flex-row">
-                <div class="text-highlight">{{ kiosk().name }}</div>
-                <div *ngIf="kiosk().desc != ''">&nbsp;- {{ kiosk().desc }}</div>
+                <div *ngIf="kiosk().desc == ''">{{ kiosk().name }}</div>
+                <div class="text-highlight" *ngIf="kiosk().desc != ''">{{ kiosk().desc }}</div>
             </div>
         </div>
         <div class="flex flex-row items-center gap-1">
@@ -31,6 +31,9 @@
             <div>{{ users().get(kiosk().added_by_id!)!.login }}</div>
         </div>
         <div class="flex flex-row gap-2">
+            <a class="pi pi-external-link !text-1xl hover:cursor-pointer hover:text-highlight" pTooltip="open Kiosk's display in new window" showDelay="300" tooltipPosition="bottom" href="{{ selfUri }}" target="_blank"></a>
+            <i class="pi pi-eye !text-1xl hover:cursor-pointer hover:text-highlight" pTooltip="hide Kiosk" showDelay="300" tooltipPosition="bottom" (click)="kioskHide()" *ngIf="!currentUser().hidden_elements.includes(kiosk().id)"></i>
+            <i class="pi pi-eye-slash !text-1xl hover:cursor-pointer hover:text-highlight" pTooltip="unhide (show) Kiosk" showDelay="300" tooltipPosition="bottom" (click)="kioskUnhide()" *ngIf="currentUser().hidden_elements.includes(kiosk().id)"></i>
             <i class="pi pi-pencil !text-1xl hover:cursor-pointer hover:text-highlight" pTooltip="edit" showDelay="300" tooltipPosition="bottom" (click)="editOpen()" *ngIf="currentUser().admin || currentUser().id == kiosk().added_by_id"></i>
             <i class="pi pi-save !text-1xl hover:cursor-pointer hover:text-highlight" pTooltip="apply next Timeline as current Timeline" showDelay="300" tooltipPosition="bottom" (click)="changeTimeline()" *ngIf="nextTimeline"></i>
         </div>
@@ -82,6 +85,11 @@
             </div>
 
             <p-iftalabel class="w-full mb-2">
+                <input pInputText id="name" [(ngModel)]="kiosk().name" autocomplete="off" class="w-full" [disabled]="kiosk().id" />
+                <label for="name">Name</label>
+            </p-iftalabel>
+
+            <p-iftalabel class="w-full mb-2">
                 <input pInputText id="desc" [(ngModel)]="kiosk().desc" autocomplete="off" class="w-full" autofocus />
                 <label for="desc">Description</label>
             </p-iftalabel>
@@ -94,7 +102,7 @@
             <p-selectbutton [options]="selectableCommons" inputId="common" [(ngModel)]="kiosk().common" optionLabel="name" optionValue="code" class="mb-2" />
 
             <div class="w-full flex justify-between">
-                <p-button label="Delete" severity="danger" (onClick)="kioskDelete()" />
+                <p-button label="Delete" severity="danger" (onClick)="kioskDelete()" *ngIf="kiosk().id" />
                 <p-button label="Save" (onClick)="kioskSave()" />
             </div>
         </div>

@@ -3,4 +3,5 @@ export interface User {
     admin: boolean;
     login: string;
     pw?: string | null;
+    hidden_elements: string[];
 }
