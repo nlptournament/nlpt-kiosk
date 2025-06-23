@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
-import { CommonModule, Time } from '@angular/common';
+import { CommonModule } from '@angular/common';
 
 import { Kiosk, KioskTlSelection } from '../../../interfaces/kiosk';
 import { User } from '../../../interfaces/user';
@@ -67,6 +67,7 @@ export class AdminScreenComponent implements OnInit, OnDestroy {
     timelinesChanged: boolean = false;
     selectedNextTimelines: Map<string, string> = new Map<string, string>;
     selectedPresetTimelines: Map<string, string[]> = new Map<string, string[]>;
+    dummyKiosk: Kiosk | undefined;
 
     constructor(
         private errorHandler: ErrorHandlerService,
@@ -104,8 +105,10 @@ export class AdminScreenComponent implements OnInit, OnDestroy {
         if (Object.keys(msg).includes('content')) {
             if (Object.keys(msg).includes('kiosk')) {
                 let kiosk: Kiosk = <Kiosk>msg['kiosk'];
-                if (kiosk.id && msg['content'] == 'update')
+                if (kiosk.id && msg['content'] == 'update') {
                     this.kiosks.set(kiosk.id, kiosk);
+                    this.setKiosksSorted();
+                }
                 else if (kiosk.id && this.kiosks.has(kiosk.id) && msg['content'] == 'delete')
                     this.kiosks.delete(kiosk.id);
             }
@@ -179,6 +182,13 @@ export class AdminScreenComponent implements OnInit, OnDestroy {
                         icon: 'pi pi-key',
                         command: () => {
                             this.updatePwActive = true;
+                        }
+                    },
+                    {
+                        label: 'Create Kiosk',
+                        icon: 'pi pi-building-columns',
+                        command: () => {
+                            this.dummyKiosk = <Kiosk>{'name': this.currentUser.login + "'s Kiosk", 'added_by_id': this.currentUser.id, 'common': false};
                         }
                     },
                     {
@@ -324,12 +334,22 @@ export class AdminScreenComponent implements OnInit, OnDestroy {
                 next: (kiosks: Kiosk[]) => {
                     let kl: Map<string, Kiosk> = new Map<string, Kiosk>;
                     for (let kiosk of kiosks) if (kiosk.id) kl.set(kiosk.id, kiosk);
-                    this.kiosks = kl;
+                    this.setKiosksSorted(kl);
                 },
                 error: (err: HttpErrorResponse) => {
                     this.errorHandler.handleError(err);
                 }
             });
+    }
+
+    setKiosksSorted(kiosks: Map<string, Kiosk> = this.kiosks) {
+        this.kiosks = new Map<string, Kiosk>(
+            [...kiosks].sort((a, b) => (
+                (a[1].common == b[1].common) ? a[1].desc.localeCompare(b[1].desc) : (
+                    (a[1].common ? -1 : 1)
+                )
+            )
+        ));
     }
 
     refreshTimelines() {

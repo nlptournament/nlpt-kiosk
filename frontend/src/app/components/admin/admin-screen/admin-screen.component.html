@@ -21,7 +21,10 @@
 <panel-users [users]="users" [currentUser]="currentUser" [(isActive)]="panelUsersActive" *ngIf="panelUsersActive"></panel-users>
 
 <!-- SETTINGS PANEL MODAL -->
- <panel-settings [(isActive)]="panelSettingsActive" *ngIf="panelSettingsActive"></panel-settings>
+<panel-settings [(isActive)]="panelSettingsActive" *ngIf="panelSettingsActive"></panel-settings>
 
 <!-- UPDATE PW MODAL -->
- <update-pw [currentUser]="currentUser" [(isActive)]="updatePwActive" *ngIf="updatePwActive"></update-pw>
+<update-pw [currentUser]="currentUser" [(isActive)]="updatePwActive" *ngIf="updatePwActive"></update-pw>
+
+<!-- CREATE KIOSK MODAL -->
+<element-kiosk  [kiosk]="dummyKiosk" [users]="users" [currentUser]="currentUser" [timelineTemplates]="timelineTemplates" [timelines]="timelines" [medias]="medias" [screens]="screens" [screenTemplates]="screenTemplates" [editMode]="true" (editResult)="dummyKiosk = undefined" *ngIf="dummyKiosk"></element-kiosk>
