@@ -1,6 +1,7 @@
 boto3
 cherrypy
 cherrypy-cors
+pychallonge
 pycryptodome
 pymongo
 requests

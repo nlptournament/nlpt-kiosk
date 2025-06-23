@@ -239,3 +239,12 @@ def system_screentemplates():
             'key': 'stream-player', 'name': 'Stream',
             'desc': 'Stream is played fullscreen',
             'endless': True, 'duration': None, 'variables_def': vardef}).save()
+    # Challonge Round Completion
+    if ScreenTemplate.count({'name': 'Challonge Round Completion'}) == 0:
+        vardef = dict({
+            'tournament_id': {'type': 'int', 'desc': 'ID of the challonge tournament to display'}
+        })
+        ScreenTemplate({
+            'key': 'challonge-rc', 'name': 'Challonge Round Completion',
+            'desc': 'Shows the pairs and their completion of the current round in a challonge tournament',
+            'endless': True, 'duration': None, 'variables_def': vardef}).save()
