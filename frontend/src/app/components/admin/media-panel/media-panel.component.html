@@ -8,14 +8,19 @@
             </div>
             <div class="flex flex-row justify-start items-center gap-2 mb-2">
                 <div>Filter:</div>
+                <input pInputText id="filterDesc" [(ngModel)]="filterDesc" placeholder="description" autocomplete="off" autofocus />
                 <p-select [(ngModel)]="filterType" inputId="filterType" [options]="selectableTypes" optionValue="code" optionLabel="name" />
                 <p-select [(ngModel)]="filterSrcType" inputId="filterSrcType" [options]="selectableSrcTypes" optionValue="code" optionLabel="name" />
                 <p-select [(ngModel)]="filterUser" inputId="filterUser" [options]="selectableUsers" optionValue="code" optionLabel="name" />
-                <p-select [(ngModel)]="filterCommon" inputId="filterCommon" [options]="selectableCommons" optionValue="code" optionLabel="name" />
+                <i class="pi pi-stop-circle !text-2xl hover:cursor-pointer hover:text-highlight" pTooltip="show only common Media" showDelay="300" tooltipPosition="bottom" (click)="filterCommon = true" *ngIf="filterCommon == null"></i>
+                <i class="pi pi-circle-fill !text-2xl hover:cursor-pointer hover:text-highlight" pTooltip="show only uncommon Media" showDelay="300" tooltipPosition="bottom" (click)="filterCommon = false" *ngIf="filterCommon == true"></i>
+                <i class="pi pi-circle !text-2xl hover:cursor-pointer hover:text-highlight" pTooltip="show common and uncommon Media" showDelay="300" tooltipPosition="bottom" (click)="filterCommon = null" *ngIf="filterCommon == false"></i>
+                <i class="pi pi-eye !text-2xl hover:cursor-pointer hover:text-highlight" pTooltip="show hidden Media" showDelay="300" tooltipPosition="bottom" (click)="showHiddenMedia = true" *ngIf="!showHiddenMedia"></i>
+                <i class="pi pi-eye-slash !text-2xl hover:cursor-pointer hover:text-highlight" pTooltip="suppress hidden Media" showDelay="300" tooltipPosition="bottom" (click)="showHiddenMedia = false" *ngIf="showHiddenMedia"></i>
             </div>
             <div class="flex flex-wrap w-fit max-h-35% overflow-x-hidden overflow-y-scroll gap-2">
                 @for (media of medias().values(); track media.id) {
-                <element-media [media]="media" [users]="users()" [currentUser]="currentUser()" *ngIf="(currentUser().admin || media.common || media.user_id == currentUser().id) && (filterType == null || filterType == media.type) && (filterSrcType == null || filterSrcType == media.src_type) && (filterUser == null || filterUser == media.user_id) && (filterCommon == null || filterCommon == media.common)"></element-media>
+                <element-media [media]="media" [users]="users()" [currentUser]="currentUser()" *ngIf="(currentUser().admin || media.common || media.user_id == currentUser().id) && (showHiddenMedia == currentUser().hidden_elements.includes(media.id)) && (filterType == null || filterType == media.type) && (filterSrcType == null || filterSrcType == media.src_type) && (filterUser == null || filterUser == media.user_id) && (filterCommon == null || filterCommon == media.common) && (media.desc.includes(filterDesc))"></element-media>
                 }
                 <element-media [media]="createMediaDummy" [users]="users()" [currentUser]="currentUser()" [editMode]="true" (editResult)="createdMedia($event)" *ngIf="createMediaActive"></element-media>
                 <div class="w-10% bg-add-card rounded-xl shadow-md flex items-center justify-center p-5">

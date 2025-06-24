@@ -11,6 +11,9 @@
         </div>
         <div class="flex flex-row gap-2">
             <a class="pi pi-external-link !text-1xl hover:cursor-pointer hover:text-highlight" href="{{ mediaUri }}" target="_blank" *ngIf="mediaUri != ''"></a>
+
+            <i class="pi pi-eye !text-1xl hover:cursor-pointer hover:text-highlight" pTooltip="hide Media" showDelay="300" tooltipPosition="bottom" (click)="hideMedia()" *ngIf="media().id && !currentUser().hidden_elements.includes(media().id!)"></i>
+            <i class="pi pi-eye-slash !text-1xl hover:cursor-pointer hover:text-highlight" pTooltip="unhide (show) Media" showDelay="300" tooltipPosition="bottom" (click)="unhideMedia()" *ngIf="media().id && currentUser().hidden_elements.includes(media().id!)"></i>
             <i class="pi pi-pencil !text-1xl hover:cursor-pointer hover:text-highlight" (click)="editActive = true" *ngIf="currentUser().admin || media().user_id == currentUser().id"></i>
         </div>
     </div>

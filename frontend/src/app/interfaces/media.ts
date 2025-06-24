@@ -1,6 +1,6 @@
 export interface Media {
     id: string;
-    desc?: string;
+    desc: string;
     src_type: MediaSrcType;
     src: string;
     type: MediaType;

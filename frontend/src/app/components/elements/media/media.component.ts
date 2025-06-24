@@ -4,6 +4,7 @@ import { Media, MediaSrcType, MediaType } from '../../../interfaces/media';
 import { User } from '../../../interfaces/user';
 
 import { MediaService } from '../../../services/media.service';
+import { UserService } from '../../../services/user.service';
 
 import { CommonModule } from '@angular/common';
 import { TooltipModule } from 'primeng/tooltip';
@@ -56,7 +57,8 @@ export class MediaComponent implements OnInit, OnChanges {
     mediaUri: string = '';
 
     constructor(
-        private mediaService: MediaService
+        private mediaService: MediaService,
+        private userService: UserService
     ) {}
 
     ngOnInit(): void {
@@ -109,6 +111,14 @@ export class MediaComponent implements OnInit, OnChanges {
         else {
             this.selectedFile = undefined;
         }
+    }
+
+    hideMedia() {
+        if (this.currentUser().id && this.media().id) this.userService.addHide(this.currentUser().id!, this.media().id!).subscribe();
+    }
+
+    unhideMedia() {
+        if (this.currentUser().id && this.media().id) this.userService.delHide(this.currentUser().id!, this.media().id!).subscribe();
     }
 
     saveMedia() {
