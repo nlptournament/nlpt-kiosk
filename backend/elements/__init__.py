@@ -8,3 +8,6 @@ from .timeline import Timeline
 from .kiosk import Kiosk
 from .preset import Preset
 from .media import Media
+from .challongetournament import ChallongeTournament
+from .challongeparticipant import ChallongeParticipant
+from .challongematch import ChallongeMatch
