@@ -2,7 +2,7 @@ import cherrypy
 import cherrypy_cors
 from noapi import docDB, ElementEndpointBase
 from noapi.endpoints import SettingEndpointBase, LoginEndpointBase
-from elements import Setting, Session, ScreenTemplate, Screen
+from elements import Setting, Session, ScreenTemplate, Screen, ChallongeTournament, ChallongeParticipant, ChallongeMatch
 from endpoints import UserEndpoint, TimelineTemplateEndpoint, PresetEndpoint, KioskEndpoint, TimelineEndpoint, MediaEndpoint
 from endpoints import AnnouncementsEndpoint, PlayercountsEndpoint
 from helpers.versioning import run as versioning_run
@@ -53,6 +53,27 @@ class ScreenEndpoint(ElementEndpointBase):
     _other_readable = list(['id', 'desc', 'template_id', 'user_id', 'duration', 'repeat', 'loop', 'variables', 'locked', 'key'])
     _other_createable = list(['desc', 'template_id', 'user_id', 'duration', 'repeat', 'loop', 'variables'])
     _all_readable = list(['id', 'duration', 'repeat', 'loop', 'variables', 'key'])
+
+
+class ChallongeTournamentEndpoint(ElementEndpointBase):
+    _session_cls = Session
+    _element = ChallongeTournament
+    _all_readable = list(['id', 'name', 'url', 'state', 'type', 'game', 'completed_rounds'])
+    _ro_attr = list(['name', 'url', 'state', 'type', 'game', 'completed_rounds'])
+
+
+class ChallongeParticipantEndpoint(ElementEndpointBase):
+    _session_cls = Session
+    _element = ChallongeParticipant
+    _all_readable = list(['id', 'tournament_id', 'name', 'portrait_id'])
+    _ro_attr = list(['tournament_id', 'name', 'portrait_id'])
+
+
+class ChallongeMatchEndpoint(ElementEndpointBase):
+    _session_cls = Session
+    _element = ChallongeMatch
+    _all_readable = list(['id', 'tournament_id', 'state', 'round', 'player1_id', 'player2_id', 'winner_id'])
+    _ro_attr = list(['tournament_id', 'state', 'round', 'player1_id', 'player2_id', 'winner_id'])
 
 
 if __name__ == '__main__':

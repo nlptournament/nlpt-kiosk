@@ -191,3 +191,13 @@ def transmit_media_update(media):
 def transmit_media_delete(media):
     result = {'media': media.json(), 'content': 'delete'}
     com_rx_queue.put({'what': 'send', 'target': 'users', 'msg': json.dumps(result)})
+
+
+def transmit_challonge_update(chal, what):
+    result = {f'challonge_{what}': chal.json(), 'content': 'update'}
+    com_rx_queue.put({'what': 'send', 'target': 'kiosks', 'msg': json.dumps(result)})
+
+
+def transmit_challonge_delete(chal, what):
+    result = {f'challonge_{what}': chal.json(), 'content': 'delete'}
+    com_rx_queue.put({'what': 'send', 'target': 'kiosks', 'msg': json.dumps(result)})

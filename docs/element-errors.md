@@ -80,3 +80,17 @@
 
   * **5**: *(src_type)* needs to be one of: [0, 1]
   * **5**: *(type)* needs to be one of: [0, 1, 2]
+
+## ChallongeMatch
+
+*reserved range **9x** for individual errors*
+
+  * **5**: *(state)* needs to be one of: [0, 1, 2, 3]
+  * **5**: *(winner_id)* needs to be one of: [None, <player1_id\>, <player2_id\>]
+  * **90**: *(player2_id)* can't be equal to player1_id
+
+## ChallongeTournament
+
+*reserved range **10x** for individual errors*
+
+  * **5**: *(state)* needs to be one of: [0, 1, 2, 3]

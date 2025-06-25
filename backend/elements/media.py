@@ -1,4 +1,6 @@
 from noapi import ElementBase, docDB
+import requests
+import tempfile
 
 
 class Media(ElementBase):
@@ -58,8 +60,30 @@ common : bool (default: True)
 
     def delete_post(self):
         from helpers.wss import transmit_media_delete
+        from elements import ChallongeParticipant
+        for p in [ChallongeParticipant(p) for p in docDB.search_many('ChallongeParticipant', {'portrait_id': self['_id']})]:
+            p['portrait_id'] = None
+            p.save()
         if self['src_type'] == 1:
             from helpers.s3 import media_delete, media_exists
             if media_exists(self['_id']):
                 media_delete(self['_id'])
         transmit_media_delete(self)
+
+    def fetch_and_store(self, url, filename=None):
+        from helpers.s3 import media_upload
+        if self['_id'] is not None and self['type'] == 1:
+            try:
+                img = requests.get(url)
+                with tempfile.TemporaryFile() as tmp_file:
+                    tmp_file.write(img.content)
+                    tmp_file.seek(0)
+                    media_upload(self['_id'], tmp_file)
+                if filename is None:
+                    filename = url.rsplit('/', 1)[-1]
+                self['src'] = f"{filename.replace(';', '')};{img.headers.get('Content-Type')}"
+                self.save()
+                return True
+            except Exception:
+                return False
+        return False

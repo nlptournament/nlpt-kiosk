@@ -1,4 +1,4 @@
-from noapi import ElementBase
+from noapi import ElementBase, docDB
 
 
 class ChallongeTournament(ElementBase):
@@ -18,7 +18,7 @@ state : int
         2: underway
         3: complete
 type : string
-    the kind of tournament (singel elemination, double elemination, ...) returned by the API variable tournament_type
+    the kind of tournament (single elemination, double elemination, ...) returned by the API variable tournament_type
 game : string
     the name of the game, that is played on the tournament as returnd by the API variable game_name
 completed_rounds : list[int]
@@ -46,3 +46,33 @@ completed_rounds : list[int]
         if self['state'] not in range(4):
             errors['state'] = {'code': 5, 'desc': 'needs to be one of: [0, 1, 2, 3]'}
         return errors
+
+    def save_post(self):
+        from helpers.wss import transmit_challonge_update
+        transmit_challonge_update(self, 'tournament')
+
+    def delete_post(self):
+        from elements import ChallongeMatch, ChallongeParticipant
+        from helpers.wss import transmit_challonge_delete
+        for m in [ChallongeMatch(m) for m in docDB.search_many('ChallongeMatch', {'tournament_id': self['_id']})]:
+            m.delete()
+        for p in [ChallongeParticipant(p) for p in docDB.search_many('ChallongeParticipant', {'tournament_id': self['_id']})]:
+            p.delete()
+        transmit_challonge_delete(self, 'tournament')
+
+    def fill_completed_rounds(self):
+        from elements import ChallongeMatch
+        avail_rounds = list()
+        incom_rounds = list()
+        for m in [ChallongeMatch(m) for m in docDB.search_many('ChallongeMatch', {'tournament_id': self['_id']})]:
+            if m['round'] not in avail_rounds:
+                avail_rounds.append(m['round'])
+            if not m['state'] == 3 and m['round'] not in incom_rounds:
+                incom_rounds.append(m['round'])
+        result = list()
+        for r in sorted(avail_rounds):
+            if r not in incom_rounds:
+                result.append(r)
+        if not len(result) == len(self['completed_rounds']):
+            self['completed_rounds'] = result
+            self.save()

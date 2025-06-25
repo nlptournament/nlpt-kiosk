@@ -46,4 +46,14 @@ winner_id : string | None
             errors['state'] = {'code': 5, 'desc': 'needs to be one of: [0, 1, 2, 3]'}
         if self['winner_id'] not in [None, self['player1_id'], self['player2_id']]:
             errors['winner_id'] = {'code': 5, 'desc': f"needs to be one of: [{None}, {self['player1_id']}, {self['player2_id']}]"}
+        if self['player2_id'] is not None and self['player2_id'] == self['player1_id']:
+            errors['player2_id'] = {'code': 90, 'desc': "can't be equal to player1_id"}
         return errors
+
+    def save_post(self):
+        from helpers.wss import transmit_challonge_update
+        transmit_challonge_update(self, 'match')
+
+    def delete_post(self):
+        from helpers.wss import transmit_challonge_delete
+        transmit_challonge_delete(self, 'match')
