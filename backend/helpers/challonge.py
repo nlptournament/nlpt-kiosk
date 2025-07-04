@@ -1,5 +1,5 @@
 import challonge
-from elements import Setting
+from elements import Setting, ChallongeTournament, ChallongeMatch, ChallongeParticipant
 
 
 def my_fetch_and_parse(method, uri, params_prefix=None, **params):
@@ -11,222 +11,50 @@ def my_fetch_and_parse(method, uri, params_prefix=None, **params):
 challonge.set_credentials(Setting.value('challonge_user'), Setting.value('challonge_key'))
 challonge.api.fetch_and_parse = my_fetch_and_parse
 
-""" Ein Teilnehmer registriert
-"tournament": {
-    "id": 16408532,
-    "name": "DevTest1",
-    "url": "nz456pb9",
-    "description": "testing the API",
-    "tournament_type": "double elimination",
-    "started_at": null,
-    "completed_at": null,
-    "require_score_agreement": false,
-    "notify_users_when_matches_open": true,
-    "created_at": "2025-06-21T14:23:25.422-07:00",
-    "updated_at": "2025-06-21T14:34:35.554-07:00",
-    "state": "pending",
-    "open_signup": true,
-    "notify_users_when_the_tournament_ends": true,
-    "progress_meter": 0,
-    "quick_advance": false,
-    "hold_third_place_match": false,
-    "pts_for_game_win": "0.0",
-    "pts_for_game_tie": "0.0",
-    "pts_for_match_win": "1.0",
-    "pts_for_match_tie": "0.5",
-    "pts_for_bye": "1.0",
-    "swiss_rounds": 0,
-    "private": false,
-    "ranked_by": "match wins",
-    "show_rounds": true,
-    "hide_forum": false,
-    "sequential_pairings": false,
-    "accept_attachments": false,
-    "rr_pts_for_game_win": "0.0",
-    "rr_pts_for_game_tie": "0.0",
-    "rr_pts_for_match_win": "1.0",
-    "rr_pts_for_match_tie": "0.5",
-    "created_by_api": false,
-    "credit_capped": false,
-    "category": null,
-    "hide_seeds": false,
-    "prediction_method": 0,
-    "predictions_opened_at": null,
-    "anonymous_voting": false,
-    "max_predictions_per_user": 1,
-    "signup_cap": null,
-    "game_id": 423,
-    "participants_count": 1,
-    "group_stages_enabled": false,
-    "allow_participant_match_reporting": true,
-    "teams": false,
-    "check_in_duration": null,
-    "start_at": null,
-    "started_checking_in_at": null,
-    "tie_breaks": [
-    "match wins vs tied",
-    "game wins",
-    "points scored"
-    ],
-    "locked_at": null,
-    "event_id": null,
-    "public_predictions_before_start_time": false,
-    "ranked": null,
-    "grand_finals_modifier": null,
-    "predict_the_losers_bracket": false,
-    "spam": null,
-    "ham": null,
-    "rr_iterations": null,
-    "tournament_registration_id": null,
-    "donation_contest_enabled": null,
-    "mandatory_donation": null,
-    "non_elimination_tournament_data": {
-    "participants_per_match": ""
-    },
-    "auto_assign_stations": null,
-    "only_start_matches_with_stations": null,
-    "registration_fee": "0.0",
-    "registration_type": "free",
-    "split_participants": false,
-    "allowed_regions": [],
-    "show_participant_country": null,
-    "program_id": null,
-    "program_classification_ids_allowed": null,
-    "team_size_range": null,
-    "toxic": null,
-    "use_new_style": null,
-    "optional_display_data": {
-    "show_standings": "1",
-    "show_announcements": true
-    },
-    "processing": null,
-    "oauth_application_id": null,
-    "hide_bracket_preview": false,
-    "consolation_matches_target_rank": null,
-    "review_swiss_pairings_before_starting_rounds": null,
-    "allow_incomplete_rosters": null,
-    "check_in_onsite": false,
-    "description_source": "testing the API",
-    "subdomain": null,
-    "full_challonge_url": "https://challonge.com/nz456pb9",
-    "live_image_url": "https://challonge.com/nz456pb9.svg",
-    "sign_up_url": "https://challonge.com/tournaments/signup/QffE6epKxV",
-    "review_before_finalizing": true,
-    "accepting_predictions": false,
-    "participants_locked": false,
-    "game_name": "TrackMania Nations Forever",
-    "participants_swappable": true,
-    "team_convertable": false,
-    "group_stages_were_started": false
-}
-"""
 
-""" turnier gestartet
-"tournament": {
-    "id": 16408532,
-    "name": "DevTest1",
-    "url": "nz456pb9",
-    "description": "testing the API",
-    "tournament_type": "double elimination",
-    "started_at": "2025-06-22T16:36:44.456-05:00",
-    "completed_at": null,
-    "require_score_agreement": false,
-    "notify_users_when_matches_open": true,
-    "created_at": "2025-06-21T16:23:25.422-05:00",
-    "updated_at": "2025-06-22T16:36:44.799-05:00",
-    "state": "underway",
-    "open_signup": true,
-    "notify_users_when_the_tournament_ends": true,
-    "progress_meter": 0,
-    "quick_advance": false,
-    "hold_third_place_match": false,
-    "pts_for_game_win": "0.0",
-    "pts_for_game_tie": "0.0",
-    "pts_for_match_win": "1.0",
-    "pts_for_match_tie": "0.5",
-    "pts_for_bye": "1.0",
-    "swiss_rounds": 3,
-    "private": false,
-    "ranked_by": "match wins",
-    "show_rounds": true,
-    "hide_forum": false,
-    "sequential_pairings": false,
-    "accept_attachments": false,
-    "rr_pts_for_game_win": "0.0",
-    "rr_pts_for_game_tie": "0.0",
-    "rr_pts_for_match_win": "1.0",
-    "rr_pts_for_match_tie": "0.5",
-    "created_by_api": false,
-    "credit_capped": false,
-    "category": null,
-    "hide_seeds": false,
-    "prediction_method": 0,
-    "predictions_opened_at": null,
-    "anonymous_voting": false,
-    "max_predictions_per_user": 1,
-    "signup_cap": null,
-    "game_id": 423,
-    "participants_count": 8,
-    "group_stages_enabled": false,
-    "allow_participant_match_reporting": true,
-    "teams": false,
-    "check_in_duration": null,
-    "start_at": null,
-    "started_checking_in_at": null,
-    "tie_breaks": [
-      "match wins vs tied",
-      "game wins",
-      "points scored"
-    ],
-    "locked_at": null,
-    "event_id": null,
-    "public_predictions_before_start_time": false,
-    "ranked": null,
-    "grand_finals_modifier": null,
-    "predict_the_losers_bracket": false,
-    "spam": null,
-    "ham": null,
-    "rr_iterations": null,
-    "tournament_registration_id": null,
-    "donation_contest_enabled": null,
-    "mandatory_donation": null,
-    "non_elimination_tournament_data": {
-      "participants_per_match": ""
-    },
-    "auto_assign_stations": null,
-    "only_start_matches_with_stations": null,
-    "registration_fee": "0.0",
-    "registration_type": "free",
-    "split_participants": false,
-    "allowed_regions": [],
-    "show_participant_country": null,
-    "program_id": null,
-    "program_classification_ids_allowed": null,
-    "team_size_range": null,
-    "toxic": null,
-    "use_new_style": null,
-    "optional_display_data": {
-      "show_standings": "1",
-      "show_announcements": true
-    },
-    "processing": false,
-    "oauth_application_id": null,
-    "hide_bracket_preview": false,
-    "consolation_matches_target_rank": null,
-    "review_swiss_pairings_before_starting_rounds": null,
-    "allow_incomplete_rosters": null,
-    "check_in_onsite": false,
-    "description_source": "testing the API",
-    "subdomain": null,
-    "full_challonge_url": "https://challonge.com/nz456pb9",
-    "live_image_url": "https://challonge.com/nz456pb9.svg",
-    "sign_up_url": "https://challonge.com/tournaments/signup/QffE6epKxV",
-    "review_before_finalizing": true,
-    "accepting_predictions": false,
-    "participants_locked": true,
-    "game_name": "TrackMania Nations Forever",
-    "participants_swappable": false,
-    "team_convertable": false,
-    "group_stages_were_started": false
-}
-"""
+def fetch_tournament(tournament_id):
+    at = challonge.tournaments.show(tournament_id)['tournament']
+    ct = ChallongeTournament.get(str(tournament_id))
+
+    ct['_id'] = str(at['id'])
+    ct['name'] = at['name']
+    ct['url'] = at['full_challonge_url']
+    ct['state'] = ct.translate_state.get(at['state'], 0)
+    ct['type'] = at['tournament_type']
+    ct['game'] = at['game_name']
+    ct.save(only_on_changes=True)
+
+    fetch_matches(str(tournament_id))
+    ct.fill_completed_rounds()
+
+
+def fetch_matches(tournament_id):
+    for am in [am['match'] for am in challonge.matches.index(tournament_id)]:
+        cm = ChallongeMatch.get(str(am['id']))
+
+        cm['_id'] = str(am['id'])
+        cm['tournament_id'] = str(tournament_id)
+        cm['state'] = cm.translate_state.get(am['state'], 0)
+        cm['round'] = am['round']
+        cm['player1_id'] = None if am['player1_id'] is None else str(am['player1_id'])
+        cm['player2_id'] = None if am['player2_id'] is None else str(am['player2_id'])
+        cm['winner_id'] = None if am['winner_id'] is None else str(am['winner_id'])
+
+        if cm['player1_id'] is not None and not ChallongeParticipant.exists(cm['player1_id']):
+            fetch_participant(tournament_id, cm['player1_id'])
+        if cm['player2_id'] is not None and not ChallongeParticipant.exists(cm['player2_id']):
+            fetch_participant(tournament_id, cm['player2_id'])
+
+        cm.save(only_on_changes=True)
+
+
+def fetch_participant(tournament_id, participant_id):
+    ap = challonge.participants.show(tournament_id, participant_id)['participant']
+    cp = ChallongeParticipant.get(str(participant_id))
+
+    cp['_id'] = str(ap['id'])
+    cp['tournament_id'] = str(tournament_id)
+    cp['name'] = ap['display_name']
+    cp.save(only_on_changes=True)
+    if ap['attached_participatable_portrait_url'] is not None:
+        cp.fetch_portrait(ap['attached_participatable_portrait_url'], overwrite=True)

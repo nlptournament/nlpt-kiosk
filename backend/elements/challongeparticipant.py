@@ -57,7 +57,9 @@ portrait_id : string | None
         else:
             portrait = Media.get(self['portrait_id'])
 
-        if portrait is not None:
+        if portrait is not None and portrait['_id'] is not None:
             portrait.fetch_and_store(url, filename=self['_id'])
+            self['portrait_id'] = portrait['_id']
+            self.save(only_on_changes=True)
             return True
         return False

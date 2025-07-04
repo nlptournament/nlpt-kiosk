@@ -67,6 +67,10 @@ class ElementBase(object):
         return {'type': type, 'default': default, 'unique': unique, 'notnone': notnone, 'fk': fk}
 
     @classmethod
+    def exists(cls, id):
+        return docDB.exists(cls.__name__, id)
+
+    @classmethod
     def get(cls, id):
         result = cls()
         fromdb = docDB.get(cls.__name__, id)
@@ -118,10 +122,21 @@ class ElementBase(object):
     def validate(self):
         return dict()
 
-    def save(self):
+    def save(self, only_on_changes=False):
         errors = self.validate_base()
         if not len(errors) == 0:
             return {'errors': errors}
+
+        if only_on_changes:
+            fromdb = docDB.get(self.__class__.__name__, self['_id'])
+            if fromdb is not None:
+                for k, v in self._attr.items():
+                    if k not in fromdb:
+                        break
+                    if not v == fromdb[k]:
+                        break
+                else:
+                    return {'no change': self['_id']}
 
         self.save_pre()
         if self['_id'] is None:

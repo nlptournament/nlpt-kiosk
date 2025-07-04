@@ -72,9 +72,10 @@ common : bool (default: True)
 
     def fetch_and_store(self, url, filename=None):
         from helpers.s3 import media_upload
-        if self['_id'] is not None and self['type'] == 1:
+        if self['_id'] is not None and self['src_type'] == 1:
             try:
                 img = requests.get(url)
+                print(img.headers.get('Content-Type'))
                 with tempfile.TemporaryFile() as tmp_file:
                     tmp_file.write(img.content)
                     tmp_file.seek(0)
