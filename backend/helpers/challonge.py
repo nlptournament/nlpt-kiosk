@@ -1,5 +1,10 @@
+import time
 import challonge
+from multiprocessing import Process
 from elements import Setting, ChallongeTournament, ChallongeMatch, ChallongeParticipant
+
+
+fetcher_process = None
 
 
 def my_fetch_and_parse(method, uri, params_prefix=None, **params):
@@ -10,6 +15,41 @@ def my_fetch_and_parse(method, uri, params_prefix=None, **params):
 
 challonge.set_credentials(Setting.value('challonge_user'), Setting.value('challonge_key'))
 challonge.api.fetch_and_parse = my_fetch_and_parse
+
+
+def start_fetcher():
+    global fetcher_process
+    if fetcher_process is None:
+        fetcher_process = Process(target=fetcher, daemon=True)
+        fetcher_process.start()
+
+
+def fetcher():
+    from noapi import docDB
+    from elements import ScreenTemplate, Screen
+    templates = list()
+    for st in ScreenTemplate.all():
+        if st['key'].startswith('challonge'):
+            templates.append(st['_id'])
+    loop_no = 0
+    while True:
+        loop_no %= 6
+        tournaments = list()
+        for template_id in templates:
+            for s in [Screen(s) for s in docDB.search_many('Screen', {'template_id': template_id})]:
+                # if loop_no = 0 fetch all
+                # else only fetch active
+                if loop_no == 0 or s.locked():
+                    for k in ['tournament_id']:
+                        if k in s['variables'] and s['variables'][k] not in tournaments:
+                            tournaments.append(s['variables'][k])
+        for tournament in tournaments:
+            try:
+                fetch_tournament(tournament)
+            except Exception as e:
+                print(f'error on fetching challonge tournament {tournament}: {e}')
+        loop_no += 1
+        time.sleep(10)
 
 
 def fetch_tournament(tournament_id):

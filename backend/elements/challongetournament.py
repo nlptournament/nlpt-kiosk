@@ -21,6 +21,8 @@ type : string
     the kind of tournament (single elemination, double elemination, ...) returned by the API variable tournament_type
 game : string
     the name of the game, that is played on the tournament as returnd by the API variable game_name
+available_rounds : list[int]
+    holds all round numbers that are available on this tournamenr, and is just for helping the frontend to not calculate this on every refresh
 completed_rounds : list[int]
     holds all round numbers that are completed, and is just for helping the frontend to not calculate this on every refresh
     a completed round is reached if all matches of this specific round are completed
@@ -31,6 +33,7 @@ completed_rounds : list[int]
         state=ElementBase.addAttr(type=int, default=0, notnone=True),
         type=ElementBase.addAttr(type=str, default='', notnone=True),
         game=ElementBase.addAttr(type=str, default='', notnone=True),
+        available_rounds=ElementBase.addAttr(type=list, default=[], notnone=True),
         completed_rounds=ElementBase.addAttr(type=list, default=[], notnone=True)
     )
 
@@ -60,7 +63,7 @@ completed_rounds : list[int]
             p.delete()
         transmit_challonge_delete(self, 'tournament')
 
-    def fill_completed_rounds(self):
+    def fill_rounds(self):
         from elements import ChallongeMatch
         avail_rounds = list()
         incom_rounds = list()
@@ -73,6 +76,10 @@ completed_rounds : list[int]
         for r in sorted(avail_rounds):
             if r not in incom_rounds:
                 result.append(r)
-        if not len(result) == len(self['completed_rounds']):
+        if not len(avail_rounds) == len(self['available_rounds']):
+            self['available_round'] = sorted(avail_rounds)
+            self['completed_rounds'] = result
+            self.save()
+        elif not len(result) == len(self['completed_rounds']):
             self['completed_rounds'] = result
             self.save()

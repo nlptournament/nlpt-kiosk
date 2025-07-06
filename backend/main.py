@@ -7,6 +7,7 @@ from endpoints import UserEndpoint, TimelineTemplateEndpoint, PresetEndpoint, Ki
 from endpoints import AnnouncementsEndpoint, PlayercountsEndpoint
 from helpers.versioning import run as versioning_run
 from helpers.wss import start_server as start_wss_server
+from helpers.challonge import start_fetcher as start_challonge_fetcher
 
 
 class API():
@@ -61,8 +62,8 @@ class ScreenEndpoint(ElementEndpointBase):
 class ChallongeTournamentEndpoint(ElementEndpointBase):
     _session_cls = Session
     _element = ChallongeTournament
-    _all_readable = list(['id', 'name', 'url', 'state', 'type', 'game', 'completed_rounds'])
-    _ro_attr = list(['name', 'url', 'state', 'type', 'game', 'completed_rounds'])
+    _all_readable = list(['id', 'name', 'url', 'state', 'type', 'game', 'available_round', 'completed_rounds'])
+    _ro_attr = list(['name', 'url', 'state', 'type', 'game', 'available_round', 'completed_rounds'])
 
 
 class ChallongeParticipantEndpoint(ElementEndpointBase):
@@ -94,4 +95,5 @@ if __name__ == '__main__':
 
     versioning_run()
     start_wss_server()
+    start_challonge_fetcher()
     cherrypy.quickstart(API(), '/', conf)
