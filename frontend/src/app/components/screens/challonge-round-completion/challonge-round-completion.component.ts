@@ -7,10 +7,11 @@ import { ChallongeTournament } from '../../../interfaces/challonge-tournament';
 import { ChallongeMatch } from '../../../interfaces/challonge-match';
 import { ChallongeParticipant } from '../../../interfaces/challonge-participant';
 import { Media } from '../../../interfaces/media';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'screen-challonge-round-completion',
-  imports: [],
+  imports: [CommonModule],
   templateUrl: './challonge-round-completion.component.html',
   styleUrl: './challonge-round-completion.component.scss'
 })
@@ -87,7 +88,7 @@ export class ChallongeRoundCompletionComponent implements OnInit {
             }
             round = round + 1;
         }
-        if (this.tournament.type == 'Double Elimination') {
+        if (this.tournament.type == 'double elimination') {
             round_loser = -1;
             while (true) {
                 if (this.tournament.available_rounds.includes(round_loser)) {

@@ -75,7 +75,6 @@ common : bool (default: True)
         if self['_id'] is not None and self['src_type'] == 1:
             try:
                 img = requests.get(url)
-                print(img.headers.get('Content-Type'))
                 with tempfile.TemporaryFile() as tmp_file:
                     tmp_file.write(img.content)
                     tmp_file.seek(0)

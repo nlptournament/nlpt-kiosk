@@ -65,7 +65,7 @@ def fetch_tournament(tournament_id):
     ct.save(only_on_changes=True)
 
     fetch_matches(str(tournament_id))
-    ct.fill_completed_rounds()
+    ct.fill_rounds()
 
 
 def fetch_matches(tournament_id):

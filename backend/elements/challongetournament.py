@@ -77,7 +77,7 @@ completed_rounds : list[int]
             if r not in incom_rounds:
                 result.append(r)
         if not len(avail_rounds) == len(self['available_rounds']):
-            self['available_round'] = sorted(avail_rounds)
+            self['available_rounds'] = sorted(avail_rounds)
             self['completed_rounds'] = result
             self.save()
         elif not len(result) == len(self['completed_rounds']):
