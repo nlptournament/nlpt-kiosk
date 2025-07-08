@@ -1,6 +1,6 @@
 export interface Screen {
     id?: string | null;
-    desc?: string;
+    desc: string;
     template_id?: string;
     user_id?: string;
     duration: number | null;

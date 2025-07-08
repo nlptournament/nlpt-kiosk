@@ -12,10 +12,12 @@
             </div>
         </div>
         <div class="flex flex-row gap-2">
-            <i class="pi pi-clone !text-1xl hover:cursor-pointer hover:text-highlight" (click)="duplicateScreen()" *ngIf="!roMode()"></i>
-            <i class="pi pi-pencil !text-1xl hover:cursor-pointer hover:text-highlight" (click)="editActive = true" *ngIf="!screen().locked && !roMode() && (currentUser().admin || screen().user_id == currentUser().id)"></i>
-            <i class="pi pi-lock !text-1xl text-danger" *ngIf="screen().locked"></i>
-            <i class="pi pi-search !text-1xl hover:cursor-pointer hover:text-highlight" (click)="toggleOverrideDetails()" *ngIf="!showDetails()"></i>
+            <i class="pi pi-clone !text-1xl hover:cursor-pointer hover:text-highlight" pTooltip="duplicate" showDelay="300" tooltipPosition="bottom" (click)="duplicateScreen()" *ngIf="!roMode()"></i>
+            <i class="pi pi-eye !text-1xl hover:cursor-pointer hover:text-highlight" pTooltip="hide Screen" showDelay="300" tooltipPosition="bottom" (click)="hideScreen()" *ngIf="screen().id && allowHide() && !currentUser().hidden_elements.includes(screen().id!)"></i>
+            <i class="pi pi-eye-slash !text-1xl hover:cursor-pointer hover:text-highlight" pTooltip="unhide (show) Screen" showDelay="300" tooltipPosition="bottom" (click)="unhideScreen()" *ngIf="screen().id && allowHide() && currentUser().hidden_elements.includes(screen().id!)"></i>
+            <i class="pi pi-pencil !text-1xl hover:cursor-pointer hover:text-highlight" pTooltip="edit" showDelay="300" tooltipPosition="bottom" (click)="editActive = true" *ngIf="!screen().locked && !roMode() && (currentUser().admin || screen().user_id == currentUser().id)"></i>
+            <i class="pi pi-lock !text-1xl text-danger" pTooltip="used by active Timeline" showDelay="300" tooltipPosition="bottom" *ngIf="screen().locked"></i>
+            <i class="pi pi-search !text-1xl hover:cursor-pointer hover:text-highlight" pTooltip="expand details" showDelay="300" tooltipPosition="bottom" (click)="toggleOverrideDetails()" *ngIf="!showDetails()"></i>
         </div>
     </div>
 

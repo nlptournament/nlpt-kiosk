@@ -8,6 +8,7 @@ import { CommonModule } from '@angular/common';
 import { Dialog } from 'primeng/dialog';
 import { FormsModule } from '@angular/forms';
 import { SelectModule } from 'primeng/select';
+import { InputTextModule } from 'primeng/inputtext';
 
 interface selectableType {
     code: number | null;
@@ -19,14 +20,9 @@ interface selectableUser {
     name: string;
 }
 
-interface selectableCommon {
-    code: boolean | null,
-    name: string
-}
-
 @Component({
   selector: 'panel-media',
-  imports: [CommonModule, MediaComponent, Dialog, FormsModule, SelectModule],
+  imports: [CommonModule, MediaComponent, Dialog, FormsModule, SelectModule, InputTextModule],
   templateUrl: './media-panel.component.html',
   styleUrl: './media-panel.component.scss'
 })
@@ -42,7 +38,9 @@ export class MediaPanelComponent implements OnInit {
     selectableSrcTypes: selectableType[] = [];
     selectableTypes: selectableType[] = [];
     selectableUsers: selectableUser[] = [];
-    selectableCommons: selectableCommon[] = [];
+
+    showHiddenMedia: boolean = false;
+    filterDesc: string = "";
     filterType: number | null = null;
     filterSrcType: number | null = null;
     filterUser: string | null = null;
@@ -51,9 +49,6 @@ export class MediaPanelComponent implements OnInit {
     ngOnInit(): void {
         this.createSelectableTypes();
         this.createSelectableUsers();
-        this.selectableCommons.push(<selectableCommon>{code: null, name: 'common'});
-        this.selectableCommons.push(<selectableCommon>{code: true, name: 'true'});
-        this.selectableCommons.push(<selectableCommon>{code: false, name: 'false'});
     }
 
     createSelectableTypes() {

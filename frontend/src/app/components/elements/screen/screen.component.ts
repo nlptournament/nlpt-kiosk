@@ -19,6 +19,7 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { SelectButtonModule } from 'primeng/selectbutton';
 import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { DatePickerModule } from 'primeng/datepicker';
+import { UserService } from '../../../services/user.service';
 
 interface variableDef {
     val: any;
@@ -62,6 +63,7 @@ export class ScreenComponent implements OnInit, OnChanges {
     showDetails = input(false, {transform: booleanAttribute});
     editMode = input(false, {transform: booleanAttribute});
     roMode = input(false, {transform: booleanAttribute});
+    allowHide = input(false, {transform: booleanAttribute});
     editResult = output<string|null|undefined>();
 
     overrideDetails: boolean = false;
@@ -73,7 +75,8 @@ export class ScreenComponent implements OnInit, OnChanges {
     selectableMedias: Map<string, selectableMedia[]> = new Map<string, selectableMedia[]>;
 
     constructor(
-        private screenService: ScreenService
+        private screenService: ScreenService,
+        private userService: UserService
     ) { }
 
     ngOnInit(): void {
@@ -169,6 +172,14 @@ export class ScreenComponent implements OnInit, OnChanges {
 
     templateChanged() {
         this.extractVariables();
+    }
+
+    hideScreen() {
+        if (this.currentUser().id && this.screen().id) this.userService.addHide(this.currentUser().id!, this.screen().id!).subscribe();
+    }
+
+    unhideScreen() {
+        if (this.currentUser().id && this.screen().id) this.userService.delHide(this.currentUser().id!, this.screen().id!).subscribe();
     }
 
     saveScreen() {
