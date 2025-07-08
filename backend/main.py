@@ -62,8 +62,8 @@ class ScreenEndpoint(ElementEndpointBase):
 class ChallongeTournamentEndpoint(ElementEndpointBase):
     _session_cls = Session
     _element = ChallongeTournament
-    _all_readable = list(['id', 'name', 'url', 'state', 'type', 'game', 'available_round', 'completed_rounds'])
-    _ro_attr = list(['name', 'url', 'state', 'type', 'game', 'available_round', 'completed_rounds'])
+    _all_readable = list(['id', 'name', 'url', 'state', 'type', 'game', 'available_rounds', 'completed_rounds'])
+    _ro_attr = list(['name', 'url', 'state', 'type', 'game', 'available_rounds', 'completed_rounds'])
 
 
 class ChallongeParticipantEndpoint(ElementEndpointBase):

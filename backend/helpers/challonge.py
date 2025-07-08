@@ -95,6 +95,8 @@ def fetch_participant(tournament_id, participant_id):
     cp['_id'] = str(ap['id'])
     cp['tournament_id'] = str(tournament_id)
     cp['name'] = ap['display_name']
+    if cp['name'].endswith(' (invitation pending)'):
+        cp['name'] = cp['name'].replace(' (invitation pending)', '')
     cp.save(only_on_changes=True)
     if ap['attached_participatable_portrait_url'] is not None:
         cp.fetch_portrait(ap['attached_participatable_portrait_url'], overwrite=True)

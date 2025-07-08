@@ -26,7 +26,7 @@ export class ChallongeRoundCompletionComponent implements OnInit, OnDestroy {
     tournament!: ChallongeTournament;
     matches: Map<string, ChallongeMatch> = new Map<string, ChallongeMatch>;
     participants: Map<string, ChallongeParticipant> = new Map<string, ChallongeParticipant>;
-    media: Map<string, Media> = new Map<string, Media>;
+    mediaURLs: Map<string, string> = new Map<string, string>;
 
     tournament_id: string = '';
     title: string = '';
@@ -46,7 +46,7 @@ export class ChallongeRoundCompletionComponent implements OnInit, OnDestroy {
         if (Object.keys(this.variables()).includes('tournament_id')) this.load_tournament(this.variables()['tournament_id']);
         if (Object.keys(this.variables()).includes('title') && this.variables()['title'] != '') this.title = this.variables()['title'];
         if (Object.keys(this.variables()).includes('signal_completed')) this.signal_completed = this.variables()['signal_completed'];
-        this.wssSubscription = this.websocketService.getAdminMessages().subscribe((msg) => this.wssRx(msg));
+        this.wssSubscription = this.websocketService.getKioskMessages().subscribe((msg) => this.wssRx(msg));
     }
 
     ngOnDestroy(): void {
@@ -55,12 +55,14 @@ export class ChallongeRoundCompletionComponent implements OnInit, OnDestroy {
     }
 
     wssRx(msg: any) {
-        console.log(msg);
+        console.log('challonge', msg);
         if (Object.keys(msg).includes('content')) {
             if (Object.keys(msg).includes('challonge_tournament')) {
                 let tournament: ChallongeTournament = <ChallongeTournament>msg['challonge_tournament'];
-                if (msg['content'] == 'update' && tournament.id == this.tournament_id)
+                if (msg['content'] == 'update' && tournament.id == this.tournament_id) {
                     this.tournament = tournament;
+                    this.calculate_displayed_rounds();
+                }
             }
             if (Object.keys(msg).includes('challonge_match')) {
                 let match: ChallongeMatch = <ChallongeMatch>msg['challonge_match'];
@@ -68,14 +70,13 @@ export class ChallongeRoundCompletionComponent implements OnInit, OnDestroy {
                     this.matches.set(match.id, match);
                 else if (msg['content'] == 'delete')
                     this.matches.delete(match.id);
-                this.calculate_displayed_rounds();
             }
             if (Object.keys(msg).includes('challonge_participant')) {
                 let participant: ChallongeParticipant = <ChallongeParticipant>msg['challonge_participant'];
                 if (msg['content'] == 'update' && participant.tournament_id == this.tournament_id) {
-                    if (participant.portrait_id && !this.media.has(participant.portrait_id))
+                    if (participant.portrait_id && !this.mediaURLs.has(participant.portrait_id))
                         this.mediaService.getMedia(participant.portrait_id).subscribe((media: Media) => {
-                            this.media.set(media.id, media)
+                            this.mediaURLs.set(media.id, this.mediaService.getMediaUrl(media))
                         });
                     this.participants.set(participant.id, participant);
                 }
@@ -109,9 +110,9 @@ export class ChallongeRoundCompletionComponent implements OnInit, OnDestroy {
                             next: (participants: ChallongeParticipant[]) => {
                                 for (let participant of participants) {
                                     if (participant.tournament_id == tournament_id) {
-                                        if (participant.portrait_id && !this.media.has(participant.portrait_id))
+                                        if (participant.portrait_id && !this.mediaURLs.has(participant.portrait_id))
                                             this.mediaService.getMedia(participant.portrait_id).subscribe((media: Media) => {
-                                                this.media.set(media.id, media)
+                                                this.mediaURLs.set(media.id, this.mediaService.getMediaUrl(media))
                                             });
                                         this.participants.set(participant.id, participant);
                                     }
@@ -147,6 +148,7 @@ export class ChallongeRoundCompletionComponent implements OnInit, OnDestroy {
                     round_loser = round_loser + 1;
                     break;
                 }
+                round_loser = round_loser - 1;
             }
             if (round - (round_loser * -1) > 1) round = round_loser * -1 + 1;
         }
