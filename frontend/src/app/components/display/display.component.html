@@ -21,6 +21,6 @@
         <screen-timer [isActive]="screenDP.active" [variables]="screenDP.screen.variables" (finished)="loadNextScreen(true)" *ngIf="screenDP.screen.key == 'timer'"></screen-timer>
         <screen-video-player [isActive]="screenDP.active" [variables]="screenDP.screen.variables" (finished)="loadNextScreen(true)" *ngIf="screenDP.screen.key == 'video-player'"></screen-video-player>
         <screen-stream-player [isActive]="screenDP.active" [variables]="screenDP.screen.variables" *ngIf="screenDP.screen.key == 'stream-player'"></screen-stream-player>
-        <screen-challonge-round-completion [isActive]="screenDP.active" [variables]="screenDP.screen.variables" *ngIf="screenDP.screen.key == 'challonge-rc'"></screen-challonge-round-completion>
+        <screen-challonge-round-completion [isActive]="screenDP.active" [variables]="screenDP.screen.variables" (finished)="loadNextScreen(true)" *ngIf="screenDP.screen.key == 'challonge-rc'"></screen-challonge-round-completion>
     </div>
 }

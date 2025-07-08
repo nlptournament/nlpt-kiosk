@@ -242,9 +242,24 @@ def system_screentemplates():
     # Challonge Round Completion
     if ScreenTemplate.count({'name': 'Challonge Round Completion'}) == 0:
         vardef = dict({
-            'tournament_id': {'type': 'int', 'desc': 'ID of the challonge tournament to display'}
+            'title': {'type': 'str', 'default': '', 'desc': 'optional title to show on top of Screen, otherqise Tournament name is displayed'},
+            'tournament_id': {'type': 'int', 'desc': 'ID of the challonge tournament to display'},
+            'signal_completed': {'type': 'bool', 'default': False, 'desc': 'if enabled the completion of a (primary) round signals a finished'}
         })
         ScreenTemplate({
             'key': 'challonge-rc', 'name': 'Challonge Round Completion',
             'desc': 'Shows the pairs and their completion of the current round in a challonge tournament',
+            'endless': True, 'duration': None, 'variables_def': vardef}).save()
+    # Challonge Parallel Tournaments
+    if ScreenTemplate.count({'name': 'Challonge Parallel Tournaments'}) == 0:
+        vardef = dict({
+            'title': {'type': 'str', 'default': '', 'desc': 'optional title to show on top of Screen'},
+            'tournament1_id': {'type': 'int', 'desc': 'ID of one challonge tournament to display'},
+            'tournament2_id': {'type': 'int', 'desc': 'ID of other challonge tournament to display'},
+            'signal_completed': {'type': 'bool', 'default': False,
+                                 'desc': 'if enabled Screen signals finished if the same (latest, primary) rounds on both Tournaments are completed'}
+        })
+        ScreenTemplate({
+            'key': 'challonge-pt', 'name': 'Challonge Parallel Tournaments',
+            'desc': 'Shows the pairs and their completion of the current round in two parallel executed Tournaments',
             'endless': True, 'duration': None, 'variables_def': vardef}).save()

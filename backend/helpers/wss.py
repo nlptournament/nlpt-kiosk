@@ -81,6 +81,14 @@ def _connection_process(rx_queue, tx_queue):
             # all connected websockets regardless of admin-interface users or kiosks
             if msg['target'] == 'all':
                 tx_queue.put({'target': 'all', 'msg': msg['msg']})
+            # all connected kiosks but not admin-interfaces
+            elif msg['target'] == 'kiosks':
+                t = list()
+                for c, p in CLIENTS.items():
+                    if 'user_id' not in p:
+                        t.append(c)
+                if len(t) > 0:
+                    tx_queue.put({'target': t, 'msg': msg['msg']})
             # all logged in admin-interface users
             elif msg['target'] == 'users':
                 t = list()

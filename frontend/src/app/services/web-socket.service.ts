@@ -11,15 +11,19 @@ export class WebSocketService {
 
     constructor() {
         this.socket$ = webSocket(environment.wssUrl);
-        let cookie: string = this.getCookie('NLPT-Kiosk-Controller');
-        if (cookie.length > 0) this.sendMessage({'session': cookie});
     }
 
     sendMessage(message: any) {
         this.socket$.next(message);
     }
 
-    getMessages(): Observable<any> {
+    getKioskMessages(): Observable<any> {
+        return this.socket$.asObservable();
+    }
+
+    getAdminMessages(): Observable<any> {
+        let cookie: string = this.getCookie('NLPT-Kiosk-Controller');
+        if (cookie.length > 0) this.sendMessage({'session': cookie});
         return this.socket$.asObservable();
     }
 

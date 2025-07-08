@@ -1,4 +1,4 @@
-import { Component, input, OnInit } from '@angular/core';
+import { Component, input, OnDestroy, OnInit, output } from '@angular/core';
 import { ChallongeTournamentService } from '../../../services/challonge-tournament.service';
 import { ChallongeMatchService } from '../../../services/challonge-match.service';
 import { ChallongeParticipantService } from '../../../services/challonge-participant.service';
@@ -8,6 +8,8 @@ import { ChallongeMatch } from '../../../interfaces/challonge-match';
 import { ChallongeParticipant } from '../../../interfaces/challonge-participant';
 import { Media } from '../../../interfaces/media';
 import { CommonModule } from '@angular/common';
+import { WebSocketService } from '../../../services/web-socket.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'screen-challonge-round-completion',
@@ -15,19 +17,25 @@ import { CommonModule } from '@angular/common';
   templateUrl: './challonge-round-completion.component.html',
   styleUrl: './challonge-round-completion.component.scss'
 })
-export class ChallongeRoundCompletionComponent implements OnInit {
+export class ChallongeRoundCompletionComponent implements OnInit, OnDestroy {
     isActive = input.required<boolean>();
     variables = input.required<any>();
+    finished = output<null>();
 
+    wssSubscription: Subscription | undefined;
     tournament!: ChallongeTournament;
     matches: Map<string, ChallongeMatch> = new Map<string, ChallongeMatch>;
     participants: Map<string, ChallongeParticipant> = new Map<string, ChallongeParticipant>;
     media: Map<string, Media> = new Map<string, Media>;
 
+    tournament_id: string = '';
+    title: string = '';
+    signal_completed: boolean = false;
     round: number | undefined;
     round_loser: number | undefined;
 
     constructor(
+        private websocketService: WebSocketService,
         private tournamentService: ChallongeTournamentService,
         private matchService: ChallongeMatchService,
         private participantService: ChallongeParticipantService,
@@ -36,6 +44,45 @@ export class ChallongeRoundCompletionComponent implements OnInit {
 
     ngOnInit() {
         if (Object.keys(this.variables()).includes('tournament_id')) this.load_tournament(this.variables()['tournament_id']);
+        if (Object.keys(this.variables()).includes('title') && this.variables()['title'] != '') this.title = this.variables()['title'];
+        if (Object.keys(this.variables()).includes('signal_completed')) this.signal_completed = this.variables()['signal_completed'];
+        this.wssSubscription = this.websocketService.getAdminMessages().subscribe((msg) => this.wssRx(msg));
+    }
+
+    ngOnDestroy(): void {
+        this.wssSubscription?.unsubscribe();
+        this.websocketService.closeConnection();
+    }
+
+    wssRx(msg: any) {
+        console.log(msg);
+        if (Object.keys(msg).includes('content')) {
+            if (Object.keys(msg).includes('challonge_tournament')) {
+                let tournament: ChallongeTournament = <ChallongeTournament>msg['challonge_tournament'];
+                if (msg['content'] == 'update' && tournament.id == this.tournament_id)
+                    this.tournament = tournament;
+            }
+            if (Object.keys(msg).includes('challonge_match')) {
+                let match: ChallongeMatch = <ChallongeMatch>msg['challonge_match'];
+                if (msg['content'] == 'update' && match.tournament_id == this.tournament_id)
+                    this.matches.set(match.id, match);
+                else if (msg['content'] == 'delete')
+                    this.matches.delete(match.id);
+                this.calculate_displayed_rounds();
+            }
+            if (Object.keys(msg).includes('challonge_participant')) {
+                let participant: ChallongeParticipant = <ChallongeParticipant>msg['challonge_participant'];
+                if (msg['content'] == 'update' && participant.tournament_id == this.tournament_id) {
+                    if (participant.portrait_id && !this.media.has(participant.portrait_id))
+                        this.mediaService.getMedia(participant.portrait_id).subscribe((media: Media) => {
+                            this.media.set(media.id, media)
+                        });
+                    this.participants.set(participant.id, participant);
+                }
+                else if (msg['content'] == 'delete')
+                    this.participants.delete(participant.id);
+            }
+        }
     }
 
     load_tournament(tournament_id: string) {
@@ -45,6 +92,8 @@ export class ChallongeRoundCompletionComponent implements OnInit {
                     this.matches = new Map<string, ChallongeMatch>;
                     this.participants = new Map<string, ChallongeParticipant>;
                     this.tournament = tournament;
+                    this.tournament_id = tournament.id;
+                    if (this.title == '') this.title = tournament.name;
                     this.matchService
                         .getMatches().subscribe({
                             next: (matches: ChallongeMatch[]) => {

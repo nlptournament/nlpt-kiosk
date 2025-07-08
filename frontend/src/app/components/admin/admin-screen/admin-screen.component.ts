@@ -94,7 +94,7 @@ export class AdminScreenComponent implements OnInit, OnDestroy {
         this.refreshTimelines();
         this.refreshPresets();
         this.refreshMedia();
-        this.wssSubscription = this.websocketService.getMessages().subscribe((msg) => this.wssRx(msg));
+        this.wssSubscription = this.websocketService.getAdminMessages().subscribe((msg) => this.wssRx(msg));
     }
 
     ngOnDestroy(): void {

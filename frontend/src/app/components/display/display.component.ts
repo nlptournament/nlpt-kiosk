@@ -69,7 +69,7 @@ export class DisplayComponent implements OnInit, OnDestroy {
                             .subscribe((kiosk: Kiosk) => {
                                 this.kiosk = kiosk;
                                 this.refreshTimeline();
-                                this.wssSubscription = this.websocketService.getMessages().subscribe((msg) => this.wssRx(msg));
+                                this.wssSubscription = this.websocketService.getKioskMessages().subscribe((msg) => this.wssRx(msg));
                             });
                     },
                     error: (err: HttpErrorResponse) => {
