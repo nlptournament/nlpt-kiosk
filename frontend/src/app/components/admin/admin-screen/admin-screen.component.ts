@@ -72,7 +72,6 @@ export class AdminScreenComponent implements OnInit, OnDestroy {
 
     constructor(
         private errorHandler: ErrorHandlerService,
-        private websocketService: WebSocketService,
         private router: Router,
         private userService: UserService,
         private screenTemplateService: ScreenTemplateService,
@@ -81,10 +80,12 @@ export class AdminScreenComponent implements OnInit, OnDestroy {
         private kioskService: KioskService,
         private timelineService: TimelineService,
         private presetService: PresetService,
-        private mediaService: MediaService
+        private mediaService: MediaService,
+        private websocketService: WebSocketService
     ) { }
 
     ngOnInit(): void {
+        this.wssSubscription = this.websocketService.getAdminMessages().subscribe((msg) => this.wssRx(msg));
         this.populateMenu();
         this.refreshUsers();
         this.refreshScreenTemplates();
@@ -94,12 +95,10 @@ export class AdminScreenComponent implements OnInit, OnDestroy {
         this.refreshTimelines();
         this.refreshPresets();
         this.refreshMedia();
-        this.wssSubscription = this.websocketService.getAdminMessages().subscribe((msg) => this.wssRx(msg));
     }
 
     ngOnDestroy(): void {
         this.wssSubscription?.unsubscribe();
-        this.websocketService.closeConnection();
     }
 
     wssRx(msg: any) {

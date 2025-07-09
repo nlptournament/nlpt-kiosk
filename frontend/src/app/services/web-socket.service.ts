@@ -23,7 +23,7 @@ export class WebSocketService {
 
     getAdminMessages(): Observable<any> {
         let cookie: string = this.getCookie('NLPT-Kiosk-Controller');
-        if (cookie.length > 0) this.sendMessage({'session': cookie});
+        this.sendMessage({'session': cookie});
         return this.socket$.asObservable();
     }
 

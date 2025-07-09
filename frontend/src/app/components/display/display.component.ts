@@ -82,11 +82,9 @@ export class DisplayComponent implements OnInit, OnDestroy {
 
     ngOnDestroy(): void {
         this.wssSubscription?.unsubscribe();
-        this.websocketService.closeConnection();
     }
 
     wssRx(msg: any) {
-        console.log('display', msg);
         if (Object.keys(msg).includes('kiosk') && Object.keys(msg).includes('content') && msg['content'] == 'update') {
             let k: Kiosk = <Kiosk>msg['kiosk'];
             if (this.kiosk.id == k.id && this.kiosk.timeline_id != k.timeline_id) {

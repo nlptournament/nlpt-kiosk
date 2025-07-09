@@ -51,11 +51,9 @@ export class ChallongeRoundCompletionComponent implements OnInit, OnDestroy {
 
     ngOnDestroy(): void {
         this.wssSubscription?.unsubscribe();
-        this.websocketService.closeConnection();
     }
 
     wssRx(msg: any) {
-        console.log('challonge', msg);
         if (Object.keys(msg).includes('content')) {
             if (Object.keys(msg).includes('challonge_tournament')) {
                 let tournament: ChallongeTournament = <ChallongeTournament>msg['challonge_tournament'];
