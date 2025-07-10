@@ -10,17 +10,14 @@ import { Media } from '../../../interfaces/media';
 import { CommonModule } from '@angular/common';
 import { WebSocketService } from '../../../services/web-socket.service';
 import { Subscription } from 'rxjs';
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { faBoltLightning } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
-  selector: 'screen-challonge-round-completion',
-  imports: [CommonModule, FontAwesomeModule],
-  templateUrl: './challonge-round-completion.component.html',
-  styleUrl: './challonge-round-completion.component.scss'
+  selector: 'screen-challonge-parallel-tournaments',
+  imports: [],
+  templateUrl: './challonge-parallel-tournaments.component.html',
+  styleUrl: './challonge-parallel-tournaments.component.scss'
 })
-export class ChallongeRoundCompletionComponent implements OnInit, OnDestroy {
-    faBoltLightning = faBoltLightning;
+export class ChallongeParallelTournamentsComponent {
     isActive = input.required<boolean>();
     variables = input.required<any>();
     finished = output<null>();
@@ -46,7 +43,7 @@ export class ChallongeRoundCompletionComponent implements OnInit, OnDestroy {
     ) {}
 
     ngOnInit() {
-        if (Object.keys(this.variables()).includes('tournament_id')) this.load_tournament(this.variables()['tournament_id']);
+        if (Object.keys(this.variables()).includes('tournament1_id')) this.load_tournament(this.variables()['tournament1_id']);
         if (Object.keys(this.variables()).includes('title') && this.variables()['title'] != '') this.title = this.variables()['title'];
         if (Object.keys(this.variables()).includes('signal_completed')) this.signal_completed = this.variables()['signal_completed'];
         this.wssSubscription = this.websocketService.getKioskMessages().subscribe((msg) => this.wssRx(msg));
@@ -156,5 +153,4 @@ export class ChallongeRoundCompletionComponent implements OnInit, OnDestroy {
         this.round = round;
         this.round_loser = round_loser;
     }
-
 }
