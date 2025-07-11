@@ -40,7 +40,7 @@ def fetcher():
                 # if loop_no = 0 fetch all
                 # else only fetch active
                 if loop_no == 0 or s.locked():
-                    for k in ['tournament_id']:
+                    for k in ['tournament_id', 'tournament1_id', 'tournament2_id']:
                         if k in s['variables'] and s['variables'][k] not in tournaments:
                             tournaments.append(s['variables'][k])
         for tournament in tournaments:

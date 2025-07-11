@@ -1,5 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription, timer } from 'rxjs';
+import { HttpErrorResponse } from '@angular/common/http';
 
 import { Kiosk } from '../../interfaces/kiosk';
 import { Timeline } from '../../interfaces/timeline';
@@ -9,6 +10,7 @@ import { KioskService } from '../../services/kiosk.service';
 import { TimelineService } from '../../services/timeline.service';
 import { ScreenService } from '../../services/screen.service';
 import { WebSocketService } from '../../services/web-socket.service';
+import { ErrorHandlerService } from '../../services/error-handler.service';
 
 import { CommonModule } from '@angular/common';
 import { AnnouncementsComponent } from '../screens/announcements/announcements.component';
@@ -20,8 +22,7 @@ import { BackgroundImageComponent } from '../screens/background-image/background
 import { VideoPlayerComponent } from '../screens/video-player/video-player.component';
 import { StreamPlayerComponent } from '../screens/stream-player/stream-player.component';
 import { ChallongeRoundCompletionComponent } from '../screens/challonge-round-completion/challonge-round-completion.component';
-import { ErrorHandlerService } from '../../services/error-handler.service';
-import { HttpErrorResponse } from '@angular/common/http';
+import { ChallongeParallelTournamentsComponent } from '../screens/challonge-parallel-tournaments/challonge-parallel-tournaments.component';
 
 
 interface screenDP {
@@ -32,7 +33,8 @@ interface screenDP {
 
 @Component({
   selector: 'app-display',
-  imports: [CommonModule, AnnouncementsComponent, LogoStarfieldComponent, PlayerCountsComponent, TasComponent, TimerComponent, BackgroundImageComponent, VideoPlayerComponent, StreamPlayerComponent, ChallongeRoundCompletionComponent],
+  imports: [CommonModule, AnnouncementsComponent, LogoStarfieldComponent, PlayerCountsComponent, TasComponent, TimerComponent, BackgroundImageComponent,
+    VideoPlayerComponent, StreamPlayerComponent, ChallongeRoundCompletionComponent, ChallongeParallelTournamentsComponent],
   templateUrl: './display.component.html',
   styleUrl: './display.component.scss'
 })

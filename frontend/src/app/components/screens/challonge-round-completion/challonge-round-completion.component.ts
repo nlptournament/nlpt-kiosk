@@ -127,6 +127,8 @@ export class ChallongeRoundCompletionComponent implements OnInit, OnDestroy {
     }
 
     calculate_displayed_rounds() {
+        if (this.round && this.signal_completed && this.tournament.completed_rounds.includes(this.round))
+            this.finished.emit(null);
         let round: number = 1;
         let round_loser: number | undefined = undefined;
         while (true) {
