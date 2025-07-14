@@ -35,7 +35,7 @@ class SettingEndpoint(SettingEndpointBase):
     _all_readable = ['version', 'wss_port']
     _admin_writeable = [
         'server_port', 'new_kiosks', 'wss_port', 's3_host', 's3_port', 's3_access_key', 's3_access_secret',
-        'anno_src_uri', 'anno_img_user_id', 'challonge_user', 'challonge_key', 'challonge_img_user_id', 'mock_anno', 'mock_pc'
+        'anno_src_uri', 'anno_img_user_id', 'challonge_user', 'challonge_key', 'challonge_img_user_id', 'mock_anno', 'mock_pc', 'mock_chal'
     ]
 
 
@@ -63,7 +63,10 @@ class ChallongeTournamentEndpoint(ElementEndpointBase):
     _session_cls = Session
     _element = ChallongeTournament
     _all_readable = list(['id', 'name', 'url', 'state', 'type', 'game', 'available_rounds', 'completed_rounds'])
-    _ro_attr = list(['name', 'url', 'state', 'type', 'game', 'available_rounds', 'completed_rounds'])
+    if Setting.value('mock_chal'):
+        _all_updateable = list(['name', 'url', 'state', 'type', 'game', 'available_rounds', 'completed_rounds'])
+    else:
+        _ro_attr = list(['name', 'url', 'state', 'type', 'game', 'available_rounds', 'completed_rounds'])
 
 
 class ChallongeParticipantEndpoint(ElementEndpointBase):

@@ -17,5 +17,7 @@ class Setting(SettingBase):
         'challonge_key':         {'order': 11, 'type': 'str',  'value': None,       'desc': 'Challonge API-key used for connection'},
         'challonge_img_user_id': {'order': 12, 'type': 'str',  'value': None,       'desc': 'user_id of User who is owning Media for Challonge Screens'},
         'mock_anno':             {'order': 20, 'type': 'bool', 'value': False,      'desc': 'if enabled Announcements-Endpoint delivers mockup-data'},
-        'mock_pc':               {'order': 21, 'type': 'bool', 'value': False,      'desc': 'if enabled PlayerCounts-Endpoint delivers mockup-data'}
+        'mock_pc':               {'order': 21, 'type': 'bool', 'value': False,      'desc': 'if enabled PlayerCounts-Endpoint delivers mockup-data'},
+        'mock_chal':             {'order': 22, 'type': 'bool', 'value': False,
+                                  'desc': 'if enabled Challonge-Endpoints deliver mockup-data (use Tournament-IDs 1 and 2)'}
     }
