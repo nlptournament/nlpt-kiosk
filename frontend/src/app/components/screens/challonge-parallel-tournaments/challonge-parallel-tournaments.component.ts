@@ -10,14 +10,17 @@ import { Media } from '../../../interfaces/media';
 import { CommonModule } from '@angular/common';
 import { WebSocketService } from '../../../services/web-socket.service';
 import { Subscription } from 'rxjs';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { faBoltLightning } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'screen-challonge-parallel-tournaments',
-  imports: [CommonModule],
+  imports: [CommonModule, FontAwesomeModule],
   templateUrl: './challonge-parallel-tournaments.component.html',
   styleUrl: './challonge-parallel-tournaments.component.scss'
 })
 export class ChallongeParallelTournamentsComponent {
+    faBoltLightning = faBoltLightning;
     isActive = input.required<boolean>();
     variables = input.required<any>();
     finished = output<null>();

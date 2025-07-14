@@ -14,9 +14,9 @@ module.exports = {
         colors: {
             'background': '#000000',
             'card': '#666666',
-            'text': '#ffffe1',
+            'text': '#f0f0f0',
             'watermark': '#999999',
-            'highlight': '#6ab63c',
+            'highlight': '#D732E6',
             'red': '#ff0000',
             'green': '#00ff00',
             'anno-ffa': '#666666',
@@ -25,10 +25,12 @@ module.exports = {
             'playercount-warn': '#d9a62c',
             'playercount-max': '#7f1d1d',
             'danger': '#7f1d1d',
+            'ok': '#6ab63c',
             'kiosk-card': '#888888',
             'screen-card': '#777777',
             'timeline-card': '#666666',
-            'add-card': '#444444'
+            'add-card': '#444444',
+            'match-active': '#FFE155'
         },
         fontSize: {
             '1xl': ['0.625vw', '0.938vw'],

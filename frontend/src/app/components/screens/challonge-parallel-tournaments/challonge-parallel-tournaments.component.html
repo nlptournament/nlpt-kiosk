@@ -18,26 +18,27 @@
                 <table class="table-auto text-6xl text-text w-full">
                     <thead>
                         <tr class="border-b-2 border-background">
-                            <th></th>
                             <th style="width: 46%"></th>
+                            <th></th>
                             <th style="width: 46%"></th>
                         </tr>
                     </thead>
                     <tbody class="text-center divide-y divide-background">
                         @for (match of matches.values(); track match.id) {
                             <tr class="" *ngIf="match.tournament_id == tournament1_id && match.round == t1_round">
-                                <td class="p-2">
-                                    <i class="pi pi-circle text-5xl" *ngIf="match.state != 3"></i>
-                                    <i class="pi pi-check-circle text-5xl" *ngIf="match.state == 3"></i>
-                                </td>
-                                <td class="p-2" [ngClass]="{'text-highlight': match.winner_id && match.player1_id == match.winner_id}">
-                                    <div class="flex flex-row gap-3 justify-center overflow-hidden">
+                                <td>
+                                    <div class="flex flex-row gap-3 justify-center" [ngClass]="{'text-highlight': match.winner_id && match.player1_id == match.winner_id, 'text-watermark': match.winner_id && match.player1_id != match.winner_id}">
                                         <img class="h-14 w-14 rounded-full" src="{{ mediaURLs.get(participants.get(match.player1_id)!.portrait_id) }}" *ngIf="match.player1_id && participants.get(match.player1_id)!.portrait_id" />
                                         {{ match.player1_id ? participants.get(match.player1_id)!.name : '???' }}
                                     </div>
                                 </td>
-                                <td class="p-2" [ngClass]="{'text-highlight': match.winner_id && match.player2_id == match.winner_id}">
-                                    <div class="flex flex-row gap-3 justify-center overflow-hidden">
+                                <td class="p-2">
+                                    <div class="text-watermark text-5xl" [ngClass]="{'text-match-active': match.state == 2}">
+                                        <fa-icon [icon]="faBoltLightning"></fa-icon>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="flex flex-row gap-3 justify-center" [ngClass]="{'text-highlight': match.winner_id && match.player2_id == match.winner_id, 'text-watermark': match.winner_id && match.player2_id != match.winner_id}">
                                         <img class="h-14 w-14 rounded-full" src="{{ mediaURLs.get(participants.get(match.player2_id)!.portrait_id) }}" *ngIf="match.player2_id && participants.get(match.player2_id)!.portrait_id" />
                                         {{ match.player2_id ? participants.get(match.player2_id)!.name : '???' }}
                                     </div>
@@ -55,26 +56,27 @@
                 <table class="table-auto text-6xl text-text w-full">
                     <thead>
                         <tr class="border-b-2 border-background">
-                            <th></th>
                             <th style="width: 46%"></th>
+                            <th></th>
                             <th style="width: 46%"></th>
                         </tr>
                     </thead>
                     <tbody class="text-center divide-y divide-background">
                         @for (match of matches.values(); track match.id) {
                             <tr class="" *ngIf="match.tournament_id == tournament1_id && match.round == t1_round_loser">
-                                <td class="p-2">
-                                    <i class="pi pi-circle text-5xl" *ngIf="match.state != 3"></i>
-                                    <i class="pi pi-check-circle text-5xl" *ngIf="match.state == 3"></i>
-                                </td>
-                                <td class="p-2" [ngClass]="{'text-highlight': match.winner_id && match.player1_id == match.winner_id}">
-                                    <div class="flex flex-row gap-3 justify-center overflow-hidden">
+                                <td>
+                                    <div class="flex flex-row gap-3 justify-center" [ngClass]="{'text-highlight': match.winner_id && match.player1_id == match.winner_id, 'text-watermark': match.winner_id && match.player1_id != match.winner_id}">
                                         <img class="h-14 w-14 rounded-full" src="{{ mediaURLs.get(participants.get(match.player1_id)!.portrait_id) }}" *ngIf="match.player1_id && participants.get(match.player1_id)!.portrait_id" />
                                         {{ match.player1_id ? participants.get(match.player1_id)!.name : '???' }}
                                     </div>
                                 </td>
-                                <td class="p-2" [ngClass]="{'text-highlight': match.winner_id && match.player2_id == match.winner_id}">
-                                    <div class="flex flex-row gap-3 justify-center overflow-hidden">
+                                <td class="p-2">
+                                    <div class="text-watermark text-5xl" [ngClass]="{'text-match-active': match.state == 2}">
+                                        <fa-icon [icon]="faBoltLightning"></fa-icon>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="flex flex-row gap-3 justify-center" [ngClass]="{'text-highlight': match.winner_id && match.player2_id == match.winner_id, 'text-watermark': match.winner_id && match.player2_id != match.winner_id}">
                                         <img class="h-14 w-14 rounded-full" src="{{ mediaURLs.get(participants.get(match.player2_id)!.portrait_id) }}" *ngIf="match.player2_id && participants.get(match.player2_id)!.portrait_id" />
                                         {{ match.player2_id ? participants.get(match.player2_id)!.name : '???' }}
                                     </div>
@@ -98,26 +100,27 @@
                 <table class="table-auto text-6xl text-text w-full">
                     <thead>
                         <tr class="border-b-2 border-background">
-                            <th></th>
                             <th style="width: 46%"></th>
+                            <th></th>
                             <th style="width: 46%"></th>
                         </tr>
                     </thead>
                     <tbody class="text-center divide-y divide-background">
                         @for (match of matches.values(); track match.id) {
                             <tr class="" *ngIf="match.tournament_id == tournament2_id && match.round == t2_round">
-                                <td class="p-2">
-                                    <i class="pi pi-circle text-5xl" *ngIf="match.state != 3"></i>
-                                    <i class="pi pi-check-circle text-5xl" *ngIf="match.state == 3"></i>
-                                </td>
-                                <td class="p-2" [ngClass]="{'text-highlight': match.winner_id && match.player1_id == match.winner_id}">
-                                    <div class="flex flex-row gap-3 justify-center overflow-hidden">
+                                <td>
+                                    <div class="flex flex-row gap-3 justify-center" [ngClass]="{'text-highlight': match.winner_id && match.player1_id == match.winner_id, 'text-watermark': match.winner_id && match.player1_id != match.winner_id}">
                                         <img class="h-14 w-14 rounded-full" src="{{ mediaURLs.get(participants.get(match.player1_id)!.portrait_id) }}" *ngIf="match.player1_id && participants.get(match.player1_id)!.portrait_id" />
                                         {{ match.player1_id ? participants.get(match.player1_id)!.name : '???' }}
                                     </div>
                                 </td>
-                                <td class="p-2" [ngClass]="{'text-highlight': match.winner_id && match.player2_id == match.winner_id}">
-                                    <div class="flex flex-row gap-3 justify-center overflow-hidden">
+                                <td class="p-2">
+                                    <div class="text-watermark text-5xl" [ngClass]="{'text-match-active': match.state == 2}">
+                                        <fa-icon [icon]="faBoltLightning"></fa-icon>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="flex flex-row gap-3 justify-center" [ngClass]="{'text-highlight': match.winner_id && match.player2_id == match.winner_id, 'text-watermark': match.winner_id && match.player2_id != match.winner_id}">
                                         <img class="h-14 w-14 rounded-full" src="{{ mediaURLs.get(participants.get(match.player2_id)!.portrait_id) }}" *ngIf="match.player2_id && participants.get(match.player2_id)!.portrait_id" />
                                         {{ match.player2_id ? participants.get(match.player2_id)!.name : '???' }}
                                     </div>
@@ -135,26 +138,27 @@
                 <table class="table-auto text-6xl text-text w-full">
                     <thead>
                         <tr class="border-b-2 border-background">
-                            <th></th>
                             <th style="width: 46%"></th>
+                            <th></th>
                             <th style="width: 46%"></th>
                         </tr>
                     </thead>
                     <tbody class="text-center divide-y divide-background">
                         @for (match of matches.values(); track match.id) {
                             <tr class="" *ngIf="match.tournament_id == tournament2_id && match.round == t2_round_loser">
-                                <td class="p-2">
-                                    <i class="pi pi-circle text-5xl" *ngIf="match.state != 3"></i>
-                                    <i class="pi pi-check-circle text-5xl" *ngIf="match.state == 3"></i>
-                                </td>
-                                <td class="p-2" [ngClass]="{'text-highlight': match.winner_id && match.player1_id == match.winner_id}">
-                                    <div class="flex flex-row gap-3 justify-center overflow-hidden">
+                                <td>
+                                    <div class="flex flex-row gap-3 justify-center" [ngClass]="{'text-highlight': match.winner_id && match.player1_id == match.winner_id, 'text-watermark': match.winner_id && match.player1_id != match.winner_id}">
                                         <img class="h-14 w-14 rounded-full" src="{{ mediaURLs.get(participants.get(match.player1_id)!.portrait_id) }}" *ngIf="match.player1_id && participants.get(match.player1_id)!.portrait_id" />
                                         {{ match.player1_id ? participants.get(match.player1_id)!.name : '???' }}
                                     </div>
                                 </td>
-                                <td class="p-2" [ngClass]="{'text-highlight': match.winner_id && match.player2_id == match.winner_id}">
-                                    <div class="flex flex-row gap-3 justify-center overflow-hidden">
+                                <td class="p-2">
+                                    <div class="text-watermark text-5xl" [ngClass]="{'text-match-active': match.state == 2}">
+                                        <fa-icon [icon]="faBoltLightning"></fa-icon>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="flex flex-row gap-3 justify-center" [ngClass]="{'text-highlight': match.winner_id && match.player2_id == match.winner_id, 'text-watermark': match.winner_id && match.player2_id != match.winner_id}">
                                         <img class="h-14 w-14 rounded-full" src="{{ mediaURLs.get(participants.get(match.player2_id)!.portrait_id) }}" *ngIf="match.player2_id && participants.get(match.player2_id)!.portrait_id" />
                                         {{ match.player2_id ? participants.get(match.player2_id)!.name : '???' }}
                                     </div>
