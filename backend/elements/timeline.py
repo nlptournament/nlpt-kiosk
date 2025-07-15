@@ -23,6 +23,9 @@ start_time : int | None (default: None)
 
 locked() : bool
     if True, Timeline is not allowed to be changed
+    is True if Timeline is currently displayed on a common Kiosk
+displayed() : bool
+    if True, Timeline is not allowed to be deleted
     is True if Timeline is currently displayed on a Kiosk
 preset() : bool
     is True if Timeline is part of a Preset
@@ -63,7 +66,7 @@ preset() : bool
         transmit_timeline_update(self)
 
     def delete_pre(self):
-        if self.locked():
+        if self.displayed():
             return {'error': {'code': 2, 'desc': "can't be deleted as it is locked"}}
 
     def delete_post(self):
@@ -76,6 +79,10 @@ preset() : bool
 
     def locked(self):
         from elements import Kiosk
+        return (Kiosk.count({'timeline_id': self['_id'], 'common': True}) > 0)
+
+    def displayed(self):
+        from elements import Kiosk
         return (Kiosk.count({'timeline_id': self['_id']}) > 0)
 
     def preset(self):
@@ -85,5 +92,6 @@ preset() : bool
     def json(self):
         result = super().json()
         result['locked'] = self.locked()
+        result['displayed'] = self.displayed()
         result['preset'] = self.preset()
         return result

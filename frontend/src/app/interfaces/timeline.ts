@@ -7,5 +7,6 @@ export interface Timeline {
     current_pos: number;
     start_time: number | null;
     locked?: boolean;
+    displayed?: boolean;
     preset?: boolean;
 }

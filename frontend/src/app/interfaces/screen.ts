@@ -8,5 +8,6 @@ export interface Screen {
     loop: boolean;
     variables: any;
     locked?: boolean;
+    displayed?: boolean;
     key: string;
 }

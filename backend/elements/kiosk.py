@@ -21,7 +21,7 @@ timeline_id : str | None
         name=ElementBase.addAttr(type=str, notnone=True, unique=True),
         desc=ElementBase.addAttr(type=str, default='', notnone=True),
         added_by_id=ElementBase.addAttr(type=str, default=None, fk='User'),
-        common=ElementBase.addAttr(type=bool, default=False, notnone=True),
+        common=ElementBase.addAttr(type=bool, default=True, notnone=True),
         timeline_id=ElementBase.addAttr(type=str, default=None, fk='Timeline')
     )
 

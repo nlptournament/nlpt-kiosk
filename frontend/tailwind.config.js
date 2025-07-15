@@ -25,6 +25,7 @@ module.exports = {
             'playercount-warn': '#d9a62c',
             'playercount-max': '#7f1d1d',
             'danger': '#7f1d1d',
+            'warn': '#d9a62c',
             'ok': '#6ab63c',
             'kiosk-card': '#888888',
             'screen-card': '#777777',

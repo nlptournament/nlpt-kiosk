@@ -25,8 +25,11 @@ variables : dict
     if variables (with default value in Template) are missing on saving, the are pulled over from Template.
 
 locked() : bool
-    if True, it's not allowed to change Screen, as it is used bei locked Timelines.
+    if True, it's not allowed to change Screen, as it is used by locked Timeline(s).
     gets True if Screen is part of at least one locked Timeline
+displayed() : bool
+    if True, it's not allowed to delete Screen, as it is used by displayed Timeline(s).
+    gets True if Screen is part of at least one displayed Timeline
 key() : str
     shortcut to ScreenTemplate's key
     """
@@ -84,8 +87,8 @@ key() : str
         transmit_screen_update(self)
 
     def delete_pre(self):
-        if self.locked():
-            return {'error': {'code': 2, 'desc': "can't be deleted as it is locked"}}
+        if self.displayed():
+            return {'error': {'code': 2, 'desc': "can't be deleted as it is displayed on Kiosk"}}
 
     def delete_post(self):
         from elements import TimelineTemplate, Timeline
@@ -105,11 +108,19 @@ key() : str
                 return True
         return False
 
+    def displayed(self):
+        from elements import Timeline
+        for t in [Timeline(t) for t in docDB.search_many('Timeline', {'screen_ids': self['_id']})]:
+            if t.displayed():
+                return True
+        return False
+
     def key(self):
         return self.template()['key']
 
     def json(self):
         result = super().json()
         result['locked'] = self.locked()
+        result['displayed'] = self.displayed()
         result['key'] = self.key()
         return result
