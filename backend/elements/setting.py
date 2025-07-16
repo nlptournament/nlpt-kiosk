@@ -18,6 +18,7 @@ class Setting(SettingBase):
         'challonge_img_user_id': {'order': 12, 'type': 'str',  'value': None,       'desc': 'user_id of User who is owning Media for Challonge Screens'},
         'mock_anno':             {'order': 20, 'type': 'bool', 'value': False,      'desc': 'if enabled Announcements-Endpoint delivers mockup-data'},
         'mock_pc':               {'order': 21, 'type': 'bool', 'value': False,      'desc': 'if enabled PlayerCounts-Endpoint delivers mockup-data'},
-        'mock_chal':             {'order': 22, 'type': 'bool', 'value': False,
+        'mock_tas':              {'order': 22, 'type': 'bool', 'value': False,      'desc': 'if enabled TAS-Endpoint delivers mockup-data'},
+        'mock_chal':             {'order': 23, 'type': 'bool', 'value': False,
                                   'desc': 'if enabled Challonge-Endpoints deliver mockup-data (use Tournament-IDs 1 and 2)'}
     }

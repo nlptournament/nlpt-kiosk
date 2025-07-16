@@ -4,7 +4,7 @@ from noapi import docDB, ElementEndpointBase
 from noapi.endpoints import SettingEndpointBase, LoginEndpointBase
 from elements import Setting, Session, ScreenTemplate, Screen, ChallongeTournament, ChallongeParticipant, ChallongeMatch
 from endpoints import UserEndpoint, TimelineTemplateEndpoint, PresetEndpoint, KioskEndpoint, TimelineEndpoint, MediaEndpoint
-from endpoints import AnnouncementsEndpoint, PlayercountsEndpoint
+from endpoints import AnnouncementsEndpoint, PlayercountsEndpoint, TASEndpoint
 from helpers.versioning import run as versioning_run
 from helpers.wss import start_server as start_wss_server
 from helpers.challonge import start_fetcher as start_challonge_fetcher
@@ -24,6 +24,7 @@ class API():
         self.media = MediaEndpoint()
         self.announcements = AnnouncementsEndpoint()
         self.playercounts = PlayercountsEndpoint()
+        self.tas = TASEndpoint()
         self.challongetournament = ChallongeTournamentEndpoint()
         self.challongematch = ChallongeMatchEndpoint()
         self.challongeparticipant = ChallongeParticipantEndpoint()
@@ -35,7 +36,7 @@ class SettingEndpoint(SettingEndpointBase):
     _all_readable = ['version', 'wss_port']
     _admin_writeable = [
         'server_port', 'new_kiosks', 'wss_port', 's3_host', 's3_port', 's3_access_key', 's3_access_secret',
-        'anno_src_uri', 'anno_img_user_id', 'challonge_user', 'challonge_key', 'challonge_img_user_id', 'mock_anno', 'mock_pc', 'mock_chal'
+        'anno_src_uri', 'anno_img_user_id', 'challonge_user', 'challonge_key', 'challonge_img_user_id', 'mock_anno', 'mock_pc', 'mock_tas', 'mock_chal'
     ]
 
 

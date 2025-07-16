@@ -7,10 +7,10 @@
 
     <div class="mx-auto w-screen flex flex-row justify-evenly">
         <div class="bg-card h-fit w-5/12 rounded-lg p-2">
-            <div class="text-5xl font-orbitron text-text text-center pt-2 pb-4">
+            <div class="text-{{ 5 + c_scale }}xl font-orbitron text-text text-center pt-2 pb-4">
                 aktuelle Strecke
             </div>
-            <table class="table-auto text-4xl text-text w-full">
+            <table class="table-auto text-{{ 4 + c_scale }}xl text-text w-full">
                 <thead>
                     <tr class="border-b-2 border-background">
                         <th class="pb-2">Rang</th>
@@ -20,7 +20,7 @@
                 </thead>
                 <tbody class="text-center divide-y divide-background">
                     @for (ranking of challenge_ranks; track ranking.rank) {
-                        <tr class="">
+                        <tr class="" [ngClass]="{'text-highlight': ranking.active}">
                             <td class="p-2">{{ ranking.rank }}</td>
                             <td>{{ ranking.player }}</td>
                             <td>{{ (!ranking.time ? "---" : (ranking.time / 1000 | number: '1.2-2') + "s") }}</td>
@@ -31,10 +31,10 @@
         </div>
 
         <div class="bg-card h-fit w-5/12 rounded-lg p-2">
-            <div class="text-5xl font-orbitron text-text text-center pt-2 pb-4">
+            <div class="text-{{ 5 + g_scale }}xl font-orbitron text-text text-center pt-2 pb-4">
                 Gesamtplatzierung
             </div>
-            <table class="table-auto text-4xl text-text w-full">
+            <table class="table-auto text-{{ 4 + g_scale }}xl text-text w-full">
                 <thead>
                     <tr class="border-b-2 border-background">
                         <th class="pb-2">Rang</th>
@@ -44,7 +44,7 @@
                 </thead>
                 <tbody class="text-center divide-y divide-background">
                     @for (ranking of global_ranks; track ranking.rank) {
-                        <tr class="">
+                        <tr class="" [ngClass]="{'text-highlight': ranking.active}">
                             <td class="p-2">{{ ranking.rank }}</td>
                             <td>{{ ranking.player }}</td>
                             <td>{{ ranking.points }}</td>
@@ -55,3 +55,5 @@
         </div>
     </div>
 </div>
+
+<!-- this comment helps tailwind to provide the required dynamically build classes at buildtime, do not remove this comment! text-4xl text-5xl text-6xl text-7xl -->

@@ -1,5 +1,8 @@
 import { CommonModule, DecimalPipe } from '@angular/common';
-import { Component, input, OnInit } from '@angular/core';
+import { Component, input, OnDestroy, OnInit } from '@angular/core';
+import { Subscription, timer } from 'rxjs';
+import { TasService } from '../../../services/tas.service';
+import { TasChallengeRank, TasGlobalRank } from '../../../interfaces/tas';
 
 @Component({
   selector: 'screen-tas',
@@ -7,37 +10,48 @@ import { Component, input, OnInit } from '@angular/core';
   templateUrl: './tas.component.html',
   styleUrl: './tas.component.scss'
 })
-export class TasComponent implements OnInit {
+export class TasComponent implements OnInit, OnDestroy {
     isActive = input.required<boolean>();
 
-    challenge_ranks: any[] = [];
-    global_ranks: any[] = [];
+    refreshTasTimer = timer(10000, 10000);
+    refreshTasTimerSubscription: Subscription | undefined;
+
+    challenge_ranks: TasChallengeRank[] = [];
+    global_ranks: TasGlobalRank[] = [];
+    c_scale: number = 0;
+    g_scale: number = 0;
+
+    constructor(
+        private tasService: TasService
+    ) {}
 
     ngOnInit(): void {
-        this.challenge_ranks.push({'rank': 1, 'player': 'PlayerName1', 'time': 123456});
-        this.challenge_ranks.push({'rank': 2, 'player': 'PlayerName2', 'time': 124567});
-        this.challenge_ranks.push({'rank': 3, 'player': 'ALongPlayerName', 'time': 124567});
-        this.challenge_ranks.push({'rank': 4, 'player': 'AReallyLongPlayerName', 'time': 124567});
-        this.challenge_ranks.push({'rank': 6, 'player': 'PlayerName3', 'time': undefined});
-        this.challenge_ranks.push({'rank': 6, 'player': 'PlayerName4', 'time': null});
+        this.refreshTas();
+        this.refreshTasTimerSubscription = this.refreshTasTimer.subscribe(() => this.refreshTas());
+    }
 
-        this.global_ranks.push({'rank': 1, 'player': 'PlayerName1', 'points': 16});
-        this.global_ranks.push({'rank': 2, 'player': 'PlayerName2', 'points': 15});
-        this.global_ranks.push({'rank': 3, 'player': 'ALongPlayerName', 'points': 14});
-        this.global_ranks.push({'rank': 4, 'player': 'AReallyLongPlayerName', 'points': 13});
-        this.global_ranks.push({'rank': 5, 'player': 'PlayerName5', 'points': 12});
-        this.global_ranks.push({'rank': 6, 'player': 'PlayerName6', 'points': 11});
-        this.global_ranks.push({'rank': 7, 'player': 'PlayerName7', 'points': 10});
-        this.global_ranks.push({'rank': 8, 'player': 'PlayerName8', 'points': 9});
-        this.global_ranks.push({'rank': 9, 'player': 'PlayerName9', 'points': 8});
-        this.global_ranks.push({'rank': 10, 'player': 'PlayerName10', 'points': 7});
-        this.global_ranks.push({'rank': 11, 'player': 'PlayerName11', 'points': 6});
-        this.global_ranks.push({'rank': 12, 'player': 'PlayerName12', 'points': 5});
-        this.global_ranks.push({'rank': 13, 'player': 'PlayerName13', 'points': 4});
-        this.global_ranks.push({'rank': 14, 'player': 'PlayerName14', 'points': 3});
-        this.global_ranks.push({'rank': 15, 'player': 'PlayerName15', 'points': 2});
-        this.global_ranks.push({'rank': 16, 'player': 'PlayerName16', 'points': 1});
-        this.global_ranks.push({'rank': 18, 'player': 'PlayerName3', 'points': 0});
-        this.global_ranks.push({'rank': 18, 'player': 'PlayerName4', 'points': 0});
+    ngOnDestroy(): void {
+        this.refreshTasTimerSubscription?.unsubscribe();
+    }
+
+    refreshTas() {
+        this.tasService.getChallengeRanks().subscribe({
+            next: (cranks: TasChallengeRank[]) => {
+                this.challenge_ranks = cranks;
+                if (cranks.length <= 14) this.c_scale = 2;
+                else if (cranks.length <= 17) this.c_scale = 1;
+                else this.c_scale = 0;
+            },
+            error: () => {}
+        });
+        this.tasService.getGlobalRanks().subscribe({
+            next: (granks: TasGlobalRank[]) => {
+                this.global_ranks = granks;
+                if (granks.length <= 14) this.g_scale = 2;
+                else if (granks.length <= 17) this.g_scale = 1;
+                else this.g_scale = 0;
+            },
+            error: () => {}
+        });
     }
 }
