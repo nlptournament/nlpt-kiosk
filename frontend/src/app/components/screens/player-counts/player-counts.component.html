@@ -5,15 +5,18 @@
         </div>
     </div>
 
-    <div class="mx-auto w-fill flex flex-wrap items-center justify-center gap-x-4 gap-y-4">
-        @for (count of counts; track count.game) {
-            <div class="p-4 w-1/6 bg-card rounded-xl shadow-md flex flex-col items-center gap-x-4 text-center">
-                <div class="text-5xl text-text">{{ count.game }}</div>
-                <div class="text-9xl font-orbitron text-highlight font-semibold" *ngIf="((count.count / count.max) < 0.8) && ((count.max - count.count) > 1)">{{ count.count }}</div>
-                <div class="text-9xl font-orbitron text-playercount-warn font-semibold" *ngIf="(((count.count / count.max) >= 0.8) || ((count.max - count.count) == 1)) && count.count != count.max">{{ count.count }}</div>
-                <div class="text-9xl font-orbitron text-playercount-max font-semibold" *ngIf="count.count == count.max">{{ count.count }}</div>
-                <div class="text-4xl text-text">{{ count.name }}</div>
-            </div>
-        }
+    <div class="mx-auto w-fill h-svh flex items-center">
+        <div class="w-fill flex flex-wrap gap-x-4 gap-y-4 justify-center">
+            @for (count of counts; track count.game) {
+                <div class="p-4 w-1/{{ 7 - scale }} bg-card rounded-xl shadow-md flex flex-col items-center gap-x-4 text-center">
+                    <div class="text-{{ 5 + scale }}xl text-text">{{ count.game }}</div>
+                    <div class="text-{{ 8 + scale }}xl font-orbitron text-highlight font-semibold" *ngIf="((count.count / count.max) < 0.8) && ((count.max - count.count) > 1)">{{ count.count }}</div>
+                    <div class="text-{{ 8 + scale }}xl font-orbitron text-playercount-warn font-semibold" *ngIf="(((count.count / count.max) >= 0.8) || ((count.max - count.count) == 1)) && count.count != count.max">{{ count.count }}</div>
+                    <div class="text-{{ 8 + scale }}xl font-orbitron text-playercount-max font-semibold" *ngIf="count.count == count.max">{{ count.count }}</div>
+                    <div class="text-{{ 4 + scale }}xl text-text">{{ count.name }}</div>
+                </div>
+            }
+        </div>
     </div>
 </div>
+<!-- this comment helps tailwind to provide the required dynamically build classes at buildtime, do not remove this comment! w-1/7 w-1/6 w-1/5 w-1/4 w-1/3 text-4xl text-5xl text-6xl text-7xl text-8xl text-9xl text-10xl text-11xl text-12xl -->

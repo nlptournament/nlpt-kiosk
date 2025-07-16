@@ -17,6 +17,7 @@ export class PlayerCountsComponent implements OnInit, OnDestroy {
     refreshPlayercountsTimerSubscription: Subscription | undefined;
 
     counts: any[] = [];
+    scale: number = 0;
 
     constructor(
       private playercountService: PlayercountService
@@ -36,6 +37,11 @@ export class PlayerCountsComponent implements OnInit, OnDestroy {
           .getPlayercounts().subscribe({
               next: (playercounts: Playercount[]) => {
                   this.counts = playercounts;
+                  if (playercounts.length <= 4) this.scale = 4;
+                  else if (playercounts.length <= 9) this.scale = 3;
+                  else if (playercounts.length <= 12) this.scale = 2;
+                  else if (playercounts.length <= 20) this.scale = 1;
+                  else this.scale = 0;
               },
               error: () => {}
           });
