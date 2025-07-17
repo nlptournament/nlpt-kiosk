@@ -4,7 +4,7 @@
         <div class="flex flex-row gap-2">
             <div class="flex flex-row gap-1">
                 <i class="pi pi-clock !text-1xl"></i>
-                {{ screen().duration ? screen().duration + 's' : (screenTemplates().get(screen().template_id!)!.endless ? '&infin;' : '?') }}
+                {{ screen().duration ? screen().duration + 's' : ( screen().till ? '&#8672;' : (screenTemplates().get(screen().template_id!)!.endless ? '&infin;' : '?')) }}
             </div>
             <div class="flex flex-row gap-1">
                 <i class="pi pi-replay !text-1xl"></i>
@@ -76,8 +76,13 @@
     </p-iftalabel>
 
     <p-iftalabel class="w-full mb-2">
-        <p-inputnumber [(ngModel)]="screen().duration" inputId="duration" mode="decimal" [min]="1" suffix="s" locale="de-DE" [disabled]="!screen().template_id || !screenTemplates().get(screen().template_id!)!.endless" />
+        <p-inputnumber [(ngModel)]="screen().duration" inputId="duration" mode="decimal" [min]="1" suffix="s" locale="de-DE" [disabled]="!screen().template_id || !screenTemplates().get(screen().template_id!)!.endless || screen().till != null" />
         <label for="duration">Duration</label>
+    </p-iftalabel>
+
+    <p-iftalabel class="w-full mb-2">
+        <p-datepicker [(ngModel)]="till" inputId="till" dateFormat="dd.mm.yy" [showTime]="true" [showSeconds]="true" [disabled]="!screen().template_id || !screenTemplates().get(screen().template_id!)!.endless || screen().duration != null" />
+        <label for="till">Till</label>
     </p-iftalabel>
 
     <p-selectbutton [options]="selectableLoops" inputId="loop" [(ngModel)]="screen().loop" optionLabel="name" optionValue="code" [disabled]="!screen().template_id || screenTemplates().get(screen().template_id!)!.endless" class="mb-2" />

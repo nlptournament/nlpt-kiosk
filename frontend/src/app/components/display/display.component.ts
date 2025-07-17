@@ -145,8 +145,10 @@ export class DisplayComponent implements OnInit, OnDestroy {
                         if (forceActivate) this.activateNextScreen();
                         else if (this.screens.has(this.screensNextKey - 2)) {
                             let csdp: screenDP = this.screens.get(this.screensNextKey - 2)!;
-                            if (csdp.screen.duration && csdp.startTS) {
-                                let target: Date = new Date((csdp.startTS + csdp.screen.duration) * 1000);
+                            if (csdp.screen.till || (csdp.screen.duration && csdp.startTS)) {
+                                let target: Date;
+                                if (csdp.screen.till) target = new Date((csdp.screen.till) * 1000);
+                                else target = new Date((csdp.startTS! + csdp.screen.duration!) * 1000);
                                 this.activateScreenTimerSubscription = timer(target).subscribe(() => this.activateNextScreen(target));
                             }
                         }
@@ -167,8 +169,10 @@ export class DisplayComponent implements OnInit, OnDestroy {
         this.activateScreenTimerSubscription?.unsubscribe();
         if (nowScreenDP) {
             if (this.timeline) this.sendCurrentPos(this.timeline.current_pos + 1);
-            if (nowScreenDP.screen.duration) {
-                let target: Date = new Date((currentTS + nowScreenDP.screen.duration - 2) * 1000);
+            if (nowScreenDP.screen.duration || nowScreenDP.screen.till) {
+                let target: Date;
+                if (nowScreenDP.screen.duration) target = new Date((currentTS + nowScreenDP.screen.duration - 2) * 1000);
+                else target = new Date((nowScreenDP.screen.till! - 2) * 1000);
                 this.loadNextScreenTimerSubscription = timer(target).subscribe(() => this.loadNextScreen());
             }
         }

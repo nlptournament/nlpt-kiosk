@@ -1,3 +1,4 @@
+from datetime import datetime
 from noapi import ElementBase, docDB
 
 
@@ -14,6 +15,9 @@ user_id : str
 duration : int | None
     how long the Screen is displayed on Timeline (in seconds). needs to be bigger than 0 or None.
     can only be changed if template is endless, otherwise copied from template
+till : int | None
+    till which timestamp the Screen is displayed. Needs to be in the future.
+    can only be changed if template is endless and duration is None, otherwise set to None on save.
 repeat : int (default: 0)
     number of times to repeat Screen. 0 means show once then go on. needs to be 0 or bigger.
     only possible to change if template is not endless, otherwise set to 0
@@ -38,6 +42,7 @@ key() : str
         template_id=ElementBase.addAttr(type=str, notnone=True, fk='ScreenTemplate'),
         user_id=ElementBase.addAttr(type=str, notnone=True, fk='User'),
         duration=ElementBase.addAttr(type=int, default=None),
+        till=ElementBase.addAttr(type=int, default=None),
         repeat=ElementBase.addAttr(type=int, default=0, notnone=True),
         loop=ElementBase.addAttr(type=bool, default=False, notnone=True),
         variables=ElementBase.addAttr(type=dict, default=dict(), notnone=True)
@@ -49,6 +54,8 @@ key() : str
             errors['_id'] = {'code': 50, 'desc': "Screen can't be changed, as it is used in a locked Timeline"}
         if self['duration'] is not None and self['duration'] < 1:
             errors['duration'] = {'code': 7, 'desc': 'needs to be bigger than 0 or Null'}
+        if self['till'] is not None and self['till'] <= datetime.now().timestamp():
+            errors['till'] = {'code': 7, 'desc': 'needs to be bigger in the future'}
         if self['repeat'] < 0:
             errors['repeat'] = {'code': 7, 'desc': 'needs to be 0 or bigger'}
         # variables validation
@@ -71,6 +78,8 @@ key() : str
             self['loop'] = False
         else:
             self['duration'] = self.template()['duration']
+        if not self.template()['endless'] or self['duration'] is not None:
+            self['till'] = None
         for k, v in self.template()['variables_def'].items():
             if 'ro' in v and v['ro']:
                 self['variables'][k] = v['default']

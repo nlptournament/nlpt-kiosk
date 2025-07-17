@@ -69,6 +69,7 @@ export class ScreenComponent implements OnInit, OnChanges {
     overrideDetails: boolean = false;
     editActive: boolean = false;
     variables: Map<string, variableDef> = new Map<string, variableDef>;
+    till: Date | null = null;
     selectableTemplates: selectableTemplate[] = [];
     selectableLoops: selectableLoop[] = [];
     selectableUsers: selectableUser[] = [];
@@ -126,6 +127,8 @@ export class ScreenComponent implements OnInit, OnChanges {
             this.variables = v;
             this.selectableMedias = sm;
         }
+        if (this.screen().till != null) this.till = new Date(this.screen().till! * 1000);
+        else this.till = null;
     }
 
     writeVariables() {
@@ -138,6 +141,8 @@ export class ScreenComponent implements OnInit, OnChanges {
             else nv = { ...nv, [k]: this.variables.get(k)!.val};
         }
         this.screen().variables = nv;
+        if (this.till != null) this.screen().till = Math.floor(this.till.getTime() / 1000);
+        else this.screen().till = null;
     }
 
     createSelectableTemplates() {

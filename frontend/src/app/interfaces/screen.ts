@@ -4,6 +4,7 @@ export interface Screen {
     template_id?: string;
     user_id?: string;
     duration: number | null;
+    till: number | null;
     repeat: number;
     loop: boolean;
     variables: any;

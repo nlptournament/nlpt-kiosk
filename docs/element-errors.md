@@ -46,6 +46,7 @@
 *reserved range **5x** for individual errors*
 
   * **7**: *(duration)* needs to be bigger than 0 or Null
+  * **7**: *(till)* needs to be in the future
   * **7**: *(repeat)* needs to be 0 or bigger
   * **3**: *(variables)* '<name-of-variable\>' needs to be of type <type\>
   * **50**: *(_id)* Screen can't be changed, as it is used in a locked Timeline
