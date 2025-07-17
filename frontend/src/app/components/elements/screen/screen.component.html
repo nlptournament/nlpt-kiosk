@@ -2,9 +2,9 @@
 <div class="p-4 pt-1 pb-1 w-10% bg-screen-card rounded-xl shadow-md flex flex-col items-center text-center text-1xl" *ngIf="!editMode()">
     <div class="flex flex-row w-10% justify-between pr-2 pl-2 mb-1">
         <div class="flex flex-row gap-2">
-            <div class="flex flex-row gap-1">
+            <div class="flex flex-row gap-1" *ngIf="!overrideDetails && !showDetails()">
                 <i class="pi pi-clock !text-1xl"></i>
-                {{ screen().duration ? screen().duration + 's' : ( screen().till ? '&#8672;' : (screenTemplates().get(screen().template_id!)!.endless ? '&infin;' : '?')) }}
+                {{ screen().duration ? screen().duration + 's' : ( till ? '&#8672;' : (screenTemplates().get(screen().template_id!)!.endless ? '&infin;' : '?')) }}
             </div>
             <div class="flex flex-row gap-1">
                 <i class="pi pi-replay !text-1xl"></i>
@@ -12,14 +12,23 @@
             </div>
         </div>
         <div class="flex flex-row gap-2">
-            <i class="pi pi-clone !text-1xl hover:cursor-pointer hover:text-highlight" pTooltip="duplicate" showDelay="300" tooltipPosition="bottom" (click)="duplicateScreen()" *ngIf="!roMode()"></i>
+            <i class="pi pi-clone !text-1xl hover:cursor-pointer hover:text-highlight" pTooltip="duplicate" showDelay="300" tooltipPosition="bottom" (click)="duplicateScreen()" *ngIf="allowDuplicate()"></i>
             <i class="pi pi-eye !text-1xl hover:cursor-pointer hover:text-highlight" pTooltip="hide Screen" showDelay="300" tooltipPosition="bottom" (click)="hideScreen()" *ngIf="screen().id && allowHide() && !currentUser().hidden_elements.includes(screen().id!)"></i>
             <i class="pi pi-eye-slash !text-1xl hover:cursor-pointer hover:text-highlight" pTooltip="unhide (show) Screen" showDelay="300" tooltipPosition="bottom" (click)="unhideScreen()" *ngIf="screen().id && allowHide() && currentUser().hidden_elements.includes(screen().id!)"></i>
-            <i class="pi pi-pencil !text-1xl hover:cursor-pointer hover:text-highlight" pTooltip="edit" showDelay="300" tooltipPosition="bottom" (click)="editActive = true" *ngIf="!screen().locked && !roMode() && (currentUser().admin || screen().user_id == currentUser().id)"></i>
+            <i class="pi pi-pencil !text-1xl hover:cursor-pointer hover:text-highlight" pTooltip="edit" showDelay="300" tooltipPosition="bottom" (click)="editActive = true" *ngIf="!screen().locked && allowEdit() && (currentUser().admin || screen().user_id == currentUser().id)"></i>
             <i class="pi pi-lock !text-1xl text-danger" pTooltip="used by (common) Kiosk" showDelay="300" tooltipPosition="bottom" *ngIf="screen().locked"></i>
             <i class="pi pi-unlock !text-1xl text-warn" pTooltip="used by (uncommon) Kiosk" showDelay="300" tooltipPosition="bottom" *ngIf="!screen().locked && screen().displayed"></i>
-            <i class="pi pi-search !text-1xl hover:cursor-pointer hover:text-highlight" pTooltip="expand details" showDelay="300" tooltipPosition="bottom" (click)="toggleOverrideDetails()" *ngIf="!showDetails()"></i>
+            <i class="pi pi-search !text-1xl hover:cursor-pointer hover:text-highlight" pTooltip="expand details" showDelay="300" tooltipPosition="bottom" (click)="overrideDetails = true" *ngIf="!overrideDetails && !showDetails()"></i>
+            <i class="pi pi-search !text-1xl hover:cursor-pointer hover:text-highlight" pTooltip="collapse details" showDelay="300" tooltipPosition="bottom" (click)="overrideDetails = false" *ngIf="overrideDetails && !showDetails()"></i>
         </div>
+    </div>
+
+    <div class="flex flex-row w-10% justify-between pr-2 pl-2 -mt-1" *ngIf="(overrideDetails || showDetails())">
+        <div class="flex flex-row gap-1">
+            <i class="pi pi-clock !text-1xl"></i>
+            {{ screen().duration ? screen().duration + 's' : ( till ? (till | date:'dd.MM.yy HH:mm:ss') : (screenTemplates().get(screen().template_id!)!.endless ? '&infin;' : '?')) }}
+        </div>
+        <div></div>
     </div>
 
     <div class="flex flex-row text-highlight">
@@ -62,7 +71,7 @@
     </p-iftalabel>
 
     <p-iftalabel class="w-full mb-2">
-        <p-select [(ngModel)]="screen().template_id" (onChange)="templateChanged()" inputId="template_id" [options]="selectableTemplates" optionValue="code" optionLabel="name" styleClass="w-full">
+        <p-select [(ngModel)]="screen().template_id" (onChange)="templateChanged()" inputId="template_id" [options]="selectableTemplates" optionValue="code" optionLabel="name" [filter]="true" filterBy="name" [showClear]="true" styleClass="w-full">
             <ng-template let-temp #item>
                 <div pTooltip="{{ temp.desc }}" tooltipPosition="left" showDelay="10" positionLeft="-15" class="w-full">{{ temp.name }}</div>
             </ng-template>
@@ -71,7 +80,7 @@
     </p-iftalabel>
 
     <p-iftalabel class="w-full mb-2">
-        <p-select [(ngModel)]="screen().user_id" inputId="user_id" [options]="selectableUsers" optionValue="code" optionLabel="name" styleClass="w-full" [disabled]="!currentUser().admin" />
+        <p-select [(ngModel)]="screen().user_id" inputId="user_id" [options]="selectableUsers" optionValue="code" optionLabel="name" [filter]="true" filterBy="name" [showClear]="true" styleClass="w-full" [disabled]="!currentUser().admin" />
         <label for="user_id">Owner</label>
     </p-iftalabel>
 
@@ -98,7 +107,7 @@
         <p-datepicker [(ngModel)]="v.value.val" inputId="{{v.key}}" dateFormat="dd.mm.yy" [showTime]="true" [showSeconds]="true" pTooltip="{{ v.value.desc }}" tooltipPosition="left" showDelay="10" *ngIf="v.value.type == 'ts'" />
         <p-inputnumber [(ngModel)]="v.value.val" inputId="{{v.key}}" mode="decimal" [minFractionDigits]="2" [maxFractionDigits]="5" locale="de-DE" pTooltip="{{ v.value.desc }}" tooltipPosition="left" showDelay="10" *ngIf="v.value.type == 'float'" />
         <p-toggleswitch [(ngModel)]="v.value.val" inputId="{{v.key}}" pTooltip="{{ v.value.desc }}" tooltipPosition="left" showDelay="10" *ngIf="v.value.type == 'bool'" />
-        <p-select [(ngModel)]="v.value.val" inputId="{{v.key}}" [options]="selectableMedias.get(v.key)" optionValue="code" optionLabel="name" styleClass="w-full" pTooltip="{{ v.value.desc }}" tooltipPosition="left" showDelay="10" *ngIf="v.value.type.startsWith('media')" />
+        <p-select [(ngModel)]="v.value.val" inputId="{{v.key}}" [options]="selectableMedias.get(v.key)" optionValue="code" optionLabel="name" styleClass="w-full" [filter]="true" filterBy="name" [showClear]="true" pTooltip="{{ v.value.desc }}" tooltipPosition="left" showDelay="10" *ngIf="v.value.type.startsWith('media')" />
         <label for="{{v.key}}">{{v.key}}</label>
     </p-iftalabel>
 

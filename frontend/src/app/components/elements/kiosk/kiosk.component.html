@@ -69,7 +69,7 @@
                 }
                 <div class="w-fill h-20 bg-add-card rounded-xl shadow-md flex items-center justify-center mb-2">
                     <i class="pi pi-plus-circle !text-3xl hover:cursor-pointer hover:text-highlight" (click)="timelineCreateActivate()" *ngIf="!timelineCreateActive"></i>
-                    <p-select [options]="selectableTimelineTemplates" [(ngModel)]="selectedTimelineTemplate" optionValue="code" optionLabel="name" (onChange)="timelineCreate()" appendTo="body" class="m-3 w-full !text-1xl" *ngIf="timelineCreateActive" />
+                    <p-select [options]="selectableTimelineTemplates" [(ngModel)]="selectedTimelineTemplate" optionValue="code" optionLabel="name" [filter]="true" filterBy="name" [showClear]="true" (onChange)="timelineCreate()" appendTo="body" class="m-3 w-full !text-1xl" *ngIf="timelineCreateActive" />
                 </div>
             </div>
         </div>

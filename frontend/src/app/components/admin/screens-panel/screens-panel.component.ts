@@ -46,6 +46,7 @@ export class ScreensPanelComponent implements OnInit {
     showHiddenScreens: boolean = false;
     showLockedScreens: boolean = false;
     ignoreScreenLocks: boolean = true;
+    showAllDetails: boolean = false;  // if true all Screens are instructed to show teir details
     filterDesc: string = "";
     filterUser: string | null = null;
     filterTemplate: string | null = null;

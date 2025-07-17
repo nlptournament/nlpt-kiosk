@@ -9,6 +9,7 @@ import { Dialog } from 'primeng/dialog';
 import { FormsModule } from '@angular/forms';
 import { SelectModule } from 'primeng/select';
 import { InputTextModule } from 'primeng/inputtext';
+import { TooltipModule } from 'primeng/tooltip';
 
 interface selectableType {
     code: number | null;
@@ -22,7 +23,7 @@ interface selectableUser {
 
 @Component({
   selector: 'panel-media',
-  imports: [CommonModule, MediaComponent, Dialog, FormsModule, SelectModule, InputTextModule],
+  imports: [CommonModule, MediaComponent, Dialog, FormsModule, SelectModule, InputTextModule, TooltipModule],
   templateUrl: './media-panel.component.html',
   styleUrl: './media-panel.component.scss'
 })

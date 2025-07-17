@@ -62,8 +62,9 @@ export class ScreenComponent implements OnInit, OnChanges {
     medias = input.required<Map<string, Media>>();
     showDetails = input(false, {transform: booleanAttribute});
     editMode = input(false, {transform: booleanAttribute});
-    roMode = input(false, {transform: booleanAttribute});
-    allowHide = input(false, {transform: booleanAttribute});
+    allowEdit = input(false, {transform: booleanAttribute});  // shows edit button if true
+    allowDuplicate = input(false, {transform: booleanAttribute});  // shows duplicate button if true
+    allowHide = input(false, {transform: booleanAttribute});  // shows hide and show (eye) buttons if true
     editResult = output<string|null|undefined>();
 
     overrideDetails: boolean = false;
@@ -159,10 +160,6 @@ export class ScreenComponent implements OnInit, OnChanges {
             su.push(<selectableUser>{code: k, name: this.users().get(k)!.login})
         }
         this.selectableUsers = su;
-    }
-
-    toggleOverrideDetails() {
-        this.overrideDetails = !this.overrideDetails;
     }
 
     editClose() {

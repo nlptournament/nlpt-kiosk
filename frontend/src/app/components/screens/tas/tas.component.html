@@ -13,6 +13,7 @@
             <table class="table-auto text-{{ 4 + c_scale }}xl text-text w-full">
                 <thead>
                     <tr class="border-b-2 border-background">
+                        <th></th>
                         <th class="pb-2">Rang</th>
                         <th>Spieler</th>
                         <th>Zeit</th>
@@ -20,7 +21,8 @@
                 </thead>
                 <tbody class="text-center divide-y divide-background">
                     @for (ranking of challenge_ranks; track ranking.rank) {
-                        <tr class="" [ngClass]="{'text-highlight': ranking.active}">
+                        <tr class="">
+                            <td class="text-highlight"><fa-icon [icon]="faCarOn" *ngIf="ranking.active"></fa-icon></td>
                             <td class="p-2">{{ ranking.rank }}</td>
                             <td>{{ ranking.player }}</td>
                             <td>{{ (!ranking.time ? "---" : (ranking.time / 1000 | number: '1.2-2') + "s") }}</td>
@@ -37,6 +39,7 @@
             <table class="table-auto text-{{ 4 + g_scale }}xl text-text w-full">
                 <thead>
                     <tr class="border-b-2 border-background">
+                        <th></th>
                         <th class="pb-2">Rang</th>
                         <th>Spieler</th>
                         <th>Punkte</th>
@@ -44,7 +47,8 @@
                 </thead>
                 <tbody class="text-center divide-y divide-background">
                     @for (ranking of global_ranks; track ranking.rank) {
-                        <tr class="" [ngClass]="{'text-highlight': ranking.active}">
+                        <tr class="">
+                            <td class="text-highlight"><fa-icon [icon]="faCarOn" *ngIf="ranking.active"></fa-icon></td>
                             <td class="p-2">{{ ranking.rank }}</td>
                             <td>{{ ranking.player }}</td>
                             <td>{{ ranking.points }}</td>

@@ -3,14 +3,17 @@ import { Component, input, OnDestroy, OnInit } from '@angular/core';
 import { Subscription, timer } from 'rxjs';
 import { TasService } from '../../../services/tas.service';
 import { TasChallengeRank, TasGlobalRank } from '../../../interfaces/tas';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { faCarOn } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'screen-tas',
-  imports: [CommonModule, DecimalPipe],
+  imports: [CommonModule, DecimalPipe, FontAwesomeModule],
   templateUrl: './tas.component.html',
   styleUrl: './tas.component.scss'
 })
 export class TasComponent implements OnInit, OnDestroy {
+    faCarOn = faCarOn;
     isActive = input.required<boolean>();
 
     refreshTasTimer = timer(10000, 10000);

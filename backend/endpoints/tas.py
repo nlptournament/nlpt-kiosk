@@ -93,7 +93,7 @@ class TASEndpoint(object):
         result.append({'rank': 1, 'player': 'PlayerName1', 'time': 123456, 'active': True})
         result.append({'rank': 2, 'player': 'PlayerName2', 'time': 124567, 'active': False})
         result.append({'rank': 3, 'player': 'ALongPlayerName', 'time': 124567, 'active': True})
-        result.append({'rank': 4, 'player': 'AReallyLongPlayerName', 'time': 124567, 'active': False})
+        result.append({'rank': 4, 'player': 'ALongPlayerName2', 'time': 124567, 'active': False})
         result.append({'rank': 6, 'player': 'PlayerName3', 'active': False})
         result.append({'rank': 6, 'player': 'PlayerName4', 'time': None, 'active': True})
         return result
@@ -103,7 +103,7 @@ class TASEndpoint(object):
         result.append({'rank': 1, 'player': 'PlayerName1', 'points': 21, 'active': True})
         result.append({'rank': 2, 'player': 'PlayerName2', 'points': 20, 'active': False})
         result.append({'rank': 3, 'player': 'ALongPlayerName', 'points': 19, 'active': True})
-        result.append({'rank': 4, 'player': 'AReallyLongPlayerName', 'points': 18, 'active': False})
+        result.append({'rank': 4, 'player': 'ALongPlayerName2', 'points': 18, 'active': False})
         result.append({'rank': 5, 'player': 'PlayerName5', 'points': 17, 'active': False})
         result.append({'rank': 6, 'player': 'PlayerName6', 'points': 16, 'active': False})
         result.append({'rank': 7, 'player': 'PlayerName7', 'points': 15, 'active': False})
