@@ -1,6 +1,7 @@
 boto3
 cherrypy
 cherrypy-cors
+prometheus-api-client
 pychallonge
 pycryptodome
 pymongo

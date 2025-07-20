@@ -20,7 +20,24 @@ class PlayercountsEndpoint(object):
             if Setting.value('mock_pc'):
                 result = self.mock_data()
             else:
-                pass
+                from prometheus_api_client import PrometheusConnect
+                src_uri = Setting.value('pc_prometheus_uri')
+                if src_uri is None:
+                    cherrypy.response.status = 500
+                    return {'error': 'Settings are missing the source for PlayerCounts'}
+                prom = PrometheusConnect(url=src_uri, disable_ssl=True)
+                tmp = dict()
+                for s in prom.custom_query(query='playercount_num and on (server) up==1'):
+                    tmp[s['metric']['instance']] = {
+                        'name': s['metric']['iname'],
+                        'game': self.translate_game(s['metric']['game']),
+                        'count': s['value'][-1]
+                    }
+                for s in prom.custom_query(query='playercount_max and on (server) up==1'):
+                    if s['metric']['instance'] in tmp:
+                        tmp[s['metric']['instance']]['max'] = s['value'][-1]
+                for v in tmp.values():
+                    result.append(v)
 
             cherrypy.response.headers['Cache-Control'] = 'public,s-maxage=10'
             result = sorted(result, key=lambda x: (x['game'], x['name']))
@@ -30,6 +47,12 @@ class PlayercountsEndpoint(object):
             cherrypy.response.headers['Allow'] = 'OPTIONS, GET'
             cherrypy.response.status = 405
             return {'error': 'method not allowed'}
+
+    def translate_game(self, name):
+        translations = {
+            'bf2': 'Battlefield 2'
+        }
+        return translations.get(name, name)
 
     def mock_data(self):
         result = list()
