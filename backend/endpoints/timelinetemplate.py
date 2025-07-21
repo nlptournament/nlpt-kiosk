@@ -1,6 +1,6 @@
 import cherrypy
 import cherrypy_cors
-from noapi import ElementEndpointBase
+from noapiframe import ElementEndpointBase
 from elements import TimelineTemplate, Session
 
 

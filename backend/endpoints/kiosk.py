@@ -2,7 +2,7 @@ import cherrypy
 import cherrypy_cors
 import time
 import math
-from noapi import ElementEndpointBase
+from noapiframe import ElementEndpointBase
 from elements import Session, Kiosk, Setting
 
 

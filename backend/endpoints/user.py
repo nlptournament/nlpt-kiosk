@@ -1,6 +1,6 @@
 import cherrypy
 import cherrypy_cors
-from noapi.endpoints import UserEndpointBase
+from noapiframe.endpoints import UserEndpointBase
 from elements import User, Session
 
 

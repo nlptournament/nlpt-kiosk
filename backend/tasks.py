@@ -4,7 +4,7 @@ import time
 
 @task(name='testdata')
 def generate_testdata(c):
-    from noapi import docDB
+    from noapiframe import docDB
     from elements import Screen, User, TimelineTemplate, Kiosk, Setting, Media
     admin_user_id = docDB.search_one('User', {'login': 'admin'})['_id']
     test_user_id = User({'login': 'testuser', 'admin': False, 'pw': 'password'}).save()['created']

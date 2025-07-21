@@ -30,7 +30,7 @@ def start_fetcher():
 
 
 def fetcher():
-    from noapi import docDB
+    from noapiframe import docDB
     from elements import ScreenTemplate, Screen
     templates = list()
     for st in ScreenTemplate.all():

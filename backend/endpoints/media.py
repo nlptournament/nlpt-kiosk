@@ -3,7 +3,7 @@ import cherrypy_cors
 import tempfile
 import json
 from cherrypy.lib import file_generator
-from noapi import ElementEndpointBase
+from noapiframe import ElementEndpointBase
 from elements import Media, Session
 
 

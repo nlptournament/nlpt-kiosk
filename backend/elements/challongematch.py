@@ -1,4 +1,4 @@
-from noapi import ElementBase
+from noapiframe import ElementBase
 
 
 class ChallongeMatch(ElementBase):

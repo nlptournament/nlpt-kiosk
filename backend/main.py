@@ -1,7 +1,7 @@
 import cherrypy
 import cherrypy_cors
-from noapi import docDB, ElementEndpointBase
-from noapi.endpoints import SettingEndpointBase, LoginEndpointBase
+from noapiframe import docDB, ElementEndpointBase
+from noapiframe.endpoints import SettingEndpointBase, LoginEndpointBase
 from elements import Setting, Session, ScreenTemplate, Screen, ChallongeTournament, ChallongeParticipant, ChallongeMatch
 from endpoints import UserEndpoint, TimelineTemplateEndpoint, PresetEndpoint, KioskEndpoint, TimelineEndpoint, MediaEndpoint
 from endpoints import AnnouncementsEndpoint, PlayercountsEndpoint, TASEndpoint

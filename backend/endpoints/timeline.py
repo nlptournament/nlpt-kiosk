@@ -1,6 +1,6 @@
 import cherrypy
 import cherrypy_cors
-from noapi import ElementEndpointBase
+from noapiframe import ElementEndpointBase
 from elements import Session, Timeline
 
 
@@ -25,7 +25,7 @@ class TimelineEndpoint(ElementEndpointBase):
             return
         elif cherrypy.request.method == 'PUT':
             from elements import Kiosk
-            from noapi import docDB
+            from noapiframe import docDB
             data = cherrypy.request.json
             if not isinstance(data, dict):
                 cherrypy.response.status = 400

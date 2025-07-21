@@ -1,4 +1,4 @@
-from noapi.elements import SessionBase
+from noapiframe.elements import SessionBase
 from .user import User
 
 

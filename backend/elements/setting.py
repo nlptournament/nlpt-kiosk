@@ -1,4 +1,4 @@
-from noapi.elements import SettingBase
+from noapiframe.elements import SettingBase
 
 
 class Setting(SettingBase):

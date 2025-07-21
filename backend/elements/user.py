@@ -1,5 +1,5 @@
-from noapi import docDB
-from noapi.elements import UserBase
+from noapiframe import docDB
+from noapiframe.elements import UserBase
 
 
 class User(UserBase):
