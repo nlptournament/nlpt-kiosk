@@ -31,26 +31,29 @@ class AnnouncementsEndpoint(object):
                     cherrypy.response.status = 500
                     return {'error': 'Settings are missing Media-Owner User'}
 
-                for a in requests.get(src_uri).json()['data']:
-                    if a['enabled']:
-                        anno = dict()
-                        anno['id'] = a['id']
-                        anno['layout'] = a['layout'] if a['layout'] in ['ffa', 'danger', 'default'] else 'default'
-                        anno['title'] = a['title']
-                        anno['msg'] = a['message']
-                        anno['target'] = a['start_at_unix'] if a['start_at_unix'] > 0 else None
-                        if a['image_path'] is None:
-                            anno['img'] = None
-                        elif (media_id := Media.get_by_filename(a['image_path'])['_id']) is not None:
-                            anno['img'] = media_id
-                        else:
-                            media = Media({'src_type': 1, 'user_id': media_user['_id'], 'common': False, 'type': 0})
-                            media.save()
-                            if media.fetch_and_store(a['image_url'], filename=a['image_path']):
-                                anno['img'] = media['_id']
+                try:
+                    for a in requests.get(src_uri).json()['data']:
+                        if a['enabled']:
+                            anno = dict()
+                            anno['id'] = a['id']
+                            anno['layout'] = a['layout'] if a['layout'] in ['ffa', 'danger', 'default'] else 'default'
+                            anno['title'] = a['title']
+                            anno['msg'] = a['message']
+                            anno['target'] = a['start_at_unix'] if a['start_at_unix'] > 0 else None
+                            if a['image_path'] is None:
+                                anno['img'] = None
+                            elif (media_id := Media.get_by_filename(a['image_path'])['_id']) is not None:
+                                anno['img'] = media_id
                             else:
-                                media.delete()
-                        result.append(anno)
+                                media = Media({'src_type': 1, 'user_id': media_user['_id'], 'common': False, 'type': 0})
+                                media.save()
+                                if media.fetch_and_store(a['image_url'], filename=a['image_path']):
+                                    anno['img'] = media['_id']
+                                else:
+                                    media.delete()
+                            result.append(anno)
+                except Exception as e:
+                    print(f'Error on fetching announcements: {e}')
 
             def sort_func(anno):
                 r = 0
@@ -63,7 +66,7 @@ class AnnouncementsEndpoint(object):
                 r += anno['id']
                 return r
 
-            cherrypy.response.headers['Cache-Control'] = 'public,s-maxage=15'
+            cherrypy.response.headers['Cache-Control'] = 'public,s-maxage=14'
             result.sort(key=sort_func)
             return result
 

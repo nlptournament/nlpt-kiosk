@@ -1,5 +1,7 @@
 import cherrypy
 import cherrypy_cors
+import requests
+from datetime import datetime
 
 
 class TASEndpoint(object):
@@ -34,9 +36,32 @@ class TASEndpoint(object):
             if Setting.value('mock_tas'):
                 result = self.mock_challenge()
             else:
-                pass
+                src_uri = Setting.value('tas_uri')
+                if src_uri is None:
+                    cherrypy.response.status = 500
+                    return {'error': 'Settings are missing the source for TAS'}
+                try:
+                    src_uri += '' if src_uri.endswith('/') else '/'
+                    players = dict()
+                    for p in requests.get(src_uri + 'players/').json():
+                        players[p['id']] = {'name': p['nickname'], 'last_update': p['last_update']}
+                    challenge_id = requests.get(src_uri + 'challenges/current/').json()
+                    if challenge_id is not None:
+                        challenge_id = challenge_id['id']
+                        now_ts = int(datetime.now().timestamp())
+                        for r in requests.get(src_uri + f'rankings/{challenge_id}/').json():
+                            if r['player_id'] in players:
+                                rank = {
+                                    'rank': r['rank'],
+                                    'player': players[r['player_id']]['name'],
+                                    'active': (now_ts - players[r['player_id']]['last_update']) <= 60
+                                }
+                                rank['time'] = r.get('time', None)
+                                result.append(rank)
+                except Exception as e:
+                    print(f'Error on fetching tas-challenge-ranks: {e}')
 
-            cherrypy.response.headers['Cache-Control'] = 'public,s-maxage=10'
+            cherrypy.response.headers['Cache-Control'] = 'public,s-maxage=9'
             return self.reduce_and_sort(result)
 
         else:
@@ -61,9 +86,28 @@ class TASEndpoint(object):
             if Setting.value('mock_tas'):
                 result = self.mock_global()
             else:
-                pass
+                src_uri = Setting.value('tas_uri')
+                if src_uri is None:
+                    cherrypy.response.status = 500
+                    return {'error': 'Settings are missing the source for TAS'}
+                try:
+                    src_uri += '' if src_uri.endswith('/') else '/'
+                    players = dict()
+                    for p in requests.get(src_uri + 'players/').json():
+                        players[p['id']] = {'name': p['nickname'], 'last_update': p['last_update']}
+                    now_ts = int(datetime.now().timestamp())
+                    for r in requests.get(src_uri + 'rankings/').json():
+                        if r['player_id'] in players:
+                            result.append({
+                                'rank': r['rank'],
+                                'player': players[r['player_id']]['name'],
+                                'points': r['points'],
+                                'active': (now_ts - players[r['player_id']]['last_update']) <= 60
+                            })
+                except Exception as e:
+                    print(f'Error on fetching tas-global-ranks: {e}')
 
-            cherrypy.response.headers['Cache-Control'] = 'public,s-maxage=10'
+            cherrypy.response.headers['Cache-Control'] = 'public,s-maxage=9'
             return self.reduce_and_sort(result)
 
         else:

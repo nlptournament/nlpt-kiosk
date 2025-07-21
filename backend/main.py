@@ -36,7 +36,7 @@ class SettingEndpoint(SettingEndpointBase):
     _all_readable = ['version', 'wss_port']
     _admin_writeable = [
         'server_port', 'new_kiosks', 'wss_port', 's3_host', 's3_port', 's3_access_key', 's3_access_secret',
-        'anno_src_uri', 'anno_img_user_id', 'pc_prometheus_uri', 'challonge_user', 'challonge_key', 'challonge_img_user_id',
+        'anno_src_uri', 'anno_img_user_id', 'pc_prometheus_uri', 'tas_uri', 'challonge_user', 'challonge_key', 'challonge_img_user_id',
         'mock_anno', 'mock_pc', 'mock_tas', 'mock_chal'
     ]
 

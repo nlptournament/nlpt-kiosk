@@ -191,13 +191,10 @@ def system_screentemplates():
             'endless': True, 'duration': None}).save()
     # TrackMania Stats
     if ScreenTemplate.count({'name': 'TrackMania Stats'}) == 0:
-        vardef = dict({
-            'tas_url': {'type': 'str', 'default': '', 'desc': 'the URL of TMNF-TAS as shown on the display, if left empty the infobox is ommited'}
-        })
         ScreenTemplate({
             'key': 'tas', 'name': 'TrackMania Stats',
             'desc': 'a reduced form of the TrackMania TimeAttackServer wallboard',
-            'endless': True, 'duration': None, 'variables_def': vardef}).save()
+            'endless': True, 'duration': None}).save()
     # Starfield Logo
     if ScreenTemplate.count({'name': 'Starfield Logo'}) == 0:
         vardef = dict({
