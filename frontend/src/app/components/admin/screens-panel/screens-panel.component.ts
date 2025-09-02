@@ -49,6 +49,7 @@ export class ScreensPanelComponent implements OnInit {
     showAllDetails: boolean = false;  // if true all Screens are instructed to show teir details
     filterDesc: string = "";
     filterUser: string | null = null;
+    filterUserEqual: boolean = true;
     filterTemplate: string | null = null;
 
     ngOnInit(): void {

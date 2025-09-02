@@ -6,9 +6,18 @@
                 <div class="text-2xl">Timelines Manager</div>
                 <i class="pi pi-times !text-1xl hover:cursor-pointer hover:text-danger" (click)="closeDialog()"></i>
             </div>
+            <div class="flex flex-row justify-start items-center gap-2 mb-2">
+                <div>Filter:</div>
+                <input pInputText id="filterDesc" [(ngModel)]="filterDesc" placeholder="description" autocomplete="off" autofocus />
+                <i class="!text-2xl hover:cursor-pointer hover:text-highlight" pTooltip="show users unequal" showDelay="300" tooltipPosition="bottom" (click)="filterUserEqual = false" *ngIf="filterUserEqual">==</i>
+                <i class="!text-2xl hover:cursor-pointer hover:text-highlight" pTooltip="show users equal" showDelay="300" tooltipPosition="bottom" (click)="filterUserEqual = true" *ngIf="!filterUserEqual">!=</i>
+                <p-select [(ngModel)]="filterUser" inputId="filterUser" [options]="selectableUsers" optionValue="code" optionLabel="name" />
+                <i class="pi pi-eye !text-2xl hover:cursor-pointer hover:text-highlight" pTooltip="show hidden TimelineTemplates" showDelay="300" tooltipPosition="bottom" (click)="showHiddenTT = true" *ngIf="!showHiddenTT"></i>
+                <i class="pi pi-eye-slash !text-2xl hover:cursor-pointer hover:text-highlight" pTooltip="suppress hidden TimelineTemplates" showDelay="300" tooltipPosition="bottom" (click)="showHiddenTT = false" *ngIf="showHiddenTT"></i>
+            </div>
             <div class="flex flex-col max-w-80% max-h-35% overflow-scroll gap-2">
                 @for (tt of timelineTemplates().values(); track tt.id) {
-                    <element-timeline-template [timelineTemplate]="tt" [screens]="screens()" [screenTemplates]="screenTemplates()" [medias]="medias()" [users]="users()" [currentUser]="currentUser()"></element-timeline-template>
+                    <element-timeline-template [timelineTemplate]="tt" [screens]="screens()" [screenTemplates]="screenTemplates()" [medias]="medias()" [users]="users()" [currentUser]="currentUser()" *ngIf="tt.id && (showHiddenTT == currentUser().hidden_elements.includes(tt.id)) && (filterUser == null || (filterUserEqual && filterUser == tt.user_id) || (!filterUserEqual && filterUser != tt.user_id)) && (tt.desc.includes(filterDesc))"></element-timeline-template>
                 }
                 <div class="w-fill h-28 bg-add-card rounded-xl shadow-md flex items-center justify-center">
                     <i class="pi pi-plus-circle !text-3xl hover:cursor-pointer hover:text-highlight" (click)="createTt()"></i>

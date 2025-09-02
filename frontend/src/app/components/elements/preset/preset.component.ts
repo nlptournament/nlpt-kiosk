@@ -22,6 +22,7 @@ import { TooltipModule } from 'primeng/tooltip';
 import { IftaLabelModule } from 'primeng/iftalabel';
 import { ButtonModule } from 'primeng/button';
 import { SelectButtonModule } from 'primeng/selectbutton';
+import { UserService } from '../../../services/user.service';
 
 interface selectableUser {
     code: string;
@@ -58,7 +59,8 @@ export class PresetComponent implements OnInit {
     selectableCommons: selectableCommon[] = [];
 
     constructor(
-        private presetService: PresetService
+        private presetService: PresetService,
+        private userService: UserService
     ) { }
 
     ngOnInit(): void {
@@ -134,5 +136,13 @@ export class PresetComponent implements OnInit {
             this.presetService
                 .applyPreset(this.preset().id!)
                 .subscribe((result: any) => {});
+    }
+
+    hidePreset() {
+        if (this.currentUser().id && this.preset().id) this.userService.addHide(this.currentUser().id!, this.preset().id!).subscribe();
+    }
+
+    unhidePreset() {
+        if (this.currentUser().id && this.preset().id) this.userService.delHide(this.currentUser().id!, this.preset().id!).subscribe();
     }
 }

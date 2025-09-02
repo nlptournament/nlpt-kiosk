@@ -11,6 +11,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { SelectModule } from 'primeng/select';
 import { CommonModule } from '@angular/common';
 import { TimelineTemplateService } from '../../../services/timeline-template.service';
+import { UserService } from '../../../services/user.service';
 import { TooltipModule } from 'primeng/tooltip';
 
 interface selectableUser {
@@ -46,7 +47,8 @@ export class TimelineTemplateComponent implements OnInit {
     selectedScreen: string = "";
 
     constructor(
-        private ttService: TimelineTemplateService
+        private ttService: TimelineTemplateService,
+        private userService: UserService
     ) { }
 
     ngOnInit(): void {
@@ -113,6 +115,14 @@ export class TimelineTemplateComponent implements OnInit {
         this.createSelectableScreens();
         this.selectedScreen = "";
         this.addScreenActive = true;
+    }
+
+    hideTT() {
+        if (this.currentUser().id && this.timelineTemplate().id) this.userService.addHide(this.currentUser().id!, this.timelineTemplate().id!).subscribe();
+    }
+
+    unhideTT() {
+        if (this.currentUser().id && this.timelineTemplate().id) this.userService.delHide(this.currentUser().id!, this.timelineTemplate().id!).subscribe();
     }
 
     saveTimelineTemplate() {

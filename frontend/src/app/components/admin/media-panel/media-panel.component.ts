@@ -45,6 +45,7 @@ export class MediaPanelComponent implements OnInit {
     filterType: number | null = null;
     filterSrcType: number | null = null;
     filterUser: string | null = null;
+    filterUserEqual: boolean = true;
     filterCommon: boolean | null = null;
 
     ngOnInit(): void {

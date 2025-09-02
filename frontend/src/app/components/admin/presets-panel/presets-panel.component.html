@@ -6,9 +6,21 @@
                 <div class="text-2xl">Presets Manager</div>
                 <i class="pi pi-times !text-1xl hover:cursor-pointer hover:text-danger" (click)="closeDialog()"></i>
             </div>
+            <div class="flex flex-row justify-start items-center gap-2 mb-2">
+                <div>Filter:</div>
+                <input pInputText id="filterDesc" [(ngModel)]="filterDesc" placeholder="description" autocomplete="off" autofocus />
+                <i class="!text-2xl hover:cursor-pointer hover:text-highlight" pTooltip="show users unequal" showDelay="300" tooltipPosition="bottom" (click)="filterUserEqual = false" *ngIf="filterUserEqual">==</i>
+                <i class="!text-2xl hover:cursor-pointer hover:text-highlight" pTooltip="show users equal" showDelay="300" tooltipPosition="bottom" (click)="filterUserEqual = true" *ngIf="!filterUserEqual">!=</i>
+                <p-select [(ngModel)]="filterUser" inputId="filterUser" [options]="selectableUsers" optionValue="code" optionLabel="name" />
+                <i class="pi pi-stop-circle !text-2xl hover:cursor-pointer hover:text-highlight" pTooltip="show only common Presets" showDelay="300" tooltipPosition="bottom" (click)="filterCommon = true" *ngIf="filterCommon == null"></i>
+                <i class="pi pi-circle-fill !text-2xl hover:cursor-pointer hover:text-highlight" pTooltip="show only uncommon Presets" showDelay="300" tooltipPosition="bottom" (click)="filterCommon = false" *ngIf="filterCommon == true"></i>
+                <i class="pi pi-circle !text-2xl hover:cursor-pointer hover:text-highlight" pTooltip="show common and uncommon Presets" showDelay="300" tooltipPosition="bottom" (click)="filterCommon = null" *ngIf="filterCommon == false"></i>
+                <i class="pi pi-eye !text-2xl hover:cursor-pointer hover:text-highlight" pTooltip="show hidden Presets" showDelay="300" tooltipPosition="bottom" (click)="showHiddenPresets = true" *ngIf="!showHiddenPresets"></i>
+                <i class="pi pi-eye-slash !text-2xl hover:cursor-pointer hover:text-highlight" pTooltip="suppress hidden Presets" showDelay="300" tooltipPosition="bottom" (click)="showHiddenPresets = false" *ngIf="showHiddenPresets"></i>
+            </div>
             <div class="flex flex-col max-w-80% max-h-35% overflow-scroll gap-2">
                 @for (preset of presets().values(); track preset.id) {
-                    <element-preset [preset]="preset" [kiosks]="kiosks()" [timelines]="timelines" [screens]="screens()" [screenTemplates]="screenTemplates()" [medias]="medias()" [users]="users()" [currentUser]="currentUser()" [timelineTemplates]="timelineTemplates()"></element-preset>
+                    <element-preset [preset]="preset" [kiosks]="kiosks()" [timelines]="timelines" [screens]="screens()" [screenTemplates]="screenTemplates()" [medias]="medias()" [users]="users()" [currentUser]="currentUser()" [timelineTemplates]="timelineTemplates()" *ngIf="preset.id && (showHiddenPresets == currentUser().hidden_elements.includes(preset.id)) && (filterUser == null || (filterUserEqual && filterUser == preset.user_id) || (!filterUserEqual && filterUser != preset.user_id)) && (filterCommon == null || filterCommon == preset.common) && (preset.desc.includes(filterDesc))"></element-preset>
                 }
             </div>
         </div>
