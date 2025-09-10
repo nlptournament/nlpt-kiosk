@@ -1,6 +1,7 @@
 import { booleanAttribute, Component, input, OnChanges, OnInit, output, SimpleChanges } from '@angular/core';
 
 import { ScreenService } from '../../../services/screen.service';
+import { UserService } from '../../../services/user.service';
 
 import { Screen } from '../../../interfaces/screen';
 import { ScreenTemplate } from '../../../interfaces/screen-template';
@@ -19,7 +20,7 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { SelectButtonModule } from 'primeng/selectbutton';
 import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { DatePickerModule } from 'primeng/datepicker';
-import { UserService } from '../../../services/user.service';
+import { TextareaModule } from 'primeng/textarea';
 
 interface variableDef {
     val: any;
@@ -50,7 +51,7 @@ interface selectableMedia {
 
 @Component({
   selector: 'element-screen',
-  imports: [CommonModule, Dialog, FormsModule, InputTextModule, IftaLabelModule, ButtonModule, SelectModule, TooltipModule, InputNumberModule, SelectButtonModule, ToggleSwitchModule, DatePickerModule],
+  imports: [CommonModule, Dialog, FormsModule, InputTextModule, IftaLabelModule, ButtonModule, SelectModule, TooltipModule, InputNumberModule, SelectButtonModule, ToggleSwitchModule, DatePickerModule, TextareaModule],
   templateUrl: './screen.component.html',
   styleUrl: './screen.component.scss'
 })

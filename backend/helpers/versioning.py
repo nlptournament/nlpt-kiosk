@@ -166,6 +166,30 @@ def db_defaults():
 
 def system_screentemplates():
     from elements import ScreenTemplate
+    # Plain Text
+    if ScreenTemplate.count({'name': 'Plain Text'}) == 0:
+        vardef = dict({
+            'text': {'type': 'text', 'desc': 'The text to display'},
+            'text_color': {'type': 'str', 'default': '', 'desc': '(html) color of the text, foreground color is used if not set'},
+            'text_size':  {'type': 'int', 'default': 9, 'desc': 'the size of the text, between 1 and 14'}
+        })
+        ScreenTemplate({
+            'key': 'text', 'name': 'Plain Text',
+            'desc': 'Just displays some text on the Screen',
+            'endless': True, 'duration': None, 'variables_def': vardef}).save()
+    # Background Image
+    if ScreenTemplate.count({'name': 'Background Image'}) == 0:
+        vardef = dict({
+            'image': {'type': 'media01', 'desc': 'Media element to be displayed in background, needs to be of type 0 or 1'},
+            'text_above': {'type': 'str', 'default': '', 'desc': 'upper line of text'},
+            'text_below': {'type': 'str', 'default': '', 'desc': 'lower line of text'},
+            'text_color': {'type': 'str', 'default': '', 'desc': '(html) color of the text lines, foreground color is used if not set'},
+            'text_space': {'type': 'int', 'default': 0, 'desc': 'space between the two lines of text'}
+        })
+        ScreenTemplate({
+            'key': 'background-image', 'name': 'Background Image',
+            'desc': 'Image Media displayed in background, with the option to display text on top',
+            'endless': True, 'duration': None, 'variables_def': vardef}).save()
     # Countdown
     if ScreenTemplate.count({'name': 'Countdown'}) == 0:
         vardef = dict({
@@ -195,29 +219,6 @@ def system_screentemplates():
             'key': 'tas', 'name': 'TrackMania Stats',
             'desc': 'a reduced form of the TrackMania TimeAttackServer wallboard',
             'endless': True, 'duration': None}).save()
-    # Starfield Logo
-    if ScreenTemplate.count({'name': 'Starfield Logo'}) == 0:
-        vardef = dict({
-            'text_above': {'type': 'str', 'default': '', 'desc': 'Text displayed above the logo'},
-            'text_below': {'type': 'str', 'default': '', 'desc': 'Text displayed below the logo'}
-        })
-        ScreenTemplate({
-            'key': 'logo-starfield', 'name': 'Starfield Logo',
-            'desc': 'NLPT logo with animated starfield around',
-            'endless': True, 'duration': None, 'variables_def': vardef}).save()
-    # Background Image
-    if ScreenTemplate.count({'name': 'Background Image'}) == 0:
-        vardef = dict({
-            'image': {'type': 'media01', 'desc': 'Media element to be displayed in background, needs to be of type 0 or 1'},
-            'text_above': {'type': 'str', 'default': '', 'desc': 'upper line of text'},
-            'text_below': {'type': 'str', 'default': '', 'desc': 'lower line of text'},
-            'text_color': {'type': 'str', 'default': '', 'desc': '(html) color of the text lines, foreground color is used if not set'},
-            'text_space': {'type': 'int', 'default': 0, 'desc': 'space between the two lines of text'}
-        })
-        ScreenTemplate({
-            'key': 'background-image', 'name': 'Background Image',
-            'desc': 'Image Media displayed in background, with the option to display text on top',
-            'endless': True, 'duration': None, 'variables_def': vardef}).save()
     # Video
     if ScreenTemplate.count({'name': 'Video'}) == 0:
         vardef = dict({

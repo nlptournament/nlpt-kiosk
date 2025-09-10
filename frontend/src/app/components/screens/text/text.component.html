@@ -1,0 +1,8 @@
+<div class="mx-auto h-screen w-screen overflow-hidden flex flex-col items-center justify-center">
+    @for (line of text; track line) {
+    <div class="text-text text-{{ text_size }}xl text-center" *ngIf="!text_color">{{ (line == '' ? '&nbsp;' : line) }}</div>
+    <div class="text-{{ text_size }}xl text-center" [style.color]="text_color" *ngIf="text_color">{{ (line == '' ? '&nbsp;' : line) }}</div>
+    }
+</div>
+
+<!-- this comment helps tailwind to provide the required dynamically build classes at buildtime, do not remove this comment! text-1xl text-2xl text-3xl text-4xl text-5xl text-6xl text-7xl text-8xl text-9xl text-10xl text-11xl text-12xl text-13xl text-1xl4 -->

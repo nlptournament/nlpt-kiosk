@@ -39,6 +39,7 @@ variables_def : dict
 
     _valid_types = {
         'str': str,
+        'text': str,     # Rich-Text field
         'int': int,
         'ts': int,
         'float': float,

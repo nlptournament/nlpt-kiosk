@@ -14,7 +14,6 @@ import { ErrorHandlerService } from '../../services/error-handler.service';
 
 import { CommonModule } from '@angular/common';
 import { AnnouncementsComponent } from '../screens/announcements/announcements.component';
-import { LogoStarfieldComponent } from '../screens/logo-starfield/logo-starfield.component';
 import { PlayerCountsComponent } from '../screens/player-counts/player-counts.component';
 import { TasComponent } from '../screens/tas/tas.component';
 import { TimerComponent } from '../screens/timer/timer.component';
@@ -23,6 +22,7 @@ import { VideoPlayerComponent } from '../screens/video-player/video-player.compo
 import { StreamPlayerComponent } from '../screens/stream-player/stream-player.component';
 import { ChallongeRoundCompletionComponent } from '../screens/challonge-round-completion/challonge-round-completion.component';
 import { ChallongeParallelTournamentsComponent } from '../screens/challonge-parallel-tournaments/challonge-parallel-tournaments.component';
+import { TextComponent } from '../screens/text/text.component';
 
 
 interface screenDP {
@@ -33,7 +33,7 @@ interface screenDP {
 
 @Component({
   selector: 'app-display',
-  imports: [CommonModule, AnnouncementsComponent, LogoStarfieldComponent, PlayerCountsComponent, TasComponent, TimerComponent, BackgroundImageComponent,
+  imports: [CommonModule, TextComponent, AnnouncementsComponent, PlayerCountsComponent, TasComponent, TimerComponent, BackgroundImageComponent,
     VideoPlayerComponent, StreamPlayerComponent, ChallongeRoundCompletionComponent, ChallongeParallelTournamentsComponent],
   templateUrl: './display.component.html',
   styleUrl: './display.component.scss'
