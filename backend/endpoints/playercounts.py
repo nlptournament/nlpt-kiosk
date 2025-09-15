@@ -18,7 +18,9 @@ class PlayercountsEndpoint(object):
         elif cherrypy.request.method == 'GET':
             result = list()
             if Setting.value('mock_pc'):
-                result = self.mock_data()
+                for s in self.mock_data():
+                    s['game'] = self.translate_game(s['game'])
+                    result.append(s)
             else:
                 from prometheus_api_client import PrometheusConnect
                 src_uri = Setting.value('pc_prometheus_uri')
@@ -58,30 +60,31 @@ class PlayercountsEndpoint(object):
             'ut3': 'UT 3',
             'cod2': 'CoD 2',
             'cod4': 'CoD 4',
-            'mc': 'Minecraft'
+            'mc': 'Minecraft',
+            'gmod': "Garry's Mod"
         }
         return translations.get(name, name)
 
     def mock_data(self):
         result = list()
-        result.append({'name': 'Server3', 'count': 2, 'max': 24, 'game': 'UT 2004'})
-        result.append({'name': 'Server2', 'count': 2, 'max': 24, 'game': 'UT 2004'})
-        result.append({'name': 'Server1', 'count': 2, 'max': 24, 'game': 'UT 2004'})
-        result.append({'name': 'Server1', 'count': 3, 'max': 24, 'game': 'UT 3'})
-        result.append({'name': 'Server4', 'count': 0, 'max': 24, 'game': 'UT 3'})
-        result.append({'name': 'Server2', 'count': 3, 'max': 24, 'game': 'UT 3'})
-        result.append({'name': 'Server3', 'count': 3, 'max': 24, 'game': 'UT 3'})
-        result.append({'name': 'Server3', 'count': 2, 'max': 32, 'game': 'BF 2'})
-        result.append({'name': 'Server2', 'count': 3, 'max': 32, 'game': 'BF 2'})
-        result.append({'name': 'Server1', 'count': 1, 'max': 32, 'game': 'BF 2'})
-        result.append({'name': 'OpenWorld', 'count': 0, 'max': 20, 'game': 'Minecraft'})
-        result.append({'name': 'Tournament', 'count': 10, 'max': 10, 'game': 'Minecraft'})
-        result.append({'name': 'Server1', 'count': 0, 'max': 32, 'game': 'CoD 4'})
-        result.append({'name': 'Server2', 'count': 0, 'max': 32, 'game': 'CoD 4'})
-        result.append({'name': 'Server3', 'count': 0, 'max': 32, 'game': 'CoD 4'})
-        result.append({'name': 'Server1', 'count': 2, 'max': 16, 'game': 'CoD 2'})
-        result.append({'name': 'Server2', 'count': 2, 'max': 16, 'game': 'CoD 2'})
-        result.append({'name': 'Server3', 'count': 2, 'max': 16, 'game': 'CoD 2'})
+        result.append({'name': 'Server3', 'count': 2, 'max': 24, 'game': 'ut2k4'})
+        result.append({'name': 'Server2', 'count': 2, 'max': 24, 'game': 'ut2k4'})
+        result.append({'name': 'Server1', 'count': 2, 'max': 24, 'game': 'ut2k4'})
+        result.append({'name': 'Server1', 'count': 19, 'max': 24, 'game': 'ut3'})
+        result.append({'name': 'Server4', 'count': 24, 'max': 24, 'game': 'ut3'})
+        result.append({'name': 'Server2', 'count': 20, 'max': 24, 'game': 'ut3'})
+        result.append({'name': 'Server3', 'count': 23, 'max': 24, 'game': 'ut3'})
+        result.append({'name': 'Server3', 'count': 2, 'max': 32, 'game': 'bf2'})
+        result.append({'name': 'Server2', 'count': 1, 'max': 32, 'game': 'bf2'})
+        result.append({'name': 'Server1', 'count': 0, 'max': 32, 'game': 'bf2'})
+        result.append({'name': 'OpenWorld', 'count': 0, 'max': 20, 'game': 'mc'})
+        result.append({'name': 'Tournament', 'count': 10, 'max': 10, 'game': 'mc'})
+        result.append({'name': 'Server1', 'count': 0, 'max': 32, 'game': 'cod4'})
+        result.append({'name': 'Server2', 'count': 0, 'max': 32, 'game': 'cod4'})
+        result.append({'name': 'Server3', 'count': 0, 'max': 32, 'game': 'cod4'})
+        result.append({'name': 'Server1', 'count': 2, 'max': 16, 'game': 'cod2'})
+        result.append({'name': 'Server2', 'count': 2, 'max': 16, 'game': 'cod2'})
+        result.append({'name': 'Server3', 'count': 2, 'max': 16, 'game': 'cod2'})
         result.append({'name': 'NLPT', 'count': 57, 'max': 60, 'game': 'Mordhau'})
-        result.append({'name': 'Geheimbasis', 'count': 3, 'max': 4, 'game': 'Left4Dead2'})
+        result.append({'name': 'NLPT TTT', 'count': 10, 'max': 20, 'game': 'gmod'})
         return result
