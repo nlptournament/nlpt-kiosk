@@ -1,4 +1,6 @@
 <p-menubar class="!text-1xl" [model]="menuItems"></p-menubar>
+<p-confirmdialog />
+
 <div class="flex flex-wrap p-2 gap-2">
     @for (kiosk of kiosks.values(); track kiosk.id) {
     <element-kiosk [kiosk]="kiosk" [users]="users" [currentUser]="currentUser" [timelineTemplates]="timelineTemplates" [timelines]="timelines" [medias]="medias" [screens]="screens" [screenTemplates]="screenTemplates" [timelinesChanged]="timelinesChanged" (timelineSelection)="timelinesSelected($event)" *ngIf="showHiddenKiosks || !currentUser.hidden_elements.includes(kiosk.id)"></element-kiosk>

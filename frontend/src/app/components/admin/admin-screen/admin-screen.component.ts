@@ -28,18 +28,20 @@ import { UsersPanelComponent } from '../users-panel/users-panel.component';
 import { MediaPanelComponent } from '../media-panel/media-panel.component';
 import { UpdatePwComponent } from '../update-pw/update-pw.component';
 
-import { MenuItem } from 'primeng/api';
+import { ConfirmationService, MenuItem } from 'primeng/api';
 import { MenubarModule } from 'primeng/menubar';
 import { Subscription } from 'rxjs';
 import { WebSocketService } from '../../../services/web-socket.service';
 import { MediaService } from '../../../services/media.service';
 import { Media } from '../../../interfaces/media';
 import { SettingsPanelComponent } from '../settings-panel/settings-panel.component';
+import { ConfirmDialog } from 'primeng/confirmdialog';
 
 
 @Component({
   selector: 'app-admin-screen',
-  imports: [CommonModule, MenubarModule, KioskComponent, ScreensPanelComponent, TimelineTemplatesPanelComponent, PresetsPanelComponent, UsersPanelComponent, MediaPanelComponent, UpdatePwComponent, SettingsPanelComponent],
+  imports: [CommonModule, MenubarModule, KioskComponent, ScreensPanelComponent, TimelineTemplatesPanelComponent, PresetsPanelComponent, UsersPanelComponent, MediaPanelComponent, UpdatePwComponent, SettingsPanelComponent, ConfirmDialog],
+  providers: [ConfirmationService],
   templateUrl: './admin-screen.component.html',
   styleUrl: './admin-screen.component.scss'
 })
@@ -81,7 +83,8 @@ export class AdminScreenComponent implements OnInit, OnDestroy {
         private timelineService: TimelineService,
         private presetService: PresetService,
         private mediaService: MediaService,
-        private websocketService: WebSocketService
+        private websocketService: WebSocketService,
+        private confirmationService: ConfirmationService
     ) { }
 
     ngOnInit(): void {
@@ -273,6 +276,14 @@ export class AdminScreenComponent implements OnInit, OnDestroy {
                 command: () => {
                     this.syncedCurrentTimelineApply();
                 }
+            },
+            {
+                label: 'Delete Timelines',
+                icon: 'pi pi-trash',
+                disabled: this.selectedPresetTimelines.size == 0,
+                command: () => {
+                    this.deleteSelectedTimelines();
+                }
             }
         ]
     }
@@ -457,6 +468,33 @@ export class AdminScreenComponent implements OnInit, OnDestroy {
                    this.populateMenu();
                 }
             });
+    }
+
+    deleteSelectedTimelines() {
+        this.confirmationService.confirm({
+            message: 'Are you sure you want to delete selected Timelines?',
+            header: 'Confirmation',
+            closable: true,
+            closeOnEscape: true,
+            icon: 'pi pi-exclamation-triangle',
+            rejectButtonProps: {
+                label: 'No'
+            },
+            acceptButtonProps: {
+                label: 'Yes',
+                outlined: true,
+            },
+            accept: () => {
+                for (let timeline_ids of this.selectedPresetTimelines.values()) {
+                    for (let tlid of timeline_ids) {
+                        this.timelineService.deleteTimeline(tlid).subscribe((result: any) => {});
+                    }
+                }
+                this.selectedPresetTimelines.clear();
+                this.populateMenu();
+            },
+            reject: () => {},
+        });
     }
 
 }
