@@ -15,8 +15,9 @@
         <div class="flex flex-row gap-2">
             <i class="pi pi-eye !text-1xl hover:cursor-pointer hover:text-highlight" pTooltip="hide Preset" showDelay="300" tooltipPosition="bottom" (click)="hidePreset()" *ngIf="preset().id && !currentUser().hidden_elements.includes(preset().id!)"></i>
             <i class="pi pi-eye-slash !text-1xl hover:cursor-pointer hover:text-highlight" pTooltip="unhide (show) Preset" showDelay="300" tooltipPosition="bottom" (click)="unhidePreset()" *ngIf="preset().id && currentUser().hidden_elements.includes(preset().id!)"></i>
-            <i class="pi pi-file-export !text-1xl hover:cursor-pointer hover:text-highlight" pTooltip="apply" showDelay="300" tooltipPosition="top" (click)="presetApply()" *ngIf="!editActive"></i>
-            <i class="pi pi-pencil !text-1xl hover:cursor-pointer hover:text-highlight" pTooltip="edit" showDelay="300" tooltipPosition="top" (click)="editOpen()" *ngIf="!editActive && (currentUser().admin || currentUser().id == preset().user_id)"></i>
+            <i class="pi pi-desktop !text-1xl hover:cursor-pointer hover:text-highlight" pTooltip="apply directly to Kiosk-Screens" showDelay="300" tooltipPosition="bottom" (click)="presetApplyToKiosks()" *ngIf="!editActive"></i>
+            <i class="pi pi-file-export !text-1xl hover:cursor-pointer hover:text-highlight" pTooltip="apply" showDelay="300" tooltipPosition="bottom" (click)="presetApply()" *ngIf="!editActive"></i>
+            <i class="pi pi-pencil !text-1xl hover:cursor-pointer hover:text-highlight" pTooltip="edit" showDelay="300" tooltipPosition="bottom" (click)="editOpen()" *ngIf="!editActive && (currentUser().admin || currentUser().id == preset().user_id)"></i>
         </div>
     </div>
 
@@ -70,5 +71,12 @@
                 <p-button label="Save" (onClick)="presetSave()" />
             </div>
         </div>
+    </ng-template>
+</p-dialog>
+
+<!-- WAIT SPINNER MODAL -->
+<p-dialog [modal]="true" appendTo="body" [(visible)]="waitingActive">
+    <ng-template #headless>
+        <p-progress-spinner ariaLabel="loading" />
     </ng-template>
 </p-dialog>

@@ -12,8 +12,11 @@ import { Media } from '../../../interfaces/media';
 import { TimelineComponent } from '../timeline/timeline.component';
 
 import { PresetService } from '../../../services/preset.service';
-import { Dialog } from 'primeng/dialog';
+import { UserService } from '../../../services/user.service';
+import { TimelineService } from '../../../services/timeline.service';
+import { KioskService } from '../../../services/kiosk.service';
 
+import { Dialog } from 'primeng/dialog';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { InputTextModule } from 'primeng/inputtext';
@@ -22,7 +25,7 @@ import { TooltipModule } from 'primeng/tooltip';
 import { IftaLabelModule } from 'primeng/iftalabel';
 import { ButtonModule } from 'primeng/button';
 import { SelectButtonModule } from 'primeng/selectbutton';
-import { UserService } from '../../../services/user.service';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
 
 interface selectableUser {
     code: string;
@@ -36,7 +39,7 @@ interface selectableCommon {
 
 @Component({
   selector: 'element-preset',
-  imports: [CommonModule, Dialog, FormsModule, TooltipModule, IftaLabelModule, SelectModule, InputTextModule, TimelineComponent, ButtonModule, SelectButtonModule],
+  imports: [CommonModule, Dialog, FormsModule, TooltipModule, IftaLabelModule, SelectModule, InputTextModule, TimelineComponent, ButtonModule, SelectButtonModule, ProgressSpinnerModule],
   templateUrl: './preset.component.html',
   styleUrl: './preset.component.scss'
 })
@@ -54,13 +57,16 @@ export class PresetComponent implements OnInit {
 
     relevantTimelines: Map<string, Timeline[]> = new Map<string, Timeline[]>;
     editActive: boolean = false;
+    waitingActive: boolean = false;
     timelinesExpanded: boolean = false;
     selectableUsers: selectableUser[] = [];
     selectableCommons: selectableCommon[] = [];
 
     constructor(
         private presetService: PresetService,
-        private userService: UserService
+        private userService: UserService,
+        private timelineService: TimelineService,
+        private kioskService: KioskService
     ) { }
 
     ngOnInit(): void {
@@ -138,11 +144,40 @@ export class PresetComponent implements OnInit {
                 .subscribe((result: any) => {});
     }
 
+    presetApplyToKiosks() {
+        if (this.preset().id)
+            this.waitingActive = true;
+            this.presetService
+                .applyPreset(this.preset().id!)
+                .subscribe(async (result: any) => {
+                    if (Object.keys(result).includes('created')) {
+                        let sync_data = {};
+                        for (let t_id of result['created']) {
+                            this.timelineService.getTimeline(t_id).subscribe((timeline: Timeline) => {
+                                if (timeline.kiosk_id)
+                                    sync_data = { ...sync_data, [timeline.kiosk_id]: t_id};
+                            });
+                        }
+                        for (let counter: number = 0; counter < 10; counter++) {
+                            if (result['created'].length == Object.keys(sync_data).length) break;
+                            await this.sleep(500);
+                        }
+                        this.kioskService.syncedApply(sync_data).subscribe((result: any) => {
+                            this.waitingActive = false;
+                        });
+                    }
+                });
+    }
+
     hidePreset() {
         if (this.currentUser().id && this.preset().id) this.userService.addHide(this.currentUser().id!, this.preset().id!).subscribe();
     }
 
     unhidePreset() {
         if (this.currentUser().id && this.preset().id) this.userService.delHide(this.currentUser().id!, this.preset().id!).subscribe();
+    }
+
+    private sleep(ms: number) {
+        return new Promise(resolve => setTimeout(resolve, ms));
     }
 }
