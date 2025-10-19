@@ -2,7 +2,6 @@ boto3
 cherrypy
 cherrypy-cors
 noapiframe @ git+https://github.com/nils-ost/noAPIframe.git
-prometheus-api-client
 pychallonge @ git+https://github.com/nils-ost/pychallonge.git
 pymongo
 requests

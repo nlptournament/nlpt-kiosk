@@ -22,7 +22,7 @@ class PlayercountsEndpoint(object):
                     s['game'] = self.translate_game(s['game'])
                     result.append(s)
             else:
-                from prometheus_api_client import PrometheusConnect
+                from helpers.prometheus_connect import PrometheusConnect
                 src_uri = Setting.value('pc_prometheus_uri')
                 if src_uri is None:
                     cherrypy.response.status = 500

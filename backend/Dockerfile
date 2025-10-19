@@ -7,7 +7,7 @@ ENV HOME=/app
 WORKDIR $HOME
 
 COPY requirements.txt ./
-RUN pip3 install -r requirements.txt
+RUN apk add --no-cache --virtual build-dependencies git build-base && pip3 install -r requirements.txt && apk del build-dependencies
 
 COPY . .
 

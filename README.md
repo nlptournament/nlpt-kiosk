@@ -52,3 +52,11 @@ ln -s ng.js frontend/node_modules/@angular/cli/bin/ng
 echo -e "source venv/bin/activate\nunset PS1\nPATH_add frontend/node_modules/@angular/cli/bin\nsource <(ng completion script)" > .envrc
 direnv allow
 ```
+
+## Setup Build-Environment
+
+```
+sudo docker buildx create --name multi-arch --platform "linux/arm64,linux/amd64,linux/arm/v7" --driver "docker-container"
+sudo docker buildx use multi-arch
+sudo docker buildx inspect --bootstrap
+```
