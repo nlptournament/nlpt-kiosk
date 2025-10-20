@@ -41,8 +41,10 @@ def generate_testdata(c):
 @task(name='container-image-build')
 def build_container_image(c, version=None):
     if version is not None:
-        c.run(f'sudo docker buildx build --platform linux/amd64,linux/arm64 -t nilsost/nlpt-kiosk-controller-backend:{version}')
-    c.run('sudo docker buildx build --platform linux/amd64,linux/arm64 -t nilsost/nlpt-kiosk-controller-backend:latest .')
+        c.run(f'sudo docker buildx build --platform linux/amd64 -t nilsost/nlpt-kiosk-controller-backend:{version} --load .')
+        c.run(f'sudo docker buildx build --platform linux/arm64 -t nilsost/nlpt-kiosk-controller-backend:{version} .')
+    c.run('sudo docker buildx build --platform linux/amd64 -t nilsost/nlpt-kiosk-controller-backend:latest --load .')
+    c.run('sudo docker buildx build --platform linux/arm64 -t nilsost/nlpt-kiosk-controller-backend:latest .')
 
 
 @task(name='container-image-push')

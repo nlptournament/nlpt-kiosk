@@ -1,8 +1,7 @@
-version: '3.6'
-
 services:
   backend:
     image: nilsost/nlpt-kiosk-controller-backend:${NKC_VERSION:-latest}
+    restart: unless-stopped
     depends_on:
       - mongodb
     environment:
@@ -12,9 +11,11 @@ services:
 
   frontend:
     image: nilsost/nlpt-kiosk-controller-frontend:${NKC_VERSION:-latest}
+    restart: unless-stopped
 
   haproxy:
     image: haproxy:lts-alpine
+    restart: unless-stopped
     depends_on:
       - backend
       - frontend
@@ -29,11 +30,13 @@ services:
 
   mongodb:
     image: mongo:4.4
+    restart: unless-stopped
     volumes:
       - mongo_data:/data/db:rw
 
   minio:
     image: minio/minio:RELEASE.2025-04-22T22-12-26Z
+    restart: unless-stopped
     command: server /data --console-address ":9001"
     environment:
       - MINIO_ROOT_USER=nlptkc
@@ -44,7 +47,7 @@ services:
 
   timeserver:
     image: cturra/ntp:latest
-    restart: always
+    restart: unless-stopped
     ports:
       - ${BIND_IP:-0.0.0.0}:123:123/udp
     environment:
