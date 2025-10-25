@@ -44,7 +44,7 @@ class TASEndpoint(object):
                     src_uri += '' if src_uri.endswith('/') else '/'
                     players = dict()
                     for p in requests.get(src_uri + 'players/').json():
-                        players[p['id']] = {'name': p['nickname'], 'last_update': p['last_update']}
+                        players[p['id']] = {'name': p['name'], 'last_update': p['last_update']}
                     challenge_id = requests.get(src_uri + 'challenges/current/').json()
                     if challenge_id is not None:
                         challenge_id = challenge_id['id']
@@ -94,7 +94,7 @@ class TASEndpoint(object):
                     src_uri += '' if src_uri.endswith('/') else '/'
                     players = dict()
                     for p in requests.get(src_uri + 'players/').json():
-                        players[p['id']] = {'name': p['nickname'], 'last_update': p['last_update']}
+                        players[p['id']] = {'name': p['name'], 'last_update': p['last_update']}
                     now_ts = int(datetime.now().timestamp())
                     for r in requests.get(src_uri + 'rankings/').json():
                         if r['player_id'] in players:

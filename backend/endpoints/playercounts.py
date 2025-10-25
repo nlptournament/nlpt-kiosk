@@ -31,11 +31,14 @@ class PlayercountsEndpoint(object):
                     prom = PrometheusConnect(url=src_uri, disable_ssl=True)
                     tmp = dict()
                     for s in prom.custom_query(query='playercount_num and on (server) up==1'):
-                        tmp[s['metric']['instance']] = {
-                            'name': s['metric']['iname'],
-                            'game': self.translate_game(s['metric']['game']),
-                            'count': s['value'][-1]
-                        }
+                        try:
+                            tmp[s['metric']['instance']] = {
+                                'name': s['metric']['iname'],
+                                'game': self.translate_game(s['metric']['game']),
+                                'count': s['value'][-1]
+                            }
+                        except Exception:
+                            pass
                     for s in prom.custom_query(query='playercount_max and on (server) up==1'):
                         if s['metric']['instance'] in tmp:
                             tmp[s['metric']['instance']]['max'] = s['value'][-1]
