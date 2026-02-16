@@ -40,7 +40,7 @@ Muss aber unter Umständen für andere Umgebungen adaptiert werden.
 
 ```
 sudo apt update; sudo apt install -y python3 virtualenv direnv curl
-curl -fsSL https://deb.nodesource.com/setup_23.x | sudo -E bash -
+curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash -
 sudo apt update; sudo apt install -y nodejs
 virtualenv -p /usr/bin/python3 venv
 venv/bin/pip install -r requirements.txt

@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { environment } from '../../environments/environment';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { catchError, Observable, of } from 'rxjs';
+import { Observable, of } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 import { Login } from '../interfaces/login';
 import { Md5 } from 'ts-md5';
 
