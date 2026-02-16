@@ -7,8 +7,23 @@ discord_process = None
 def _discord_process():
     intents = discord.Intents.default()
     intents.message_content = True
+    intents.guilds = True
+    intents.members = True
 
     client = discord.Client(intents=intents)
+
+    def capture_game(player):
+        if not player.bot and player.guild.id == 544405246810783744:  # TODO: insert guild from settings
+            # TODO: optional check for member.role
+            playing = dict()
+            for act in player.activities:
+                if act.type == 'playing':
+                    playing[act.timestamps.get('start', 0)] = act.name
+            if len(playing) > 0:
+                current_game = playing[sorted(playing.keys(), reverse=True)[0]]
+                print(f'Player {player.id} is playing {current_game}')  # TODO: save to db
+            else:
+                print(f'Player {player.id} is playing nothing')  # TODO: save to db
 
     @client.event
     async def on_ready():
@@ -17,6 +32,12 @@ def _discord_process():
         for g in client.guilds:
             print(f'  {g.name}: {g.id}')
         # TODO: initial fetch of all member activities (including dump of DB data???)
+        for g in client.guilds:
+            if g.id == 544405246810783744:  # TODO: insert guild from settings
+                print('found guild')
+                for m in g.members:
+                    print(f'capture {m.name}')
+                    capture_game(m)
 
     @client.event
     async def on_message(message):
@@ -29,19 +50,9 @@ def _discord_process():
     # on_presence_update is called when member status or member activity changes
     @client.event
     async def on_presence_update(before, after):
-        if not after.bot and after.guild.id == 'selected guild':  # TODO: insert guild from settings
-            # TODO: optional check for member.role
-            playing = dict()
-            for act in after.activities:
-                if act.type == 'playing':
-                    playing[act.timestamps.get('start', 0)] = act.name
-            if len(playing) > 0:
-                current_game = playing[sorted(playing.keys(), reverse=True)[0]]
-                print(f'Player {after.id} is playing {current_game}')  # TODO: save to db
-            else:
-                print(f'Player {after.id} is playing nothing')  # TODO: save to db
+        capture_game(after)
 
-    client.run('your token here')  # TODO: insert token from settings
+    client.run('token')  # TODO: insert token from settings
 
 
 def start_worker():
