@@ -11,3 +11,6 @@ from .media import Media
 from .challongetournament import ChallongeTournament
 from .challongeparticipant import ChallongeParticipant
 from .challongematch import ChallongeMatch
+from .discordguild import DiscordGuild
+from .discordrole import DiscordRole
+from .discordmember import DiscordMember
