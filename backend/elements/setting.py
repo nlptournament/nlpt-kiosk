@@ -22,12 +22,17 @@ class Setting(SettingBase):
         'challonge_img_user_id': {'order': 52, 'type': 'str',  'value': None,       'desc': 'user_id of User who is owning Media for Challonge Screens'},
         'mock_anno':             {'order': 90, 'type': 'bool', 'value': False,      'desc': 'if enabled Announcements-Endpoint delivers mockup-data'},
         'mock_pc':               {'order': 91, 'type': 'bool', 'value': False,      'desc': 'if enabled PlayerCounts-Endpoint delivers mockup-data'},
-        'mock_tas':              {'order': 92, 'type': 'bool', 'value': False,      'desc': 'if enabled TAS-Endpoint delivers mockup-data'},
-        'mock_chal':             {'order': 93, 'type': 'bool', 'value': False,
-                                  'desc': 'if enabled Challonge-Endpoints deliver mockup-data (use Tournament-IDs 1 and 2)'}
+        'mock_pc_discord':       {'order': 92, 'type': 'bool', 'value': False,
+                                  'desc': 'if enabled PlayerCounts-Endpoint (for Discord) delivers mockup-data'},
+        'mock_tas':              {'order': 93, 'type': 'bool', 'value': False,      'desc': 'if enabled TAS-Endpoint delivers mockup-data'},
+        'mock_chal':             {'order': 94, 'type': 'bool', 'value': False,
+                                  'desc': 'if enabled Challonge-Endpoints deliver mockup-data (use Tournament-IDs 1 and 2)'},
     }
 
     def save_post(self):
         if self['_id'] == 'discord_bot_token' and self['value'] is not None:
             from helpers.discord import start_worker
             start_worker()
+        if self['_id'] == 'mock_pc_discord' and self['value']:
+            from endpoints import PlayercountsEndpoint
+            PlayercountsEndpoint.discord_mock_data()

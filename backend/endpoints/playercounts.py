@@ -18,7 +18,7 @@ class PlayercountsEndpoint(object):
         elif cherrypy.request.method == 'GET':
             result = list()
             if Setting.value('mock_pc'):
-                for s in self.mock_data():
+                for s in self.prometheus_mock_data():
                     s['game'] = self.translate_game(s['game'])
                     result.append(s)
             else:
@@ -67,13 +67,20 @@ class PlayercountsEndpoint(object):
 
         # GET
         elif cherrypy.request.method == 'GET':
-            from elements import DiscordMember
+            from elements import Setting, DiscordMember
+
+            if Setting.value('mock_pc_discord'):
+                members = self.__class__.discord_mock_data()
+            else:
+                members = DiscordMember.all()
 
             games = dict()
-            for member in DiscordMember.all():
-                if guild is not None and not str(guild) == '' and not str(guild) == member['guild']:
+            for member in members:
+                if member['game'] is None or member['game'] == '':
                     continue
-                if role is not None and not str(role) == '' and str(role) not in member['roles']:
+                if guild is not None and not str(guild) == '' and not str(guild) == member['guild_id']:
+                    continue
+                if role is not None and not str(role) == '' and str(role) not in member['role_ids']:
                     continue
                 if member['game'] not in games:
                     games[member['game']] = 1
@@ -102,7 +109,7 @@ class PlayercountsEndpoint(object):
         }
         return translations.get(name, name)
 
-    def mock_data(self):
+    def prometheus_mock_data(self):
         result = list()
         result.append({'name': 'Server3', 'count': 2, 'max': 24, 'game': 'ut2k4'})
         result.append({'name': 'Server2', 'count': 2, 'max': 24, 'game': 'ut2k4'})
@@ -125,3 +132,62 @@ class PlayercountsEndpoint(object):
         result.append({'name': 'NLPT', 'count': 57, 'max': 60, 'game': 'Mordhau'})
         result.append({'name': 'NLPT TTT', 'count': 10, 'max': 20, 'game': 'gmod'})
         return result
+
+    @classmethod
+    def discord_mock_data(cls):
+        from elements import DiscordGuild, DiscordRole
+
+        guilds = [
+            {'id': '1', 'name': 'Guild1'},
+            {'id': '2', 'name': 'Guild2'},
+            {'id': '3', 'name': 'Guild3'},
+        ]
+        for guild in guilds:
+            g = DiscordGuild(guild)
+            g.save()
+
+        roles = [
+            {'id': '1', 'guild_id': '1', 'name': 'g1role1'},
+            {'id': '2', 'guild_id': '1', 'name': 'g1role2'},
+            {'id': '3', 'guild_id': '1', 'name': 'g1role3'},
+            {'id': '4', 'guild_id': '2', 'name': 'g2role1'},
+            {'id': '5', 'guild_id': '2', 'name': 'g2role2'},
+            {'id': '6', 'guild_id': '3', 'name': 'g3role1'},
+        ]
+        for role in roles:
+            r = DiscordRole(role)
+            r.save()
+
+        members = [
+            {'id': '1', 'guild_id': '1', 'role_ids': ['1'], 'game': 'Game1'},
+            {'id': '2', 'guild_id': '1', 'role_ids': ['1'], 'game': 'Game2'},
+            {'id': '3', 'guild_id': '1', 'role_ids': ['1'], 'game': 'Game3'},
+            {'id': '4', 'guild_id': '1', 'role_ids': ['1', '2'], 'game': 'Game1'},
+            {'id': '5', 'guild_id': '1', 'role_ids': ['1', '2'], 'game': 'Game2'},
+            {'id': '6', 'guild_id': '1', 'role_ids': ['1', '2'], 'game': 'Game3'},
+            {'id': '7', 'guild_id': '1', 'role_ids': ['1', '3'], 'game': 'Game1'},
+            {'id': '8', 'guild_id': '1', 'role_ids': ['1', '3'], 'game': 'Game2'},
+            {'id': '9', 'guild_id': '1', 'role_ids': ['1', '3'], 'game': 'Game2'},
+            {'id': '10', 'guild_id': '1', 'role_ids': ['1', '2', '3'], 'game': 'Game1'},
+            {'id': '11', 'guild_id': '2', 'role_ids': [], 'game': 'Game4'},
+            {'id': '12', 'guild_id': '2', 'role_ids': ['4'], 'game': 'Game4'},
+            {'id': '13', 'guild_id': '2', 'role_ids': ['4'], 'game': 'Game4'},
+            {'id': '14', 'guild_id': '2', 'role_ids': ['4'], 'game': 'Game5'},
+            {'id': '15', 'guild_id': '2', 'role_ids': ['4'], 'game': None},
+            {'id': '16', 'guild_id': '2', 'role_ids': ['5'], 'game': None},
+            {'id': '17', 'guild_id': '2', 'role_ids': ['5'], 'game': None},
+            {'id': '18', 'guild_id': '2', 'role_ids': ['5'], 'game': 'Game4'},
+            {'id': '19', 'guild_id': '2', 'role_ids': ['5'], 'game': 'Game5'},
+            {'id': '20', 'guild_id': '2', 'role_ids': ['4', '5'], 'game': 'Game5'},
+            {'id': '21', 'guild_id': '3', 'role_ids': [], 'game': 'Game6'},
+            {'id': '22', 'guild_id': '3', 'role_ids': [], 'game': 'Game6'},
+            {'id': '23', 'guild_id': '3', 'role_ids': [], 'game': 'Game7'},
+            {'id': '24', 'guild_id': '3', 'role_ids': [], 'game': 'Game3'},
+            {'id': '25', 'guild_id': '3', 'role_ids': [], 'game': 'Game3'},
+            {'id': '26', 'guild_id': '3', 'role_ids': ['6'], 'game': 'Game6'},
+            {'id': '27', 'guild_id': '3', 'role_ids': ['6'], 'game': 'Game7'},
+            {'id': '28', 'guild_id': '3', 'role_ids': ['6'], 'game': 'Game7'},
+            {'id': '29', 'guild_id': '3', 'role_ids': ['6'], 'game': 'Game7'},
+            {'id': '30', 'guild_id': '3', 'role_ids': ['6'], 'game': 'Game3'},
+        ]
+        return members
