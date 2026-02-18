@@ -1,5 +1,6 @@
 import discord
 from multiprocessing import Process
+from noapiframe import docDB
 from elements import DiscordGuild, DiscordRole, DiscordMember, Setting
 
 discord_process = None
@@ -16,7 +17,7 @@ def _discord_process():
 
     def capture_member(player):
         if not player.bot:
-            member = DiscordMember({'_id': str(player.id), 'name': player.name, 'guild_id': str(player.guild.id)})
+            member = DiscordMember({'_id': str(player.id), 'name': player.name, 'guild_id': str(player.guild.id), 'role_ids': list()})
 
             playing = dict()
             for act in player.activities:
@@ -29,14 +30,17 @@ def _discord_process():
                 member['game'] = None
 
             for role in player.roles:
-                member['role_ids'].append(str(role.id))
+                if str(role.id) not in member['role_ids']:
+                    member['role_ids'].append(str(role.id))
 
             member.save()
 
     @client.event
     async def on_ready():
         print(f'We have logged in as {client.user}')
-        # TODO: dump DB?
+        docDB.clear('DiscordMember')
+        docDB.clear('DiscordRole')
+        docDB.clear('DiscordGuild')
 
         for guild in client.guilds:
             g = DiscordGuild({'_id': str(guild.id), 'name': guild.name})
@@ -57,7 +61,7 @@ def _discord_process():
         if isinstance(message.channel, discord.DMChannel):
             if message.content.startswith('debug'):
                 result = list()
-                for member in DiscordMember.all_for_guild(message.guild.id):
+                for member in DiscordMember.all():
                     playing = 'nothing'
                     if member['game'] is not None:
                         playing = member['game']
@@ -71,12 +75,12 @@ def _discord_process():
     async def on_presence_update(before, after):
         capture_member(after)
 
-    client.run(Setting.value('pc_discord_token'))
+    client.run(Setting.value('discord_bot_token'))
 
 
 def start_worker():
     global discord_process
-    if Setting.value('pc_discord_token') is None:
+    if Setting.value('discord_bot_token') is None:
         return
 
     if discord_process is None:

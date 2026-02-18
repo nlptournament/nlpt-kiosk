@@ -15,7 +15,7 @@ class Setting(SettingBase):
         'anno_img_user_id':      {'order': 21, 'type': 'str',  'value': None,       'desc': 'user_id of User who is owning Media for Announcements Screen'},
         'pc_prometheus_uri':     {'order': 30, 'type': 'str',  'value': None,
                                   'desc': 'full URI (with http and port) to prometheus server, providing playercounts'},
-        'pc_discord_token':      {'order': 31, 'type': 'str',  'value': None,       'desc': 'token of discord bot, capturing guild playercounts'},
+        'discord_bot_token':     {'order': 31, 'type': 'str',  'value': None,       'desc': 'token of discord bot, capturing guild playercounts'},
         'tas_uri':               {'order': 40, 'type': 'str',  'value': None,       'desc': 'full URI (with http) where the TAS startpage is reachable'},
         'challonge_user':        {'order': 50, 'type': 'str',  'value': None,       'desc': 'Challonge username used for API connection'},
         'challonge_key':         {'order': 51, 'type': 'str',  'value': None,       'desc': 'Challonge API-key used for connection'},
@@ -28,6 +28,6 @@ class Setting(SettingBase):
     }
 
     def save_post(self):
-        if self['_id'] == 'pc_discord_token' and self['value'] is not None:
+        if self['_id'] == 'discord_bot_token' and self['value'] is not None:
             from helpers.discord import start_worker
             start_worker()

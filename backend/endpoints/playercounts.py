@@ -56,6 +56,40 @@ class PlayercountsEndpoint(object):
             cherrypy.response.status = 405
             return {'error': 'method not allowed'}
 
+    @cherrypy.expose()
+    @cherrypy.tools.json_in()
+    @cherrypy.tools.json_out()
+    def discord(self, guild=None, role=None):
+        if cherrypy.request.method == 'OPTIONS':
+            cherrypy.response.headers['Allow'] = 'OPTIONS, GET'
+            cherrypy_cors.preflight(allowed_methods=['GET'])
+            return
+
+        # GET
+        elif cherrypy.request.method == 'GET':
+            from elements import DiscordMember
+
+            games = dict()
+            for member in DiscordMember.all():
+                if guild is not None and not str(guild) == '' and not str(guild) == member['guild']:
+                    continue
+                if role is not None and not str(role) == '' and str(role) not in member['roles']:
+                    continue
+                if member['game'] not in games:
+                    games[member['game']] = 1
+                else:
+                    games[member['game']] += 1
+
+            result = list()
+            for name, count in games.items():
+                result.append({'game': name, 'count': count})
+            return result
+
+        else:
+            cherrypy.response.headers['Allow'] = 'OPTIONS, GET'
+            cherrypy.response.status = 405
+            return {'error': 'method not allowed'}
+
     def translate_game(self, name):
         translations = {
             'bf2': 'BF 2',

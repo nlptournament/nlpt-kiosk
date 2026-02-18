@@ -39,17 +39,19 @@ variables_def : dict
 
     _valid_types = {
         'str': str,
-        'text': str,     # Rich-Text field
+        'text': str,          # Rich-Text field
         'int': int,
         'ts': int,
         'float': float,
         'bool': bool,
-        'media': str,    # any type of Media
-        'media0': str,   # Media of type 0
-        'media1': str,   # Media of type 1
-        'media2': str,   # Media of type 2
-        'media3': str,   # Media of type 3
-        'media01': str   # Media of type 0 or 1
+        'media': str,         # any type of Media
+        'media0': str,        # Media of type 0
+        'media1': str,        # Media of type 1
+        'media2': str,        # Media of type 2
+        'media3': str,        # Media of type 3
+        'media01': str,       # Media of type 0 or 1
+        'discordguild': str,  # ID of a DiscordGuild
+        'discordrole': str    # ID of a DiscordRole
     }
 
     def validate(self):

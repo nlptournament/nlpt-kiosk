@@ -213,6 +213,16 @@ def system_screentemplates():
             'key': 'player-counts', 'name': 'Player Counts',
             'desc': 'shows the number of players currently active on game-servers',
             'endless': True, 'duration': None}).save()
+    # Player Counts - Discord
+    if ScreenTemplate.count({'name': 'Player Counts - Discord'}) == 0:
+        vardef = dict({
+            'guild': {'type': 'discordguild', 'default': '', 'desc': 'Only members of this guild are counted'},
+            'role': {'type': 'discordrole', 'default': '', 'desc': 'Only members with this role are counted'}
+        })
+        ScreenTemplate({
+            'key': 'player-counts-discord', 'name': 'Player Counts - Discord',
+            'desc': 'shows the number of players playing the same game within Discord guild',
+            'endless': True, 'duration': None, 'variables_def': vardef}).save()
     # TrackMania Stats
     if ScreenTemplate.count({'name': 'TrackMania Stats'}) == 0:
         ScreenTemplate({
