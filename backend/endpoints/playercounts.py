@@ -67,30 +67,7 @@ class PlayercountsEndpoint(object):
 
         # GET
         elif cherrypy.request.method == 'GET':
-            from elements import Setting, DiscordMember
-
-            if Setting.value('mock_pc_discord'):
-                members = self.__class__.discord_mock_data()
-            else:
-                members = DiscordMember.all()
-
-            games = dict()
-            for member in members:
-                if member['game'] is None or member['game'] == '':
-                    continue
-                if guild is not None and not str(guild) == '' and not str(guild) == member['guild_id']:
-                    continue
-                if role is not None and not str(role) == '' and str(role) not in member['role_ids']:
-                    continue
-                if member['game'] not in games:
-                    games[member['game']] = 1
-                else:
-                    games[member['game']] += 1
-
-            result = list()
-            for name, count in games.items():
-                result.append({'game': name, 'count': count})
-            return result
+            return self.__class__.discord_counts(guild, role)
 
         else:
             cherrypy.response.headers['Allow'] = 'OPTIONS, GET'
@@ -131,6 +108,33 @@ class PlayercountsEndpoint(object):
         result.append({'name': 'Server3', 'count': 2, 'max': 16, 'game': 'cod2'})
         result.append({'name': 'NLPT', 'count': 57, 'max': 60, 'game': 'Mordhau'})
         result.append({'name': 'NLPT TTT', 'count': 10, 'max': 20, 'game': 'gmod'})
+        return result
+
+    @classmethod
+    def discord_counts(cls, guild=None, role=None):
+        from elements import Setting, DiscordMember
+
+        if Setting.value('mock_pc_discord'):
+            members = cls.discord_mock_data()
+        else:
+            members = DiscordMember.all()
+
+        games = dict()
+        for member in members:
+            if member['game'] is None or member['game'] == '':
+                continue
+            if guild is not None and not str(guild) == '' and not str(guild) == member['guild_id']:
+                continue
+            if role is not None and not str(role) == '' and str(role) not in member['role_ids']:
+                continue
+            if member['game'] not in games:
+                games[member['game']] = 1
+            else:
+                games[member['game']] += 1
+
+        result = list()
+        for name, count in games.items():
+            result.append({'game': name, 'count': count})
         return result
 
     @classmethod

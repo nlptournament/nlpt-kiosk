@@ -17,7 +17,7 @@ def _discord_process():
 
     def capture_member(player):
         if not player.bot:
-            member = DiscordMember({'_id': str(player.id), 'name': player.name, 'guild_id': str(player.guild.id), 'role_ids': list()})
+            member = DiscordMember({'_id': f'{player.guild.id}_{player.id}', 'name': player.name, 'guild_id': str(player.guild.id), 'role_ids': list()})
 
             playing = dict()
             for act in player.activities:
