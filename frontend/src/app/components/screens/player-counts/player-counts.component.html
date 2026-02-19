@@ -1,13 +1,13 @@
 <div class="mx-auto h-screen overflow-hidden w-fill flex flex-col gap-6" *ngIf="isActive()">
-    <div class="mx-auto w-fill font-orbitron flex items-center justify-center">
+    <div class="mx-auto w-fill font-orbitron flex items-center justify-center" *ngIf="src_prometheus">
         <div class="text-7xl text-text bg-card rounded-b-lg p-7">
             GameServer Spielerzahlen
         </div>
     </div>
 
-    <div class="mx-auto w-screen h-svh flex items-center">
+    <div class="mx-auto w-screen h-svh flex items-center" *ngIf="src_prometheus">
         <div class="w-screen flex flex-wrap gap-x-4 gap-y-4 justify-center">
-            @for (count of counts; track count.game) {
+            @for (count of counts_prometheus; track count.game) {
                 <div class="p-4 w-1/{{ 7 - scale }} bg-card rounded-xl shadow-md flex flex-col items-center gap-x-4 text-center">
                     <div class="text-{{ 5 + scale }}xl text-text">{{ count.game }}</div>
                     <div class="text-{{ 8 + scale }}xl font-orbitron text-highlight font-semibold" *ngIf="count.count == 0">{{ count.count }}</div>
@@ -19,5 +19,22 @@
             }
         </div>
     </div>
+
+    <div class="mx-auto w-fill font-orbitron flex items-center justify-center" *ngIf="src_discord">
+        <div class="text-7xl text-text bg-card rounded-b-lg p-7">
+            Discord Spielerzahlen
+        </div>
+    </div>
+
+    <div class="mx-auto w-screen h-svh flex items-center" *ngIf="src_discord">
+        <div class="w-screen flex flex-wrap gap-x-4 gap-y-4 justify-center">
+            @for (count of counts_discord; track count.game) {
+                <div class="p-4 w-{{ scale_w_discord }}% bg-card rounded-xl shadow-md flex flex-row items-center justify-between gap-x-4 text-center">
+                    <div class="text-{{ 6 + scale_discord }}xl text-text">{{ count.game }}</div>
+                    <div class="text-{{ 9 + scale_discord }}xl font-orbitron text-highlight font-semibold">{{ count.count }}</div>
+                </div>
+            }
+        </div>
+    </div>
 </div>
-<!-- this comment helps tailwind to provide the required dynamically build classes at buildtime, do not remove this comment! w-1/7 w-1/6 w-1/5 w-1/4 w-1/3 text-4xl text-5xl text-6xl text-7xl text-8xl text-9xl text-10xl text-11xl text-12xl -->
+<!-- this comment helps tailwind to provide the required dynamically build classes at buildtime, do not remove this comment! w-1/7 w-1/6 w-1/5 w-1/4 w-1/3 w-90% w-45% w-30% w-23% text-4xl text-5xl text-6xl text-7xl text-8xl text-9xl text-10xl text-11xl text-12xl -->

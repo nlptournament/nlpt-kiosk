@@ -208,19 +208,23 @@ def system_screentemplates():
             'desc': 'displays nlpt.online announcements',
             'endless': True, 'duration': None}).save()
     # Player Counts
-    if ScreenTemplate.count({'name': 'Player Counts'}) == 0:
+    if ScreenTemplate.count({'name': 'Player Counts - Prometheus'}) == 0:
+        vardef = dict({
+            'src_prom': {'type': 'bool', 'default': True, 'desc': 'Prometheus Source is enabled for this Screen', 'ro': True},
+        })
         ScreenTemplate({
-            'key': 'player-counts', 'name': 'Player Counts',
+            'key': 'player-counts', 'name': 'Player Counts - Prometheus',
             'desc': 'shows the number of players currently active on game-servers',
-            'endless': True, 'duration': None}).save()
+            'endless': True, 'duration': None, 'variables_def': vardef}).save()
     # Player Counts - Discord
     if ScreenTemplate.count({'name': 'Player Counts - Discord'}) == 0:
         vardef = dict({
             'guild': {'type': 'discordguild', 'default': '', 'desc': 'Only members of this guild are counted'},
-            'role': {'type': 'discordrole', 'default': '', 'desc': 'Only members with this role are counted'}
+            'role': {'type': 'discordrole', 'default': '', 'desc': 'Only members with this role are counted'},
+            'src_discord': {'type': 'bool', 'default': True, 'desc': 'Discord Source is enabled for this Screen', 'ro': True},
         })
         ScreenTemplate({
-            'key': 'player-counts-discord', 'name': 'Player Counts - Discord',
+            'key': 'player-counts', 'name': 'Player Counts - Discord',
             'desc': 'shows the number of players playing the same game within Discord guild',
             'endless': True, 'duration': None, 'variables_def': vardef}).save()
     # TrackMania Stats
