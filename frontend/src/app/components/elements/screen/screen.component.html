@@ -113,7 +113,8 @@
         <p-select [(ngModel)]="v.value.val" inputId="{{v.key}}" [options]="selectableDiscordGuilds" optionValue="id" optionLabel="name" (onChange)="refreshDiscordRoles(v.value.val)" styleClass="w-full" [filter]="true" filterBy="name" pTooltip="{{ v.value.desc }}" tooltipPosition="left" showDelay="10" *ngIf="v.value.type == 'discordguild'" />
         <p-select [(ngModel)]="v.value.val" inputId="{{v.key}}" [options]="selectableDiscordRoles" optionValue="id" optionLabel="name" styleClass="w-full" [filter]="true" filterBy="name" pTooltip="{{ v.value.desc }}" tooltipPosition="left" showDelay="10" *ngIf="v.value.type == 'discordrole'" />
         <textarea pTextarea [(ngModel)]="v.value.val" id="{{v.key}}" rows="3" style="resize: none" pTooltip="{{ v.value.desc }}" tooltipPosition="left" showDelay="10" *ngIf="v.value.type == 'text'"></textarea>
-        <label for="{{v.key}}">{{v.key}}</label>
+        <label for="{{v.key}}" *ngIf="v.value.type == 'bool'" class="ml-8 text-text">{{v.key}}</label>
+        <label for="{{v.key}}" *ngIf="v.value.type != 'bool'">{{v.key}}</label>
     </p-iftalabel>
 
     <div class="w-full flex justify-between">

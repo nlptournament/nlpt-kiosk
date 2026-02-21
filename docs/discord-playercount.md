@@ -31,4 +31,23 @@ Create a "New Application" and give it a name. Configure it as follows:
 
 ## Setup within Admin-Interface
 
-TBD
+  * Open the Admin-Interface **http://<server_addr\>/admin**
+  * Login as a admin user
+  * Navigate to *User->Settings*
+  * Find `discord_bot_token` and enter the saved token from above
+  * Hit Save
+
+After this setup the system is connected to Discord and is already fetching playerdata from your server (guild). To show those, create a new Screen:
+
+  * Navigate to Manage *Screens->New*
+  * Select `Player Counts - Discord` or `Player Counts - Multi` as template
+  * If you like to apply player-filters for this Screen, you can do this with `guild` and `role`
+  * The rest of the config is as usual
+  * Afterwards you can add this Screen to a Timeline as it is done with other Screens
+
+> [!NOTE]  
+> If you like to use player-filters, select a guild first, depending on the selected guild, the frontend requests the available roles from the backend
+
+> [!IMPORTANT]  
+> With the `prometheus-endpoint` (can be enabled in *User->Settings*) only the content used by Screens is exported  
+> This means: All guild- and role-filter combinations, that are used on Screens are reflected in the exported data. Therefore a game can have multiple entries (with different counts) if it is covered by multiple filters.

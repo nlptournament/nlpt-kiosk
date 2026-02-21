@@ -207,7 +207,19 @@ def system_screentemplates():
             'key': 'announcements', 'name': 'Announcements',
             'desc': 'displays nlpt.online announcements',
             'endless': True, 'duration': None}).save()
-    # Player Counts
+    # Player Counts - Multi
+    if ScreenTemplate.count({'name': 'Player Counts - Multi'}) == 0:
+        vardef = dict({
+            'src_prom': {'type': 'bool', 'default': False, 'desc': 'enable Prometheus Source for this Screen'},
+            'src_discord': {'type': 'bool', 'default': False, 'desc': 'enable Discord Source for this Screen'},
+            'guild': {'type': 'discordguild', 'default': '', 'desc': 'Only members of this guild are counted'},
+            'role': {'type': 'discordrole', 'default': '', 'desc': 'Only members with this role are counted'},
+        })
+        ScreenTemplate({
+            'key': 'player-counts', 'name': 'Player Counts - Multi',
+            'desc': 'shows the number of players playing the same game, allows multiple sources',
+            'endless': True, 'duration': None, 'variables_def': vardef}).save()
+    # Player Counts - Prometheus
     if ScreenTemplate.count({'name': 'Player Counts - Prometheus'}) == 0:
         vardef = dict({
             'src_prom': {'type': 'bool', 'default': True, 'desc': 'Prometheus Source is enabled for this Screen', 'ro': True},

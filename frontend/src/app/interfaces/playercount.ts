@@ -1,4 +1,4 @@
-export interface Playercount {
+export interface PlayercountPrometheus {
     name: string;
     game: string;
     count: number;

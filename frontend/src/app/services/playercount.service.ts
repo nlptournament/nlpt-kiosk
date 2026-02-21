@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { environment } from '../../environments/environment';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Playercount, PlayercountDiscord } from '../interfaces/playercount';
+import { PlayercountPrometheus, PlayercountDiscord } from '../interfaces/playercount';
 import { Observable } from 'rxjs';
 
 @Injectable({
@@ -14,8 +14,8 @@ export class PlayercountService {
         private http: HttpClient
     ) { }
 
-    public getPlayercountsPrometheus(): Observable<Playercount[]> {
-        return this.http.get<Playercount[]>(this.playercountUrl, {withCredentials:true});
+    public getPlayercountsPrometheus(): Observable<PlayercountPrometheus[]> {
+        return this.http.get<PlayercountPrometheus[]>(this.playercountUrl, {withCredentials:true});
     }
 
     public getPlayercountsDiscord(guild_id: string | undefined, role_id: string | undefined): Observable<PlayercountDiscord[]> {

@@ -8,13 +8,13 @@
     <div class="mx-auto w-screen h-svh flex items-center" *ngIf="src_prometheus">
         <div class="w-screen flex flex-wrap gap-x-4 gap-y-4 justify-center">
             @for (count of counts_prometheus; track count.game) {
-                <div class="p-4 w-1/{{ 7 - scale }} bg-card rounded-xl shadow-md flex flex-col items-center gap-x-4 text-center">
-                    <div class="text-{{ 5 + scale }}xl text-text">{{ count.game }}</div>
-                    <div class="text-{{ 8 + scale }}xl font-orbitron text-highlight font-semibold" *ngIf="count.count == 0">{{ count.count }}</div>
-                    <div class="text-{{ 8 + scale }}xl font-orbitron text-ok font-semibold" *ngIf="(count.count > 0) && ((count.count / count.max) < 0.8) && ((count.max - count.count) > 1)">{{ count.count }}</div>
-                    <div class="text-{{ 8 + scale }}xl font-orbitron text-warn font-semibold" *ngIf="(((count.count / count.max) >= 0.8) || ((count.max - count.count) == 1)) && count.count != count.max">{{ count.count }}</div>
-                    <div class="text-{{ 8 + scale }}xl font-orbitron text-danger font-semibold" *ngIf="count.count == count.max">{{ count.count }}</div>
-                    <div class="text-{{ 4 + scale }}xl text-text">{{ count.name }}</div>
+                <div class="p-4 w-1/{{ 7 - scale_prometheus }} bg-card rounded-xl shadow-md flex flex-col items-center gap-x-4 text-center">
+                    <div class="text-{{ 5 + scale_prometheus }}xl text-text">{{ count.game }}</div>
+                    <div class="text-{{ 8 + scale_prometheus }}xl font-orbitron text-highlight font-semibold" *ngIf="count.count == 0">{{ count.count }}</div>
+                    <div class="text-{{ 8 + scale_prometheus }}xl font-orbitron text-ok font-semibold" *ngIf="(count.count > 0) && ((count.count / count.max) < 0.8) && ((count.max - count.count) > 1)">{{ count.count }}</div>
+                    <div class="text-{{ 8 + scale_prometheus }}xl font-orbitron text-warn font-semibold" *ngIf="(((count.count / count.max) >= 0.8) || ((count.max - count.count) == 1)) && count.count != count.max">{{ count.count }}</div>
+                    <div class="text-{{ 8 + scale_prometheus }}xl font-orbitron text-danger font-semibold" *ngIf="count.count == count.max">{{ count.count }}</div>
+                    <div class="text-{{ 4 + scale_prometheus }}xl text-text">{{ count.name }}</div>
                 </div>
             }
         </div>
