@@ -1,12 +1,14 @@
-import { booleanAttribute, Component, input, OnChanges, OnInit, output, SimpleChanges } from '@angular/core';
+import { booleanAttribute, Component, input, OnChanges, OnInit, output, Pipe, PipeTransform, SimpleChanges } from '@angular/core';
 
 import { ScreenService } from '../../../services/screen.service';
 import { UserService } from '../../../services/user.service';
+import { DiscordService } from '../../../services/discord.service';
 
 import { Screen } from '../../../interfaces/screen';
 import { ScreenTemplate } from '../../../interfaces/screen-template';
 import { User } from '../../../interfaces/user';
 import { Media } from '../../../interfaces/media';
+import { DiscordGuild, DiscordRole } from '../../../interfaces/discord';
 
 import { CommonModule } from '@angular/common';
 import { Dialog } from 'primeng/dialog';
@@ -49,9 +51,19 @@ interface selectableMedia {
     name: string;
 }
 
+// Also works for DiscordRole, as the values are mapped correctly
+@Pipe({name: 'discordObjFind', })
+export class DiscordFindObjectPipe implements PipeTransform {
+  transform(arr: DiscordGuild[], id: string): DiscordGuild | undefined {
+    return arr.find(o => {
+        return o.id === id
+    })
+  }
+}
+
 @Component({
   selector: 'element-screen',
-  imports: [CommonModule, Dialog, FormsModule, InputTextModule, IftaLabelModule, ButtonModule, SelectModule, TooltipModule, InputNumberModule, SelectButtonModule, ToggleSwitchModule, DatePickerModule, TextareaModule],
+  imports: [CommonModule, Dialog, FormsModule, InputTextModule, IftaLabelModule, ButtonModule, SelectModule, TooltipModule, InputNumberModule, SelectButtonModule, ToggleSwitchModule, DatePickerModule, TextareaModule, DiscordFindObjectPipe],
   templateUrl: './screen.component.html',
   styleUrl: './screen.component.scss'
 })
@@ -76,10 +88,13 @@ export class ScreenComponent implements OnInit, OnChanges {
     selectableLoops: selectableLoop[] = [];
     selectableUsers: selectableUser[] = [];
     selectableMedias: Map<string, selectableMedia[]> = new Map<string, selectableMedia[]>;
+    selectableDiscordGuilds: DiscordGuild[] = [];
+    selectableDiscordRoles: DiscordRole[] = [];
 
     constructor(
         private screenService: ScreenService,
-        private userService: UserService
+        private userService: UserService,
+        private discordService: DiscordService
     ) { }
 
     ngOnInit(): void {
@@ -95,6 +110,39 @@ export class ScreenComponent implements OnInit, OnChanges {
     ngOnChanges(changes: SimpleChanges): void {
         if (!this.editMode() && Object.keys(changes).includes('screen')) {
             this.extractVariables();
+        }
+    }
+
+    refreshDiscordGuilds() {
+        this.discordService
+            .getDiscordGuilds()
+            .subscribe({
+                next: (guilds: DiscordGuild[]) => {
+                    let emptyGuild: DiscordGuild = {'id': '', 'name': '--dont filter--'};
+                    this.selectableDiscordGuilds = [emptyGuild, ];
+                    for (let guild of guilds) this.selectableDiscordGuilds.push(guild);
+                },
+                error: () => {}
+            });
+    }
+
+    refreshDiscordRoles(guild_id: string | undefined) {
+        let emptyRole: DiscordRole = {'id': '', 'name': '--dont filter--', 'guild_id': ''};
+        if (guild_id == undefined || guild_id == "") {
+            this.selectableDiscordRoles = [emptyRole, ];
+        }
+        else {
+            this.discordService
+            .getDiscordRoles()
+            .subscribe({
+                next: (roles: DiscordRole[]) => {
+                    this.selectableDiscordRoles = [emptyRole, ];
+                    for (let role of roles) {
+                        if (role.guild_id == guild_id) this.selectableDiscordRoles.push(role);
+                    }
+                },
+                error: () => {}
+            });
         }
     }
 
@@ -123,6 +171,10 @@ export class ScreenComponent implements OnInit, OnChanges {
                         if (media_types.includes(media.type)) sml.push(<selectableMedia>{code: media.id, name: media.desc})
                     }
                     sm.set(key, sml);
+                }
+                if (o.type == 'discordguild') {
+                    this.refreshDiscordGuilds();
+                    this.refreshDiscordRoles(o.val);
                 }
                 v.set(key, o);
             }

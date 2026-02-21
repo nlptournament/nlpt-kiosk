@@ -5,23 +5,39 @@ class Setting(SettingBase):
     _defaults = {
         'version':               {'order': 0,  'type': 'str',  'value': None,       'desc': 'Running version of NLPT-Kiosk-Controller'},
         'new_kiosks':            {'order': 1,  'type': 'bool', 'value': True,       'desc': 'enables registration of new Kiosks on Controller'},
-        'server_port':           {'order': 2,  'type': 'int',  'value': 8000,       'desc': 'Port the backend should be listening on'},
-        'wss_port':              {'order': 3,  'type': 'int',  'value': 8765,       'desc': 'Port the websocket-server should be listening on'},
-        's3_host':               {'order': 4,  'type': 'str',  'value': 'minio',    'desc': 'Address of S3 server'},
-        's3_port':               {'order': 5,  'type': 'int',  'value': 9000,       'desc': 'Port S3 server is listening on'},
-        's3_access_key':         {'order': 6,  'type': 'str',  'value': 'nlptkc',   'desc': 'Username for S3 connection'},
-        's3_access_secret':      {'order': 7,  'type': 'str',  'value': 'password', 'desc': 'Password for S3 connection'},
-        'anno_src_uri':          {'order': 8,  'type': 'str',  'value': None,       'desc': 'NLPT.online source URI from where the Announcements are pulled'},
-        'anno_img_user_id':      {'order': 9,  'type': 'str',  'value': None,       'desc': 'user_id of User who is owning Media for Announcements Screen'},
-        'pc_prometheus_uri':     {'order': 10, 'type': 'str',  'value': None,
+        'server_port':           {'order': 10, 'type': 'int',  'value': 8000,       'desc': 'Port the backend should be listening on'},
+        'metrics_enabled':       {'order': 11, 'type': 'bool', 'value': False,      'desc': 'Whether to start the Metrics-Endpoint or not'},
+        'metrics_port':          {'order': 12, 'type': 'int',  'value': 8001,       'desc': 'Port that should be used for Metrics-Endpoint'},
+        'wss_port':              {'order': 13, 'type': 'int',  'value': 8765,       'desc': 'Port the websocket-server should be listening on'},
+        's3_host':               {'order': 20, 'type': 'str',  'value': 'minio',    'desc': 'Address of S3 server'},
+        's3_port':               {'order': 21, 'type': 'int',  'value': 9000,       'desc': 'Port S3 server is listening on'},
+        's3_access_key':         {'order': 22, 'type': 'str',  'value': 'nlptkc',   'desc': 'Username for S3 connection'},
+        's3_access_secret':      {'order': 23, 'type': 'str',  'value': 'password', 'desc': 'Password for S3 connection'},
+        'anno_src_uri':          {'order': 30, 'type': 'str',  'value': None,       'desc': 'NLPT.online source URI from where the Announcements are pulled'},
+        'anno_img_user_id':      {'order': 31, 'type': 'str',  'value': None,       'desc': 'user_id of User who is owning Media for Announcements Screen'},
+        'pc_prometheus_uri':     {'order': 40, 'type': 'str',  'value': None,
                                   'desc': 'full URI (with http and port) to prometheus server, providing playercounts'},
-        'tas_uri':               {'order': 11, 'type': 'str',  'value': None,       'desc': 'full URI (with http) where the TAS startpage is reachable'},
-        'challonge_user':        {'order': 12, 'type': 'str',  'value': None,       'desc': 'Challonge username used for API connection'},
-        'challonge_key':         {'order': 13, 'type': 'str',  'value': None,       'desc': 'Challonge API-key used for connection'},
-        'challonge_img_user_id': {'order': 14, 'type': 'str',  'value': None,       'desc': 'user_id of User who is owning Media for Challonge Screens'},
-        'mock_anno':             {'order': 20, 'type': 'bool', 'value': False,      'desc': 'if enabled Announcements-Endpoint delivers mockup-data'},
-        'mock_pc':               {'order': 21, 'type': 'bool', 'value': False,      'desc': 'if enabled PlayerCounts-Endpoint delivers mockup-data'},
-        'mock_tas':              {'order': 22, 'type': 'bool', 'value': False,      'desc': 'if enabled TAS-Endpoint delivers mockup-data'},
-        'mock_chal':             {'order': 23, 'type': 'bool', 'value': False,
-                                  'desc': 'if enabled Challonge-Endpoints deliver mockup-data (use Tournament-IDs 1 and 2)'}
+        'discord_bot_token':     {'order': 41, 'type': 'str',  'value': None,       'desc': 'token of discord bot, capturing guild playercounts'},
+        'tas_uri':               {'order': 50, 'type': 'str',  'value': None,       'desc': 'full URI (with http) where the TAS startpage is reachable'},
+        'challonge_user':        {'order': 60, 'type': 'str',  'value': None,       'desc': 'Challonge username used for API connection'},
+        'challonge_key':         {'order': 61, 'type': 'str',  'value': None,       'desc': 'Challonge API-key used for connection'},
+        'challonge_img_user_id': {'order': 62, 'type': 'str',  'value': None,       'desc': 'user_id of User who is owning Media for Challonge Screens'},
+        'mock_anno':             {'order': 90, 'type': 'bool', 'value': False,      'desc': 'if enabled Announcements-Endpoint delivers mockup-data'},
+        'mock_pc':               {'order': 91, 'type': 'bool', 'value': False,      'desc': 'if enabled PlayerCounts-Endpoint delivers mockup-data'},
+        'mock_pc_discord':       {'order': 92, 'type': 'bool', 'value': False,
+                                  'desc': 'if enabled PlayerCounts-Endpoint (for Discord) delivers mockup-data'},
+        'mock_tas':              {'order': 93, 'type': 'bool', 'value': False,      'desc': 'if enabled TAS-Endpoint delivers mockup-data'},
+        'mock_chal':             {'order': 94, 'type': 'bool', 'value': False,
+                                  'desc': 'if enabled Challonge-Endpoints deliver mockup-data (use Tournament-IDs 1 and 2)'},
     }
+
+    def save_post(self):
+        if self['_id'] == 'discord_bot_token' and self['value'] is not None:
+            from helpers.discord import start_worker
+            start_worker()
+        if self['_id'] == 'mock_pc_discord' and self['value']:
+            from endpoints import PlayercountsEndpoint
+            PlayercountsEndpoint.discord_mock_data()
+        if self['_id'] == 'metrics_enabled' and self['value']:
+            from endpoints.metrics import start_metrics_exporter
+            start_metrics_exporter()

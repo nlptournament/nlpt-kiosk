@@ -1,6 +1,7 @@
 boto3
 cherrypy
 cherrypy-cors
+discord.py
 noapiframe @ git+https://github.com/nils-ost/noAPIframe.git
 pychallonge @ git+https://github.com/nils-ost/pychallonge.git
 pymongo
