@@ -1,0 +1,36 @@
+<p-dialog [modal]="true" appendTo="body" [(visible)]="isVisible" [dismissableMask]="true" (onHide)="closeDialog()">
+    <ng-template #headless>
+        <div class="max-w-53% p-2 pt-1">
+            <div class="w-fill flex flex-row justify-between items-start gap-5 mb-2">
+                <div>&nbsp;</div>
+                <div class="text-2xl">Stream Wizard</div>
+                <i class="pi pi-times !text-1xl hover:cursor-pointer hover:text-danger" (click)="closeDialog()"></i>
+            </div>
+            <div class="flex flex-col justify-start items-center gap-2 mb-2">
+                <div>
+                    For User:
+                    <p-select [(ngModel)]="selectedUser" inputId="selectUser" [options]="selectableUsers" optionValue="code" optionLabel="name" (onChange)="userChanged()" />
+                </div>
+                <div *ngIf="selectedUser">
+                    Common Description:
+                    <input pInputText id="commonDesc" [(ngModel)]="commonDesc" autocomplete="off" />
+                </div>
+                <div *ngIf="selectedUser">
+                    Media Element:
+                    <p-select [(ngModel)]="selectedMedia" inputId="selectMedia" [options]="selectableMedias" optionValue="code" optionLabel="name" />
+                    <div *ngIf="selectedMedia == null">
+                        <input pInputText id="streamUrl" [(ngModel)]="streamUrl" placeholder="Stream URL" autocomplete="off" />
+                    </div>
+                </div>
+                <div *ngIf="selectedMedia != null || streamUrl != ''">
+                    Screen Element
+                    <p-select [(ngModel)]="selectedScreen" inputId="selectScreen" [options]="selectableScreens" optionValue="code" optionLabel="name" />
+                </div>
+                <div *ngIf="selectedMedia != null || streamUrl != ''">
+                    TimelineTemplate
+                    <p-select [(ngModel)]="selectedTimelineTemplate" inputId="selectTimelineTemplate" [options]="selectableTimelineTemplates" optionValue="code" optionLabel="name" />
+                </div>
+            </div>
+        </div>
+    </ng-template>
+</p-dialog>

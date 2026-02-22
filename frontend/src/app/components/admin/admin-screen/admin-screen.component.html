@@ -25,6 +25,9 @@
 <!-- SETTINGS PANEL MODAL -->
 <panel-settings [(isActive)]="panelSettingsActive" *ngIf="panelSettingsActive"></panel-settings>
 
+<!-- STREAM WIZARD MODAL -->
+<stream-wizard [users]="users" [currentUser]="currentUser" [medias]="medias" [screens]="screens" [screenTemplates]="screenTemplates" [timelineTemplates]="timelineTemplates" [(isActive)]="streamWizardActive" *ngIf="streamWizardActive"></stream-wizard>
+
 <!-- UPDATE PW MODAL -->
 <update-pw [currentUser]="currentUser" [(isActive)]="updatePwActive" *ngIf="updatePwActive"></update-pw>
 

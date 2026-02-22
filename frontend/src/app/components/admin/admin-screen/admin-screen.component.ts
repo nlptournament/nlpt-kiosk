@@ -26,6 +26,7 @@ import { TimelineTemplatesPanelComponent } from '../timeline-templates-panel/tim
 import { PresetsPanelComponent } from '../presets-panel/presets-panel.component';
 import { UsersPanelComponent } from '../users-panel/users-panel.component';
 import { MediaPanelComponent } from '../media-panel/media-panel.component';
+import { StreamWizardComponent } from '../stream-wizard/stream-wizard.component';
 import { UpdatePwComponent } from '../update-pw/update-pw.component';
 
 import { ConfirmationService, MenuItem } from 'primeng/api';
@@ -40,7 +41,7 @@ import { ConfirmDialog } from 'primeng/confirmdialog';
 
 @Component({
   selector: 'app-admin-screen',
-  imports: [CommonModule, MenubarModule, KioskComponent, ScreensPanelComponent, TimelineTemplatesPanelComponent, PresetsPanelComponent, UsersPanelComponent, MediaPanelComponent, UpdatePwComponent, SettingsPanelComponent, ConfirmDialog],
+  imports: [CommonModule, MenubarModule, KioskComponent, ScreensPanelComponent, TimelineTemplatesPanelComponent, PresetsPanelComponent, UsersPanelComponent, MediaPanelComponent, UpdatePwComponent, SettingsPanelComponent, ConfirmDialog, StreamWizardComponent],
   providers: [ConfirmationService],
   templateUrl: './admin-screen.component.html',
   styleUrl: './admin-screen.component.scss'
@@ -65,6 +66,7 @@ export class AdminScreenComponent implements OnInit, OnDestroy {
     panelMediaActive: boolean = false;
     panelUsersActive: boolean = false;
     panelSettingsActive: boolean = false;
+    streamWizardActive: boolean = false;
     updatePwActive: boolean = false;
     timelinesChanged: boolean = false;
     selectedNextTimelines: Map<string, string> = new Map<string, string>;
@@ -251,6 +253,13 @@ export class AdminScreenComponent implements OnInit, OnDestroy {
                 icon: 'pi pi-images',
                 command: () => {
                     this.panelMediaActive = true;
+                }
+            },
+            {
+                label: 'Stream Wizard',
+                icon: 'pi pi-sparkles',
+                command: () => {
+                    this.streamWizardActive = true;
                 }
             },
             {
