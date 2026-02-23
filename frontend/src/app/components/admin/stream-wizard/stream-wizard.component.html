@@ -18,9 +18,10 @@
                 <div *ngIf="selectedUser">
                     Media Element:
                     <p-select [(ngModel)]="selectedMedia" inputId="selectMedia" [options]="selectableMedias" optionValue="code" optionLabel="name" />
-                    <div *ngIf="selectedMedia == null">
-                        <input pInputText id="streamUrl" [(ngModel)]="streamUrl" placeholder="Stream URL" autocomplete="off" />
-                    </div>
+                </div>
+                <div *ngIf="selectedUser && selectedMedia == null">
+                    Stream URL:
+                    <input pInputText id="streamUrl" [(ngModel)]="streamUrl" placeholder="http://..." autocomplete="off" />
                 </div>
                 <div *ngIf="selectedMedia != null || streamUrl != ''">
                     Screen Element
@@ -29,6 +30,9 @@
                 <div *ngIf="selectedMedia != null || streamUrl != ''">
                     TimelineTemplate
                     <p-select [(ngModel)]="selectedTimelineTemplate" inputId="selectTimelineTemplate" [options]="selectableTimelineTemplates" optionValue="code" optionLabel="name" />
+                </div>
+                <div *ngIf="selectedMedia != null || streamUrl != ''">
+                    <p-button label="Save" (onClick)="saveMedia()" />
                 </div>
             </div>
         </div>
