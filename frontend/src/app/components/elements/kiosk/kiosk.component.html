@@ -71,9 +71,9 @@
                             <i class="pi pi-desktop !text-1xl hover:cursor-pointer hover:text-highlight" pTooltip="select as next Timeline" showDelay="300" tooltipPosition="right" (click)="selectTimeline(defaultTimeline.id, true)" *ngIf="nextTimeline != defaultTimeline.id"></i>
                             <i class="pi pi-verified !text-1xl hover:cursor-pointer text-highlight" pTooltip="unselect as next Timeline" showDelay="300" tooltipPosition="right" (click)="selectTimeline(defaultTimeline.id, true)" *ngIf="nextTimeline == defaultTimeline.id"></i>
                         </div>
-                        <div class="bg-timeline-card rounded-l-lg pb-1 pl-2 pr-1 pt-1.5">
-                            <i class="pi pi-star !text-1xl hover:cursor-pointer hover:text-highlight" pTooltip="select to remove default Timeline" showDelay="300" tooltipPosition="right" (click)="nextDefaultTimeline = undefined" *ngIf="nextDefaultTimeline !== undefined"></i>
-                            <i class="pi pi-star-fill !text-1xl hover:cursor-pointer text-highlight" pTooltip="unselect to remove default Timeline" showDelay="300" tooltipPosition="right" (click)="nextDefaultTimeline = null" *ngIf="nextDefaultTimeline === undefined"></i>
+                        <div class="bg-timeline-card rounded-l-lg pb-1 pl-2 pr-1 pt-1.5" *ngIf="currentUser().admin || currentUser().id == kiosk().added_by_id">
+                            <i class="pi pi-star-fill !text-1xl hover:cursor-pointer hover:text-highlight" pTooltip="select to remove default Timeline" showDelay="300" tooltipPosition="right" (click)="nextDefaultTimeline = undefined" *ngIf="nextDefaultTimeline !== undefined"></i>
+                            <i class="pi pi-star !text-1xl hover:cursor-pointer text-highlight" pTooltip="unselect to don't remove default Timeline" showDelay="300" tooltipPosition="right" (click)="nextDefaultTimeline = null" *ngIf="nextDefaultTimeline === undefined"></i>
                         </div>
                     </div>
                     <element-timeline [timeline]="defaultTimeline" [screens]="screens()" [screenTemplates]="screenTemplates()" [users]="users()" [currentUser]="currentUser()" [medias]="medias()" [timelineTemplates]="timelineTemplates()"></element-timeline>
@@ -95,7 +95,7 @@
                             <i class="pi pi-desktop !text-1xl hover:cursor-pointer hover:text-highlight" pTooltip="select as next Timeline" showDelay="300" tooltipPosition="right" (click)="selectTimeline(timeline.id, true)" *ngIf="nextTimeline != timeline.id"></i>
                             <i class="pi pi-verified !text-1xl hover:cursor-pointer text-highlight" pTooltip="unselect as next Timeline" showDelay="300" tooltipPosition="right" (click)="selectTimeline(timeline.id, true)" *ngIf="nextTimeline == timeline.id"></i>
                         </div>
-                        <div class="bg-timeline-card rounded-l-lg pb-1 pl-2 pr-1 pt-1.5">
+                        <div class="bg-timeline-card rounded-l-lg pb-1 pl-2 pr-1 pt-1.5" *ngIf="currentUser().admin || currentUser().id == kiosk().added_by_id">
                             <i class="pi pi-star !text-1xl hover:cursor-pointer hover:text-highlight" pTooltip="select as default Timeline" showDelay="300" tooltipPosition="right" (click)="nextDefaultTimeline = timeline.id" *ngIf="nextDefaultTimeline != timeline.id"></i>
                             <i class="pi pi-star-fill !text-1xl hover:cursor-pointer text-highlight" pTooltip="unselect as default Timeline" showDelay="300" tooltipPosition="right" (click)="nextDefaultTimeline = null" *ngIf="nextDefaultTimeline == timeline.id"></i>
                         </div>

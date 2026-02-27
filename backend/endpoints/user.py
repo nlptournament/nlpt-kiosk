@@ -7,6 +7,7 @@ from elements import User, Session
 class UserEndpoint(UserEndpointBase):
     _session_cls = Session
     _element = User
+    _other_readable = list(['id', 'login', 'admin', 'streamer'])
 
     @cherrypy.expose()
     @cherrypy.tools.json_in()

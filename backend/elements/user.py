@@ -3,6 +3,16 @@ from noapiframe.elements import UserBase
 
 
 class User(UserBase):
+    """
+Representation of a User, that is able to login and administrate Kiosks
+
+streamer : bool
+    Users with this attribute set to True are redirected to streamer-screen after login (but are also able to access the regular admin-screen)
+hidden_elements : list[str]
+    list of element id's to hide in frontend for this User
+    """
+
+    UserBase._attrdef['streamer'] = UserBase.addAttr(type=bool, default=False, notnone=True)
     UserBase._attrdef['hidden_elements'] = UserBase.addAttr(type=list, default=[], notnone=True)
 
     def save_post(self):

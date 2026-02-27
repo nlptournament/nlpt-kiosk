@@ -7,6 +7,8 @@ import { ButtonModule } from 'primeng/button';
 import { Login } from '../../../interfaces/login';
 import { LoginService } from '../../../services/login.service';
 import { Router } from '@angular/router';
+import { UserService } from '../../../services/user.service';
+import { User } from '../../../interfaces/user';
 
 @Component({
   selector: 'app-login',
@@ -21,6 +23,7 @@ export class LoginComponent implements OnInit {
 
     constructor(
         private loginService: LoginService,
+        private userService: UserService,
         private router: Router
     ) { }
 
@@ -47,7 +50,17 @@ export class LoginComponent implements OnInit {
                         .completeLogin(login.session_id, this.password)
                         .subscribe((login: Login) => {
                             this.login = login;
-                            if (login.complete) this.router.navigate(['/admin']);
+                            if (login.complete) {
+                                this.userService.getMe().subscribe({
+                                    next: (user: User) => {
+                                        if (user.streamer) this.router.navigate(['/streamer']);
+                                        else this.router.navigate(['/admin']);
+                                    },
+                                    error: () => {
+                                        this.router.navigate(['/admin']);
+                                    }
+                                });
+                            }
                         })
                 }
             })

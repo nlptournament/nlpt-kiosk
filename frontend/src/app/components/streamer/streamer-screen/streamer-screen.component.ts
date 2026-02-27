@@ -1,105 +1,72 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
-import { CommonModule } from '@angular/common';
 import { Subscription } from 'rxjs';
 
-import { Kiosk, KioskTlSelection } from '../../../interfaces/kiosk';
+import { Kiosk } from '../../../interfaces/kiosk';
 import { User } from '../../../interfaces/user';
-import { ScreenTemplate } from '../../../interfaces/screen-template';
 import { Screen } from '../../../interfaces/screen';
 import { TimelineTemplate } from '../../../interfaces/timeline-template';
 import { Timeline } from '../../../interfaces/timeline';
-import { Preset } from '../../../interfaces/preset';
 import { Media } from '../../../interfaces/media';
 
 import { KioskService } from '../../../services/kiosk.service';
 import { UserService } from '../../../services/user.service';
-import { ScreenTemplateService } from '../../../services/screen-template.service';
 import { ScreenService } from '../../../services/screen.service';
 import { TimelineService } from '../../../services/timeline.service';
 import { TimelineTemplateService } from '../../../services/timeline-template.service';
-import { PresetService } from '../../../services/preset.service';
 import { MediaService } from '../../../services/media.service';
 import { ErrorHandlerService } from '../../../services/error-handler.service';
 import { WebSocketService } from '../../../services/web-socket.service';
 
-import { KioskComponent } from '../../elements/kiosk/kiosk.component';
-import { ScreensPanelComponent } from '../screens-panel/screens-panel.component';
-import { TimelineTemplatesPanelComponent } from '../timeline-templates-panel/timeline-templates-panel.component';
-import { PresetsPanelComponent } from '../presets-panel/presets-panel.component';
-import { UsersPanelComponent } from '../users-panel/users-panel.component';
-import { MediaPanelComponent } from '../media-panel/media-panel.component';
-import { StreamWizardComponent } from '../stream-wizard/stream-wizard.component';
-import { UpdatePwComponent } from '../update-pw/update-pw.component';
-import { SettingsPanelComponent } from '../settings-panel/settings-panel.component';
-
-import { ConfirmationService, MenuItem } from 'primeng/api';
+import { CommonModule } from '@angular/common';
 import { MenubarModule } from 'primeng/menubar';
-import { ConfirmDialog } from 'primeng/confirmdialog';
 
+import { MenuItem } from 'primeng/api';
 
 @Component({
-  selector: 'app-admin-screen',
-  imports: [CommonModule, MenubarModule, KioskComponent, ScreensPanelComponent, TimelineTemplatesPanelComponent, PresetsPanelComponent, UsersPanelComponent, MediaPanelComponent, UpdatePwComponent, SettingsPanelComponent, ConfirmDialog, StreamWizardComponent],
-  providers: [ConfirmationService],
-  templateUrl: './admin-screen.component.html',
-  styleUrl: './admin-screen.component.scss'
+  selector: 'app-streamer-screen',
+  imports: [CommonModule, MenubarModule],
+  templateUrl: './streamer-screen.component.html',
+  styleUrl: './streamer-screen.component.scss'
 })
-export class AdminScreenComponent implements OnInit, OnDestroy {
+export class StreamerScreenComponent implements OnInit {
     menuItems: MenuItem[] = [];
     currentUser!: User;
     users: Map<string, User> = new Map<string, User>;
-    screenTemplates: Map<string, ScreenTemplate> = new Map<string, ScreenTemplate>;
     screens: Map<string, Screen> = new Map<string, Screen>;
     timelineTemplates: Map<string, TimelineTemplate> = new Map<string, TimelineTemplate>;
     kiosks: Map<string, Kiosk> = new Map<string, Kiosk>;
     timelines: Map<string, Timeline> = new Map<string, Timeline>;
-    presets: Map<string, Preset> = new Map<string, Preset>;
     medias: Map<string, Media> = new Map<string, Media>;
 
     wssSubscription: Subscription | undefined;
 
-    panelScreensActive: boolean = false;
-    panelTimelineTemplatesActive: boolean = false;
-    panelPresetsActive: boolean = false;
-    panelMediaActive: boolean = false;
-    panelUsersActive: boolean = false;
-    panelSettingsActive: boolean = false;
-    streamWizardActive: boolean = false;
-    updatePwActive: boolean = false;
-    timelinesChanged: boolean = false;
-    selectedNextTimelines: Map<string, string> = new Map<string, string>;
-    selectedPresetTimelines: Map<string, string[]> = new Map<string, string[]>;
-    dummyKiosk: Kiosk | undefined;
     showHiddenKiosks: boolean = false;
+    ownStreamTTids: string[] = [];
+    otherStreamTTids: string[] = [];
 
     constructor(
         private errorHandler: ErrorHandlerService,
         private router: Router,
         private userService: UserService,
-        private screenTemplateService: ScreenTemplateService,
         private screenService: ScreenService,
         private timelinetemplateService: TimelineTemplateService,
         private kioskService: KioskService,
         private timelineService: TimelineService,
-        private presetService: PresetService,
         private mediaService: MediaService,
         private websocketService: WebSocketService,
-        private confirmationService: ConfirmationService
     ) { }
 
     ngOnInit(): void {
         this.wssSubscription = this.websocketService.getAdminMessages().subscribe((msg) => this.wssRx(msg));
         this.populateMenu();
         this.refreshUsers();
-        this.refreshScreenTemplates();
         this.refreshScreens();
-        this.refreshTimelineTemplates();
         this.refreshKiosks();
         this.refreshTimelines();
-        this.refreshPresets();
         this.refreshMedia();
+        this.refreshTimelineTemplates();
     }
 
     ngOnDestroy(): void {
@@ -123,7 +90,6 @@ export class AdminScreenComponent implements OnInit, OnDestroy {
                     this.timelines.set(tl.id, tl);
                 else if (tl.id && this.timelines.has(tl.id) && (msg['content'] == 'delete' || tl.preset))
                     this.timelines.delete(tl.id);
-                this.timelinesChanged = !this.timelinesChanged;
             }
             if (Object.keys(msg).includes('screen')) {
                 let screen: Screen = <Screen>msg['screen'];
@@ -131,15 +97,7 @@ export class AdminScreenComponent implements OnInit, OnDestroy {
                     this.screens.set(screen.id, screen);
                 else if (screen.id && this.screens.has(screen.id) && msg['content'] == 'delete') {
                     this.screens.delete(screen.id);
-                    this.refreshScreenTemplates();
                 }
-            }
-            if (Object.keys(msg).includes('preset')) {
-                let preset: Preset = <Preset>msg['preset'];
-                if (preset.id && msg['content'] == 'update')
-                    this.presets.set(preset.id, preset);
-                else if (preset.id && this.presets.has(preset.id) && msg['content'] == 'delete')
-                    this.presets.delete(preset.id);
             }
             if (Object.keys(msg).includes('timelinetemplate')) {
                 let timelinetemplate: TimelineTemplate = <TimelineTemplate>msg['timelinetemplate'];
@@ -147,6 +105,7 @@ export class AdminScreenComponent implements OnInit, OnDestroy {
                     this.timelineTemplates.set(timelinetemplate.id, timelinetemplate);
                 else if (timelinetemplate.id && this.timelineTemplates.has(timelinetemplate.id) && msg['content'] == 'delete')
                     this.timelineTemplates.delete(timelinetemplate.id);
+                this.determineRelevantStreamTimelineTemplates();
             }
             if (Object.keys(msg).includes('user')) {
                 let user: User = <User>msg['user'];
@@ -185,17 +144,10 @@ export class AdminScreenComponent implements OnInit, OnDestroy {
                         }
                     },
                     {
-                        label: 'Streamer Interface',
+                        label: 'Admin Interface',
                         icon: 'pi pi-hammer',
                         command: () => {
-                            this.router.navigate(['/streamer']);
-                        }
-                    },
-                    {
-                        label: 'Change Password',
-                        icon: 'pi pi-key',
-                        command: () => {
-                            this.updatePwActive = true;
+                            this.router.navigate(['/admin']);
                         }
                     },
                     {
@@ -216,91 +168,8 @@ export class AdminScreenComponent implements OnInit, OnDestroy {
                             this.populateMenu();
                         }
                     },
-                    {
-                        label: 'Create Kiosk',
-                        icon: 'pi pi-building-columns',
-                        command: () => {
-                            this.dummyKiosk = <Kiosk>{'name': this.currentUser.login + "'s Kiosk", 'added_by_id': this.currentUser.id, 'common': false};
-                        }
-                    },
-                    {
-                        label: 'Manage Users',
-                        icon: 'pi pi-users',
-                        visible: this.currentUser?.admin,
-                        command: () => {
-                            this.panelUsersActive = true;
-                        }
-                    },
-                    {
-                        label: 'Settings',
-                        icon: 'pi pi-cog',
-                        visible: this.currentUser?.admin,
-                        command: () => {
-                            this.panelSettingsActive = true;
-                        }
-                    }
                 ]
             },
-            {
-                label: 'Manage Screens',
-                icon: 'pi pi-file',
-                command: () => {
-                    this.panelScreensActive = true;
-                }
-            },
-            {
-                label: 'Manage Timelines',
-                icon: 'pi pi-folder',
-                command: () => {
-                    this.panelTimelineTemplatesActive = true;
-                }
-            },
-            {
-                label: 'Manage Media',
-                icon: 'pi pi-images',
-                command: () => {
-                    this.panelMediaActive = true;
-                }
-            },
-            {
-                label: 'Stream Wizard',
-                icon: 'pi pi-sparkles',
-                command: () => {
-                    this.streamWizardActive = true;
-                }
-            },
-            {
-                label: 'Manage Presets',
-                icon: 'pi pi-list',
-                disabled: this.presets.size == 0,
-                command: () => {
-                    this.panelPresetsActive = true;
-                }
-            },
-            {
-                label: 'Create Preset',
-                icon: 'pi pi-clipboard',
-                disabled: this.selectedPresetTimelines.size == 0,
-                command: () => {
-                    this.createPresetFromSelection();
-                }
-            },
-            {
-                label: 'Synced Apply',
-                icon: 'pi pi-desktop',
-                disabled: this.selectedNextTimelines.size < 2,
-                command: () => {
-                    this.syncedCurrentTimelineApply();
-                }
-            },
-            {
-                label: 'Delete Timelines',
-                icon: 'pi pi-trash',
-                disabled: this.selectedPresetTimelines.size == 0,
-                command: () => {
-                    this.deleteSelectedTimelines();
-                }
-            }
         ]
     }
 
@@ -329,21 +198,6 @@ export class AdminScreenComponent implements OnInit, OnDestroy {
             });
     }
 
-    refreshScreenTemplates() {
-        this.screenTemplateService
-            .getScreenTemplates()
-            .subscribe({
-                next: (sts: ScreenTemplate[]) => {
-                    let stl: Map<string, ScreenTemplate> = new Map<string, ScreenTemplate>;
-                    for (let st of sts) stl.set(st.id, st);
-                    this.screenTemplates = stl;
-                },
-                error: (err: HttpErrorResponse) => {
-                    this.errorHandler.handleError(err);
-                }
-            });
-    }
-
     refreshScreens() {
         this.screenService
             .getScreens()
@@ -352,6 +206,7 @@ export class AdminScreenComponent implements OnInit, OnDestroy {
                     let sl: Map<string, Screen> = new Map<string, Screen>;
                     for (let screen of screens) if (screen.id) sl.set(screen.id, screen);
                     this.screens = sl;
+                    this.determineRelevantStreamTimelineTemplates();
                 },
                 error: (err: HttpErrorResponse) => {
                     this.errorHandler.handleError(err);
@@ -367,6 +222,7 @@ export class AdminScreenComponent implements OnInit, OnDestroy {
                     let ttl: Map<string, TimelineTemplate> = new Map<string, TimelineTemplate>;
                     for (let tt of tts) if (tt.id) ttl.set(tt.id, tt);
                     this.timelineTemplates = ttl;
+                    this.determineRelevantStreamTimelineTemplates();
                 },
                 error: (err: HttpErrorResponse) => {
                     this.errorHandler.handleError(err);
@@ -414,22 +270,6 @@ export class AdminScreenComponent implements OnInit, OnDestroy {
             });
     }
 
-    refreshPresets() {
-        this.presetService
-            .getPresets()
-            .subscribe({
-                next: (presets: Preset[]) => {
-                    let pl: Map<string, Preset> = new Map<string, Preset>;
-                    for (let p of presets) if (p.id) pl.set(p.id, p);
-                    this.presets = pl;
-                    this.populateMenu();
-                },
-                error: (err: HttpErrorResponse) => {
-                    this.errorHandler.handleError(err);
-                }
-            });
-    }
-
     refreshMedia() {
         this.mediaService
             .getMedias()
@@ -445,72 +285,19 @@ export class AdminScreenComponent implements OnInit, OnDestroy {
             });
     }
 
-    timelinesSelected(event: KioskTlSelection) {
-        if (event.next) this.selectedNextTimelines.set(event.kiosk_id, event.next);
-        else if (this.selectedNextTimelines.has(event.kiosk_id)) this.selectedNextTimelines.delete(event.kiosk_id);
-
-        if (event.preset.length > 0) this.selectedPresetTimelines.set(event.kiosk_id, event.preset);
-        else if (this.selectedPresetTimelines.has(event.kiosk_id)) this.selectedPresetTimelines.delete(event.kiosk_id);
-
-        this.populateMenu();
-    }
-
-    syncedCurrentTimelineApply() {
-        let data = {};
-        for (let kiosk_id of this.selectedNextTimelines.keys()) {
-            let timeline_id: string = this.selectedNextTimelines.get(kiosk_id)!;
-            data = { ...data, [kiosk_id]: timeline_id};
-        }
-        this.kioskService
-            .syncedApply(data)
-            .subscribe((result: any) => {
-                this.selectedNextTimelines.clear();
-                this.populateMenu();
-            });
-    }
-
-    createPresetFromSelection() {
-        let preset: Preset = <Preset>{id: null, user_id: this.currentUser.id, timeline_ids: <string[]>[], desc: '', common: false};
-        for (let timeline_ids of this.selectedPresetTimelines.values()) {
-            for (let tlid of timeline_ids) {
-                preset.timeline_ids.push(tlid);
+    determineRelevantStreamTimelineTemplates() {
+        let rtt: string[] = [];
+        let ott: string[] = [];
+        for (let tt of this.timelineTemplates.values()) {
+            if (tt.screen_ids.length == 1) {
+                let s: Screen | undefined = this.screens.get(tt.screen_ids[0]);
+                if (s && tt.id && s.key == 'stream-player') {
+                    if (this.currentUser.admin || (tt.user_id == this.currentUser.id && s.user_id == this.currentUser.id)) rtt.push(tt.id);
+                    else ott.push(tt.id);
+                }
             }
         }
-        this.presetService
-            .createPreset(preset)
-            .subscribe({
-                next: (result: any) => {
-                   this.selectedPresetTimelines.clear();
-                   this.populateMenu();
-                }
-            });
+        this.ownStreamTTids = rtt;
+        this.otherStreamTTids = ott;
     }
-
-    deleteSelectedTimelines() {
-        this.confirmationService.confirm({
-            message: 'Are you sure you want to delete selected Timelines?',
-            header: 'Confirmation',
-            closable: true,
-            closeOnEscape: true,
-            icon: 'pi pi-exclamation-triangle',
-            rejectButtonProps: {
-                label: 'No'
-            },
-            acceptButtonProps: {
-                label: 'Yes',
-                outlined: true,
-            },
-            accept: () => {
-                for (let timeline_ids of this.selectedPresetTimelines.values()) {
-                    for (let tlid of timeline_ids) {
-                        this.timelineService.deleteTimeline(tlid).subscribe((result: any) => {});
-                    }
-                }
-                this.selectedPresetTimelines.clear();
-                this.populateMenu();
-            },
-            reject: () => {},
-        });
-    }
-
 }

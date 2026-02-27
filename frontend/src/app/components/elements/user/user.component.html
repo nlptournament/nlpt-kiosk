@@ -6,6 +6,10 @@
         <p-checkbox inputId="admin" [(ngModel)]="user().admin" [binary]="true" [disabled]="!editActive" />
         <label for="admin">Admin</label>
     </div>
+    <div class="flex flex-row gap-2 items-center">
+        <p-checkbox inputId="streamer" [(ngModel)]="user().streamer" [binary]="true" [disabled]="!editActive" />
+        <label for="streamer">Streamer</label>
+    </div>
     <div class="flex flex-row gap-2">
         <i class="pi pi-paperclip !text-1xl hover:cursor-pointer hover:text-highlight" pTooltip="copy user_id to clipboard" showDelay="300" tooltipPosition="top" (click)="toClipboard(user().id);" *ngIf="!editActive"></i>
         <i class="pi pi-key !text-1xl hover:cursor-pointer hover:text-danger" pTooltip="change password" showDelay="300" tooltipPosition="top" (click)="pwChangeActive = true" *ngIf="!editActive"></i>
