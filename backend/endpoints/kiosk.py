@@ -11,8 +11,8 @@ class KioskEndpoint(ElementEndpointBase):
     _element = Kiosk
     _owner_attr = 'added_by_id'
     _other_attr = 'common'
-    _other_readable = list(['id', 'name', 'desc', 'added_by_id', 'common', 'timeline_id'])
-    _other_createable = list(['name', 'desc', 'added_by_id', 'common', 'timeline_id'])
+    _other_readable = list(['id', 'name', 'desc', 'added_by_id', 'common', 'timeline_id', 'default_timeline_id'])
+    _other_createable = list(['name', 'desc', 'added_by_id', 'common', 'timeline_id', 'default_timeline_id'])
     _other_updateable = list(['timeline_id'])
     _all_readable = list(['id', 'name', 'desc', 'timeline_id'])
     _all_createable = list(['name'])
@@ -36,6 +36,45 @@ class KioskEndpoint(ElementEndpointBase):
                 return {'error': 'creation of new Kiosk requests is not allowed'}
             else:
                 return kiosk_id
+        else:
+            cherrypy.response.headers['Allow'] = 'OPTIONS, PUT'
+            cherrypy.response.status = 405
+            return {'error': 'method not allowed'}
+
+    @cherrypy.expose()
+    @cherrypy.tools.json_in()
+    @cherrypy.tools.json_out()
+    def apply_default(self, element_id=None):
+        if cherrypy.request.method == 'OPTIONS':
+            cherrypy.response.headers['Allow'] = 'OPTIONS, PUT'
+            cherrypy_cors.preflight(allowed_methods=['PUT'])
+            return
+        elif cherrypy.request.method == 'PUT':
+            is_authorized = False
+            cookie = cherrypy.request.cookie.get(self._session_cls.cookie_name)
+            if cookie:
+                session = self._session_cls.get(cookie.value)
+                if len(session.validate_base()) == 0:
+                    is_authorized = True
+
+            if not is_authorized:
+                cherrypy.response.status = 401
+                return {'error': 'not authorized'}
+
+            if element_id is None:
+                cherrypy.response.status = 404
+                return {'error': 'element_id is needed'}
+            element = self._element.get(element_id)
+            if element['_id'] is None:
+                cherrypy.response.status = 404
+                return {'error': f'id {element_id} not found'}
+
+            result = element.apply_default()
+            if result:
+                return True
+            else:
+                cherrypy.response.status = 500
+                return {'error': 'there seems to be no default timeline available for this Kiosk'}
         else:
             cherrypy.response.headers['Allow'] = 'OPTIONS, PUT'
             cherrypy.response.status = 405

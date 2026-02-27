@@ -8,5 +8,6 @@ export interface Timeline {
     start_time: number | null;
     locked?: boolean;
     displayed?: boolean;
+    default?: boolean;
     preset?: boolean;
 }

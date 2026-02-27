@@ -5,6 +5,7 @@ export interface Kiosk {
     added_by_id?: string | null;
     common?: boolean;
     timeline_id: string | null;
+    default_timeline_id?: string | null;
 }
 
 export interface KioskTlSelection {

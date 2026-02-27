@@ -15,14 +15,21 @@ added_by_id : str | None
 common : bool (default: False)
     if True Kiosk is available to all Users, if False only available to owner and admins.
 timeline_id : str | None
-    Timeline, that is currently displayed on Kiosk. if it is None the related displaying device is showing nothing.
+    Timeline, that is currently displayed on Kiosk. If it is None the related displaying device is showing nothing.
+default_timeline_id : str | None
+    Timeline, that is defined as the default for this Kiosk, which can be applied with a quick-access.
+
+apply_default() : bool
+    Sets the default_timeline_id as timeline_id with resetting the current_pos of Timeline
+    returns False if default_timeline_id is None, otherwise True
     """
     _attrdef = dict(
         name=ElementBase.addAttr(type=str, notnone=True, unique=True),
         desc=ElementBase.addAttr(type=str, default='', notnone=True),
         added_by_id=ElementBase.addAttr(type=str, default=None, fk='User'),
         common=ElementBase.addAttr(type=bool, default=True, notnone=True),
-        timeline_id=ElementBase.addAttr(type=str, default=None, fk='Timeline')
+        timeline_id=ElementBase.addAttr(type=str, default=None, fk='Timeline'),
+        default_timeline_id=ElementBase.addAttr(type=str, default=None, fk='Timeline')
     )
 
     @classmethod
@@ -71,3 +78,16 @@ timeline_id : str | None
         for t in [Timeline(t) for t in docDB.search_many('Timeline', {'kiosk_id': self['_id']})]:
             t.delete()
         transmit_kiosk_delete(self)
+
+    def apply_default(self):
+        if self['default_timeline_id'] is None:
+            return False
+        else:
+            from elements import Timeline
+            self['timeline_id'] = None
+            self.save()
+            t = Timeline.get(self['default_timeline_id'])
+            t.save()
+            self['timeline_id'] = self['default_timeline_id']
+            self.save()
+            return True

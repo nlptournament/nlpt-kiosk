@@ -58,14 +58,17 @@ export class KioskComponent implements OnInit {
     editMode = input(false, {transform: booleanAttribute});
 
     relevantTimelines: Timeline[] = [];
+    defaultTimeline: Timeline | undefined;
     editActive: boolean = false;
     timelinesExpanded: boolean = false;
+    defaultTimelineExpanded: boolean = false;
     selectableCommons: selectableCommon[] = [];
     selectableUsers: selectableUser[] = [];
     selectableTimelineTemplates: selectableTimelineTemplate[] = [];
     timelineCreateActive: boolean = false;
     selectedTimelineTemplate: string = "";
     nextTimeline: string | undefined;
+    nextDefaultTimeline: string | undefined | null = null;  // null = keep default as is; undefined = clear (remove) default
     presetTimelines: string[] = [];
     selfUri: string = '';
 
@@ -105,11 +108,15 @@ export class KioskComponent implements OnInit {
 
     refreshTimelines() {
         let rt: Timeline[] = [];
+        let dt: Timeline | undefined = undefined;
         for (let tl of this.timelines().values()) {
-            if (tl.kiosk_id === this.kiosk().id && tl.id !== this.kiosk().timeline_id)
+            if (this.kiosk().default_timeline_id && tl.id === this.kiosk().default_timeline_id)
+                dt = tl;
+            else if (tl.kiosk_id === this.kiosk().id && tl.id !== this.kiosk().timeline_id)
                 rt.push(tl);
         }
         this.relevantTimelines = rt;
+        this.defaultTimeline = dt;
     }
 
     kioskAccept() {
@@ -215,21 +222,38 @@ export class KioskComponent implements OnInit {
     }
 
     changeTimeline() {
-        if (this.nextTimeline) {
+        if (this.nextTimeline)
             this.kiosk().timeline_id = this.nextTimeline;
-            this.kioskService
-                .updateKiosk(this.kiosk())
-                .subscribe({
-                    next: (result: any) => {
-                        this.editResult.emit(this.kiosk().id);
-                        this.nextTimeline = undefined;
-                    },
-                    error: (err: HttpErrorResponse) => {
-                        this.editResult.emit(this.kiosk().id);
-                        this.nextTimeline = undefined;
-                        this.errorHandler.handleError(err);
-                    }
-                });
+        if (this.nextDefaultTimeline !== null) {
+            if (this.nextDefaultTimeline === undefined) this.kiosk().default_timeline_id = null;
+            else this.kiosk().default_timeline_id = this.nextDefaultTimeline;
         }
+        this.kioskService
+            .updateKiosk(this.kiosk())
+            .subscribe({
+                next: (result: any) => {
+                    this.editResult.emit(this.kiosk().id);
+                    this.nextTimeline = undefined;
+                    this.nextDefaultTimeline = null;
+                },
+                error: (err: HttpErrorResponse) => {
+                    this.editResult.emit(this.kiosk().id);
+                    this.nextTimeline = undefined;
+                    this.nextDefaultTimeline = null;
+                    this.errorHandler.handleError(err);
+                }
+            });
+    }
+
+    applyDefault() {
+        this.kioskService
+            .applyDefault(this.kiosk().id).subscribe({
+                next: (result: boolean) => {
+                    this.editResult.emit(this.kiosk().id);
+                },
+                error: (err: HttpErrorResponse) => {
+                    this.errorHandler.handleError(err);
+                }
+            });
     }
 }

@@ -10,5 +10,6 @@ export interface Screen {
     variables: any;
     locked?: boolean;
     displayed?: boolean;
+    default?: boolean;
     key: string;
 }

@@ -31,37 +31,77 @@
             <div>{{ users().get(kiosk().added_by_id!)!.login }}</div>
         </div>
         <div class="flex flex-row gap-2">
+            <i class="pi pi-file-export !text-1xl hover:cursor-pointer hover:text-highlight" pTooltip="apply default Timeline" showDelay="300" tooltipPosition="top" (click)="applyDefault()" *ngIf="kiosk().default_timeline_id"></i>
             <a class="pi pi-external-link !text-1xl hover:cursor-pointer hover:text-highlight" pTooltip="open Kiosk's display in new window" showDelay="300" tooltipPosition="bottom" href="{{ selfUri }}" target="_blank"></a>
             <i class="pi pi-eye !text-1xl hover:cursor-pointer hover:text-highlight" pTooltip="hide Kiosk" showDelay="300" tooltipPosition="bottom" (click)="kioskHide()" *ngIf="!currentUser().hidden_elements.includes(kiosk().id)"></i>
             <i class="pi pi-eye-slash !text-1xl hover:cursor-pointer hover:text-highlight" pTooltip="unhide (show) Kiosk" showDelay="300" tooltipPosition="bottom" (click)="kioskUnhide()" *ngIf="currentUser().hidden_elements.includes(kiosk().id)"></i>
             <i class="pi pi-pencil !text-1xl hover:cursor-pointer hover:text-highlight" pTooltip="edit" showDelay="300" tooltipPosition="bottom" (click)="editOpen()" *ngIf="currentUser().admin || currentUser().id == kiosk().added_by_id"></i>
-            <i class="pi pi-save !text-1xl hover:cursor-pointer hover:text-highlight" pTooltip="apply next Timeline as current Timeline" showDelay="300" tooltipPosition="bottom" (click)="changeTimeline()" *ngIf="nextTimeline"></i>
+            <i class="pi pi-save !text-1xl text-warn hover:cursor-pointer hover:text-highlight" pTooltip="apply next Timeline as current Timeline" showDelay="300" tooltipPosition="bottom" (click)="changeTimeline()" *ngIf="nextTimeline || nextDefaultTimeline !== null"></i>
         </div>
     </div>
 
     <div class="flex flex-col gap-1">
         <element-timeline class="w-fit border border-highlight rounded-xl" [timeline]="timelines().get(kiosk().timeline_id!)!" [screens]="screens()" [screenTemplates]="screenTemplates()" [medias]="medias()" [users]="users()" [currentUser]="currentUser()" [timelineTemplates]="timelineTemplates()" *ngIf="kiosk().timeline_id"></element-timeline>
         <div class="w-fill h-20 border border-highlight bg-timeline-card rounded-xl shadow-md flex items-center justify-center text-2xl p-3" *ngIf="!kiosk().timeline_id">No Timeline is displayed</div>
-        <div class="flex flex-col bg-screen-card rounded-xl shadow-md p-2 pt-0 pb-0">
-            <div class="flex flex-row justify-end" *ngIf="timelinesExpanded">
-                <i class="pi pi-chevron-up !text-1xl hover:cursor-pointer hover:text-highlight" pTooltip="collapse other Timelines" showDelay="300" tooltipPosition="bottom" (click)="timelinesExpanded = false"></i>
+        <div class="flex flex-col bg-screen-card rounded-xl shadow-md p-2 pt-0 pb-0" *ngIf="!defaultTimeline">
+            <div class="flex flex-row justify-between">
+                <div></div>
+                <div>no default Timeline defined</div>
+                <div></div>
             </div>
-            <div class="flex flex-row justify-between" *ngIf="!timelinesExpanded">
+        </div>
+        <div class="flex flex-col bg-screen-card rounded-xl shadow-md p-2 pt-0 pb-0" *ngIf="defaultTimeline && kiosk().default_timeline_id == kiosk().timeline_id">
+            <div class="flex flex-row justify-between">
+                <div></div>
+                <div>default Timeline is displayed</div>
+                <div></div>
+            </div>
+        </div>
+        <div class="flex flex-col bg-screen-card rounded-xl shadow-md p-2 pt-0 pb-0" *ngIf="defaultTimeline && kiosk().default_timeline_id != kiosk().timeline_id">
+            <div class="flex flex-row justify-between">
+                <div></div>
+                <div>default Timeline</div>
+                <i class="pi pi-chevron-down !text-1xl hover:cursor-pointer hover:text-highlight" pTooltip="show default Timeline" showDelay="300" tooltipPosition="bottom" (click)="defaultTimelineExpanded = true" *ngIf="!defaultTimelineExpanded"></i>
+                <i class="pi pi-chevron-up !text-1xl hover:cursor-pointer hover:text-highlight" pTooltip="collapse other Timelines" showDelay="300" tooltipPosition="bottom" (click)="defaultTimelineExpanded = false" *ngIf="defaultTimelineExpanded"></i>
+            </div>
+            <div class="flex flex-col gap-2 mb-2" *ngIf="defaultTimelineExpanded">
+                <div class="flex flex-row">
+                    <div class="flex flex-col justify-center gap-1.5">
+                        <div class="bg-timeline-card rounded-l-lg pb-1 pl-2 pr-1 pt-1.5">
+                            <i class="pi pi-desktop !text-1xl hover:cursor-pointer hover:text-highlight" pTooltip="select as next Timeline" showDelay="300" tooltipPosition="right" (click)="selectTimeline(defaultTimeline.id, true)" *ngIf="nextTimeline != defaultTimeline.id"></i>
+                            <i class="pi pi-verified !text-1xl hover:cursor-pointer text-highlight" pTooltip="unselect as next Timeline" showDelay="300" tooltipPosition="right" (click)="selectTimeline(defaultTimeline.id, true)" *ngIf="nextTimeline == defaultTimeline.id"></i>
+                        </div>
+                        <div class="bg-timeline-card rounded-l-lg pb-1 pl-2 pr-1 pt-1.5">
+                            <i class="pi pi-star !text-1xl hover:cursor-pointer hover:text-highlight" pTooltip="select to remove default Timeline" showDelay="300" tooltipPosition="right" (click)="nextDefaultTimeline = undefined" *ngIf="nextDefaultTimeline !== undefined"></i>
+                            <i class="pi pi-star-fill !text-1xl hover:cursor-pointer text-highlight" pTooltip="unselect to remove default Timeline" showDelay="300" tooltipPosition="right" (click)="nextDefaultTimeline = null" *ngIf="nextDefaultTimeline === undefined"></i>
+                        </div>
+                    </div>
+                    <element-timeline [timeline]="defaultTimeline" [screens]="screens()" [screenTemplates]="screenTemplates()" [users]="users()" [currentUser]="currentUser()" [medias]="medias()" [timelineTemplates]="timelineTemplates()"></element-timeline>
+                </div>
+            </div>
+        </div>
+        <div class="flex flex-col bg-screen-card rounded-xl shadow-md p-2 pt-0 pb-0">
+            <div class="flex flex-row justify-between">
                 <div></div>
                 <div>other Timelines</div>
-                <i class="pi pi-chevron-down !text-1xl hover:cursor-pointer hover:text-highlight" pTooltip="show other Timelines" showDelay="300" tooltipPosition="bottom" (click)="timelinesExpanded = true"></i>
+                <i class="pi pi-chevron-down !text-1xl hover:cursor-pointer hover:text-highlight" pTooltip="show other Timelines" showDelay="300" tooltipPosition="bottom" (click)="timelinesExpanded = true" *ngIf="!timelinesExpanded"></i>
+                <i class="pi pi-chevron-up !text-1xl hover:cursor-pointer hover:text-highlight" pTooltip="collapse other Timelines" showDelay="300" tooltipPosition="bottom" (click)="timelinesExpanded = false" *ngIf="timelinesExpanded"></i>
             </div>
             <div class="flex flex-col gap-2" *ngIf="timelinesExpanded">
                 @for (timeline of relevantTimelines; track timeline.id) {
                 <div class="flex flex-row">
                     <div class="flex flex-col justify-center gap-1.5">
                         <div class="bg-timeline-card rounded-l-lg pb-1 pl-2 pr-1 pt-1.5">
-                            <i class="pi pi-desktop !text-2xl hover:cursor-pointer hover:text-highlight" pTooltip="select as next Timeline" showDelay="300" tooltipPosition="right" (click)="selectTimeline(timeline.id, true)" *ngIf="nextTimeline != timeline.id"></i>
-                            <i class="pi pi-verified !text-2xl hover:cursor-pointer text-highlight" pTooltip="unselect as next Timeline" showDelay="300" tooltipPosition="right" (click)="selectTimeline(timeline.id, true)" *ngIf="nextTimeline == timeline.id"></i>
+                            <i class="pi pi-desktop !text-1xl hover:cursor-pointer hover:text-highlight" pTooltip="select as next Timeline" showDelay="300" tooltipPosition="right" (click)="selectTimeline(timeline.id, true)" *ngIf="nextTimeline != timeline.id"></i>
+                            <i class="pi pi-verified !text-1xl hover:cursor-pointer text-highlight" pTooltip="unselect as next Timeline" showDelay="300" tooltipPosition="right" (click)="selectTimeline(timeline.id, true)" *ngIf="nextTimeline == timeline.id"></i>
                         </div>
                         <div class="bg-timeline-card rounded-l-lg pb-1 pl-2 pr-1 pt-1.5">
-                            <i class="pi pi-list !text-2xl hover:cursor-pointer hover:text-highlight" pTooltip="select for Preset creation" showDelay="300" tooltipPosition="right" (click)="selectTimeline(timeline.id)" *ngIf="!presetTimelines.includes(timeline.id!)"></i>
-                            <i class="pi pi-list-check !text-2xl hover:cursor-pointer text-highlight" pTooltip="unselect from Preset creation" showDelay="300" tooltipPosition="right" (click)="selectTimeline(timeline.id)" *ngIf="presetTimelines.includes(timeline.id!)"></i>
+                            <i class="pi pi-star !text-1xl hover:cursor-pointer hover:text-highlight" pTooltip="select as default Timeline" showDelay="300" tooltipPosition="right" (click)="nextDefaultTimeline = timeline.id" *ngIf="nextDefaultTimeline != timeline.id"></i>
+                            <i class="pi pi-star-fill !text-1xl hover:cursor-pointer text-highlight" pTooltip="unselect as default Timeline" showDelay="300" tooltipPosition="right" (click)="nextDefaultTimeline = null" *ngIf="nextDefaultTimeline == timeline.id"></i>
+                        </div>
+                        <div class="bg-timeline-card rounded-l-lg pb-1 pl-2 pr-1 pt-1.5">
+                            <i class="pi pi-list !text-1xl hover:cursor-pointer hover:text-highlight" pTooltip="select for Preset creation" showDelay="300" tooltipPosition="right" (click)="selectTimeline(timeline.id)" *ngIf="!presetTimelines.includes(timeline.id!)"></i>
+                            <i class="pi pi-list-check !text-1xl hover:cursor-pointer text-highlight" pTooltip="unselect from Preset creation" showDelay="300" tooltipPosition="right" (click)="selectTimeline(timeline.id)" *ngIf="presetTimelines.includes(timeline.id!)"></i>
                         </div>
                     </div>
                     <element-timeline [timeline]="timeline" [screens]="screens()" [screenTemplates]="screenTemplates()" [users]="users()" [currentUser]="currentUser()" [medias]="medias()" [timelineTemplates]="timelineTemplates()"></element-timeline>

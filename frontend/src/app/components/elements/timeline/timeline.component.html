@@ -11,9 +11,9 @@
         </div>
         <div class="flex flex-row gap-2">
             <i class="pi pi-pencil !text-1xl hover:cursor-pointer hover:text-highlight" pTooltip="edit" showDelay="300" tooltipPosition="top" (click)="editActive = true" *ngIf="!editActive && !timeline().locked && !roMode()"></i>
-            <i class="pi pi-lock !text-1xl text-danger" pTooltip="used by (common) Kiosk" showDelay="300" tooltipPosition="top" *ngIf="timeline().locked"></i>
-            <i class="pi pi-unlock !text-1xl text-warn" pTooltip="used by (uncommon) Kiosk" showDelay="300" tooltipPosition="top" *ngIf="timeline().displayed && !timeline().locked"></i>
-            <i class="pi pi-trash !text-1xl hover:cursor-pointer hover:text-danger" pTooltip="delete" showDelay="300" tooltipPosition="top" (click)="timelineDelete()" *ngIf="editActive"></i>
+            <i class="pi pi-lock !text-1xl text-danger" pTooltip="disabled by (common) Kiosk" showDelay="300" tooltipPosition="top" *ngIf="timeline().locked"></i>
+            <i class="pi pi-unlock !text-1xl text-warn" pTooltip="disabled by (uncommon) Kiosk or used as default" showDelay="300" tooltipPosition="top" *ngIf="(timeline().displayed || timeline().default) && !timeline().locked"></i>
+            <i class="pi pi-trash !text-1xl hover:cursor-pointer hover:text-danger" pTooltip="delete" showDelay="300" tooltipPosition="top" (click)="timelineDelete()" *ngIf="editActive && !timeline().displayed && !timeline().default"></i>
             <i class="pi pi-save !text-1xl hover:cursor-pointer hover:text-highlight" pTooltip="save" showDelay="300" tooltipPosition="top" (click)="timelineSave()" *ngIf="editActive"></i>
             <i class="pi pi-times !text-1xl hover:cursor-pointer hover:text-danger" pTooltip="drop changes" showDelay="300" tooltipPosition="top" (click)="editClose()" *ngIf="editActive"></i>
         </div>

@@ -34,6 +34,9 @@ locked() : bool
 displayed() : bool
     if True, it's not allowed to delete Screen, as it is used by displayed Timeline(s).
     gets True if Screen is part of at least one displayed Timeline
+default() : bool
+    if True, it's not allowed to delete Screen, as it is used by default Timeline(s).
+    gets True if Screen is part of at least one default Timeline
 key() : str
     shortcut to ScreenTemplate's key
     """
@@ -96,7 +99,7 @@ key() : str
         transmit_screen_update(self)
 
     def delete_pre(self):
-        if self.displayed():
+        if self.displayed() or self.default():
             return {'error': {'code': 2, 'desc': "can't be deleted as it is displayed on Kiosk"}}
 
     def delete_post(self):
@@ -124,6 +127,13 @@ key() : str
                 return True
         return False
 
+    def default(self):
+        from elements import Timeline
+        for t in [Timeline(t) for t in docDB.search_many('Timeline', {'screen_ids': self['_id']})]:
+            if t.default():
+                return True
+        return False
+
     def key(self):
         return self.template()['key']
 
@@ -131,5 +141,6 @@ key() : str
         result = super().json()
         result['locked'] = self.locked()
         result['displayed'] = self.displayed()
+        result['default'] = self.default()
         result['key'] = self.key()
         return result
