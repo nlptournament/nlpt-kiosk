@@ -45,4 +45,8 @@ export class KioskService {
     public applyDefault(id: string): Observable<boolean> {
         return this.http.put<boolean>(this.kioskUrl + 'apply_default/' + id + '/', {}, {withCredentials:true});
     }
+
+    public applyTimelineTemplate(kiosk_id: string, template_id: string): Observable<boolean> {
+        return this.http.put<boolean>(this.kioskUrl + 'apply_timelinetemplate/' + kiosk_id + '/', {'template_id': template_id}, {withCredentials:true});
+    }
 }

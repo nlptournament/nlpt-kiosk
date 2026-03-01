@@ -1,0 +1,29 @@
+<div class="w-fit min-w-10% max-w-90% bg-card rounded-xl shadow-md flex flex-col text-1xl p-2">
+    <div class="flex flex-row items-center gap-1">
+        <i class="pi pi-circle-off !text-1xl" pTooltip="only visible to owner" showDelay="300" tooltipPosition="right" *ngIf="!kiosk().common"></i>
+        <i class="pi pi-circle-on !text-1xl" pTooltip="visible to anyone" showDelay="300" tooltipPosition="right" *ngIf="kiosk().common"></i>
+        <div *ngIf="kiosk().desc == ''">{{ kiosk().name }}</div>
+        <div class="text-highlight" *ngIf="kiosk().desc != ''">{{ kiosk().desc }}</div>
+    </div>
+    <div class="flex flex-row items-center gap-1">
+        <i class="pi pi-user !text-1xl" pTooltip="Kiosk owner" showDelay="300" tooltipPosition="right"></i>
+        <div>{{ users().get(kiosk().added_by_id!)!.login }}</div>
+    </div>
+    <div class="flex flex-row items-center gap-1">
+        <i class="pi pi-folder !text-1xl" pTooltip="current Timeline" showDelay="300" tooltipPosition="right"></i>
+        <div *ngIf="kiosk().timeline_id">{{ timelineTemplates().get(timelines().get(kiosk().timeline_id!)!.template_id!)!.desc }}</div>
+        <div *ngIf="!kiosk().timeline_id">---</div>
+    </div>
+    <div class="flex flex-row items-center gap-1">
+        <i class="pi pi-star !text-1xl" pTooltip="default Timeline" showDelay="300" tooltipPosition="right"></i>
+        <div *ngIf="kiosk().default_timeline_id">{{ timelineTemplates().get(timelines().get(kiosk().default_timeline_id!)!.template_id!)!.desc }}</div>
+        <div *ngIf="!kiosk().default_timeline_id">---</div>
+    </div>
+    <div class="w-fill flex flex-row items-center justify-center">
+        <i class="pi pi-times-circle !text-3xl text-danger" pTooltip="used by another stream" showDelay="300" tooltipPosition="bottom" *ngIf="kiosk().timeline_id && kiosk().default_timeline_id && otherStreamTTids().includes(timelines().get(kiosk().timeline_id!)!.template_id!)"></i>
+        <i class="pi pi-stop-circle !text-3xl text-warn hover:cursor-pointer hover:text-highlight" pTooltip="stop playing stream" showDelay="300" tooltipPosition="bottom" (click)="stopStream()" *ngIf="kiosk().timeline_id && kiosk().default_timeline_id && ownStreamTTids().includes(timelines().get(kiosk().timeline_id!)!.template_id!)"></i>
+        <i class="pi pi-exclamation-circle !text-3xl text-watermark" pTooltip="default Timeline is missing" showDelay="300" tooltipPosition="bottom" *ngIf="!kiosk().default_timeline_id"></i>
+        <i class="pi pi-play-circle !text-3xl text-ok hover:cursor-pointer hover:text-highlight" pTooltip="start playing stream" showDelay="300" tooltipPosition="bottom" (click)="startStream()" *ngIf="selectedTTid() && kiosk().default_timeline_id && !ownStreamTTids().includes(timelines().get(kiosk().timeline_id!)!.template_id!) && !otherStreamTTids().includes(timelines().get(kiosk().timeline_id!)!.template_id!)"></i>
+        <i class="pi pi-play-circle !text-3xl text-watermark" pTooltip="select stream to play first" showDelay="300" tooltipPosition="bottom" *ngIf="!selectedTTid() && kiosk().default_timeline_id && !ownStreamTTids().includes(timelines().get(kiosk().timeline_id!)!.template_id!) && !otherStreamTTids().includes(timelines().get(kiosk().timeline_id!)!.template_id!)"></i>
+    </div>
+</div>

@@ -8,8 +8,8 @@ class TimelineEndpoint(ElementEndpointBase):
     _session_cls = Session
     _element = Timeline
     _other_readable = list([
-        'id', 'template_id', 'kiosk_id', 'screen_ids', 'start_pos', 'current_pos', 'start_time', 'locked', 'displayed', 'default', 'preset'])
-    _other_createable = list(['template_id', 'kiosk_id', 'screen_ids', 'start_pos'])
+        'id', 'template_id', 'kiosk_id', 'screen_ids', 'start_pos', 'current_pos', 'start_time', 'single_shot', 'locked', 'displayed', 'default', 'preset'])
+    _other_createable = list(['template_id', 'kiosk_id', 'screen_ids', 'start_pos', 'single_shot'])
     _other_updateable = list(['start_pos', 'start_time'])
     _other_delete = True
     _all_readable = list(['id', 'screen_ids', 'start_pos', 'current_pos', 'start_time'])

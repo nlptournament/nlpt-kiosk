@@ -83,6 +83,56 @@ class KioskEndpoint(ElementEndpointBase):
     @cherrypy.expose()
     @cherrypy.tools.json_in()
     @cherrypy.tools.json_out()
+    def apply_timelinetemplate(self, element_id=None):
+        if cherrypy.request.method == 'OPTIONS':
+            cherrypy.response.headers['Allow'] = 'OPTIONS, PUT'
+            cherrypy_cors.preflight(allowed_methods=['PUT'])
+            return
+        elif cherrypy.request.method == 'PUT':
+            is_authorized = False
+            cookie = cherrypy.request.cookie.get(self._session_cls.cookie_name)
+            if cookie:
+                session = self._session_cls.get(cookie.value)
+                if len(session.validate_base()) == 0:
+                    is_authorized = True
+
+            if not is_authorized:
+                cherrypy.response.status = 401
+                return {'error': 'not authorized'}
+
+            attr = cherrypy.request.json
+            if not isinstance(attr, dict):
+                cherrypy.response.status = 400
+                return {'error': 'Submitted data need to be of type dict'}
+            elif len(attr) == 0:
+                cherrypy.response.status = 400
+                return {'error': 'data is needed to be submitted'}
+            elif 'template_id' not in attr:
+                cherrypy.response.status = 400
+                return {'error': "'template_id' needed in data"}
+
+            if element_id is None:
+                cherrypy.response.status = 404
+                return {'error': 'element_id is needed'}
+            element = self._element.get(element_id)
+            if element['_id'] is None:
+                cherrypy.response.status = 404
+                return {'error': f'id {element_id} not found'}
+
+            result = element.apply_timelinetemplate(attr['template_id'])
+            if result:
+                return True
+            else:
+                cherrypy.response.status = 500
+                return {'error': 'there seems to be no default TimelineTemplate with this id'}
+        else:
+            cherrypy.response.headers['Allow'] = 'OPTIONS, PUT'
+            cherrypy.response.status = 405
+            return {'error': 'method not allowed'}
+
+    @cherrypy.expose()
+    @cherrypy.tools.json_in()
+    @cherrypy.tools.json_out()
     def synced_apply(self, element_id=None):
         from elements import Timeline
         if cherrypy.request.method == 'OPTIONS':

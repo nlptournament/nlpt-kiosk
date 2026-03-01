@@ -1,24 +1,17 @@
 <p-menubar class="!text-1xl" [model]="menuItems"></p-menubar>
 
-<div class="flex flex-col p-2 gap-2">
-    <div>Own Streams</div>
+<div class="flex flex-wrap p-2 gap-2">
     @for (tt of ownStreamTTids; track tt) {
-    <div>{{ timelineTemplates.get(tt)!.desc }}</div>
-    }
-</div>
-
-<div class="flex flex-col p-2 gap-2">
-    <div>Other Streams</div>
-    @for (tt of otherStreamTTids; track tt) {
-    <div>{{ timelineTemplates.get(tt)!.desc }}</div>
+    <div class="flex flex-col items-center justify-center">
+        <div>{{ timelineTemplates.get(tt)!.desc }}</div>
+        <i class="pi pi-circle !text-3xl text-text hover:cursor-pointer hover:text-highlight" pTooltip="select as stream to be started" showDelay="300" tooltipPosition="bottom" (click)="selectedTTid = tt" *ngIf="tt !== selectedTTid"></i>
+        <i class="pi pi-check-circle !text-3xl text-ok hover:cursor-pointer hover:text-highlight" pTooltip="deselect for stream to be started" showDelay="300" tooltipPosition="bottom" (click)="selectedTTid = undefined" *ngIf="tt === selectedTTid"></i>
+    </div>
     }
 </div>
 
 <div class="flex flex-wrap p-2 gap-2">
     @for (kiosk of kiosks.values(); track kiosk.id) {
-    <div class="flex flex-col p-1 gap-1" *ngIf="showHiddenKiosks || !currentUser.hidden_elements.includes(kiosk.id)">
-        <div>{{ kiosk.name }}</div>
-        <div>{{ timelineTemplates.get(timelines.get(kiosk.timeline_id!)!.template_id!)!.desc }}</div>
-    </div>
+    <element-streamer-kiosk [kiosk]="kiosk" [users]="users" [currentUser]="currentUser" [timelineTemplates]="timelineTemplates" [timelines]="timelines" [ownStreamTTids]="ownStreamTTids" [otherStreamTTids]="otherStreamTTids" [selectedTTid]="selectedTTid"></element-streamer-kiosk>
     }
 </div>

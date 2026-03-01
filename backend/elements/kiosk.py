@@ -22,6 +22,8 @@ default_timeline_id : str | None
 apply_default() : bool
     Sets the default_timeline_id as timeline_id with resetting the current_pos of Timeline
     returns False if default_timeline_id is None, otherwise True
+apply_timelinetemplate(template_id) : bool
+    Accepts a TimelineTemplate id, creates a Timeline of of this, and applys it as the active Timeline for the Kiosk
     """
     _attrdef = dict(
         name=ElementBase.addAttr(type=str, notnone=True, unique=True),
@@ -66,7 +68,10 @@ apply_default() : bool
         transmit_timeline_update(t)
         if 'old_timeline_id' in self._cache and self._cache['old_timeline_id'] is not None and not self._cache['old_timeline_id'] == self['timeline_id']:
             t = Timeline.get(self._cache['old_timeline_id'])
-            t.save()
+            if t['single_shot']:
+                t.delete()
+            else:
+                t.save()
 
     def delete_pre(self):
         self['timeline_id'] = None
@@ -91,3 +96,16 @@ apply_default() : bool
             self['timeline_id'] = self['default_timeline_id']
             self.save()
             return True
+
+    def apply_timelinetemplate(self, template_id):
+        from elements import TimelineTemplate, Timeline
+        if self['_id'] is None:
+            return False
+        tt = TimelineTemplate.get(template_id)
+        if tt['_id'] is None:
+            return False
+        tl = Timeline({'template_id': template_id, 'kiosk_id': self['_id'], 'screen_ids': tt['screen_ids'], 'single_shot': True})
+        tl.save()
+        self['timeline_id'] = tl['_id']
+        self.save()
+        return False

@@ -21,12 +21,14 @@ import { WebSocketService } from '../../../services/web-socket.service';
 
 import { CommonModule } from '@angular/common';
 import { MenubarModule } from 'primeng/menubar';
+import { TooltipModule } from 'primeng/tooltip';
 
 import { MenuItem } from 'primeng/api';
+import { StreamerKioskComponent } from '../../elements/streamer-kiosk/streamer-kiosk.component';
 
 @Component({
   selector: 'app-streamer-screen',
-  imports: [CommonModule, MenubarModule],
+  imports: [CommonModule, MenubarModule, StreamerKioskComponent, TooltipModule],
   templateUrl: './streamer-screen.component.html',
   styleUrl: './streamer-screen.component.scss'
 })
@@ -45,6 +47,7 @@ export class StreamerScreenComponent implements OnInit {
     showHiddenKiosks: boolean = false;
     ownStreamTTids: string[] = [];
     otherStreamTTids: string[] = [];
+    selectedTTid: string | undefined;
 
     constructor(
         private errorHandler: ErrorHandlerService,
@@ -299,5 +302,7 @@ export class StreamerScreenComponent implements OnInit {
         }
         this.ownStreamTTids = rtt;
         this.otherStreamTTids = ott;
+        if (rtt.length == 1) this.selectedTTid = rtt[0];
+        else if (rtt.length == 0) this.selectedTTid = undefined;
     }
 }

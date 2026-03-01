@@ -20,6 +20,8 @@ current_pos : int (default: 0)
 start_time : int | None (default: None)
     time, as timestamp, when this Timeline should start to run on Kiosk, needs to be in the future
     this value is used for synced starts of Timelines on multiple Kiosks
+single_shot : bool & notnull
+    If set to True, Timeline gets deleted after it's been displayed on a Kiosk
 
 locked() : bool
     if True, Timeline is not allowed to be changed
@@ -39,7 +41,8 @@ preset() : bool
         screen_ids=ElementBase.addAttr(type=list, default=list(), notnone=True, fk='Screen'),
         start_pos=ElementBase.addAttr(type=int, default=0, notnone=True),
         current_pos=ElementBase.addAttr(type=int, default=0, notnone=True),
-        start_time=ElementBase.addAttr(type=int, default=None)
+        start_time=ElementBase.addAttr(type=int, default=None),
+        single_shot=ElementBase.addAttr(type=bool, default=False, notnone=True)
     )
 
     def validate(self):
