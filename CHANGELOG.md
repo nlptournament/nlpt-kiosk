@@ -10,3 +10,5 @@
 
 - Streamer Wizard
 - default Timeline on Kiosk
+- Streamer-Interface
+- single_shot on timeline
