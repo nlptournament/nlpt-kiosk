@@ -1,12 +1,12 @@
 <p-dialog [modal]="true" appendTo="body" [(visible)]="isVisible" [dismissableMask]="true" (onHide)="closeDialog()">
     <ng-template #headless>
-        <div class="max-w-52% p-3 pt-1">
+        <div class="w-fit max-w-52% p-3 pt-1">
             <div class="w-fill flex flex-row justify-between items-start gap-5 mb-2">
                 <div>&nbsp;</div>
                 <div class="text-2xl">User Manager</div>
                 <i class="pi pi-times !text-1xl hover:cursor-pointer hover:text-danger" (click)="closeDialog()"></i>
             </div>
-            <div class="flex flex-col max-h-35% overflow-x-hidden overflow-y-scroll gap-2">
+            <div class="flex flex-col max-h-35% overflow-x-hidden overflow-y-auto gap-2">
                 @for (user of users().values(); track user.id) {
                 <element-user [user]="user" [currentUser]="currentUser()"></element-user>
                 }

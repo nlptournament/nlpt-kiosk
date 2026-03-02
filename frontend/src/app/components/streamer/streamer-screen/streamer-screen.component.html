@@ -1,17 +1,27 @@
 <p-menubar class="!text-1xl" [model]="menuItems"></p-menubar>
 
-<div class="flex flex-wrap p-2 gap-2">
-    @for (tt of ownStreamTTids; track tt) {
-    <div class="flex flex-col items-center justify-center">
-        <div>{{ timelineTemplates.get(tt)!.desc }}</div>
-        <i class="pi pi-circle !text-3xl text-text hover:cursor-pointer hover:text-highlight" pTooltip="select as stream to be started" showDelay="300" tooltipPosition="bottom" (click)="selectedTTid = tt" *ngIf="tt !== selectedTTid"></i>
-        <i class="pi pi-check-circle !text-3xl text-ok hover:cursor-pointer hover:text-highlight" pTooltip="deselect for stream to be started" showDelay="300" tooltipPosition="bottom" (click)="selectedTTid = undefined" *ngIf="tt === selectedTTid"></i>
+<div class="flex flex-col w-fit rounded-xl border border-highlight p-3 gap-2 m-2">
+    <div>
+        1) Choose stream to display:
     </div>
-    }
+    <div class="flex flex-wrap w-fit gap-2">
+        @for (tt of ownStreamTTids; track tt) {
+        <div class="w-fit min-w-10% max-w-90% bg-card rounded-xl shadow-md flex flex-col items-center justify-center text-1xl p-2">
+            <div>{{ timelineTemplates.get(tt)!.desc }}</div>
+            <i class="pi pi-circle !text-3xl text-text hover:cursor-pointer hover:text-highlight" pTooltip="select as stream to be started" showDelay="300" tooltipPosition="bottom" (click)="selectedTTid = tt" *ngIf="tt !== selectedTTid"></i>
+            <i class="pi pi-check-circle !text-3xl text-ok hover:cursor-pointer hover:text-highlight" pTooltip="deselect for stream to be started" showDelay="300" tooltipPosition="bottom" (click)="selectedTTid = undefined" *ngIf="tt === selectedTTid"></i>
+        </div>
+        }
+    </div>
 </div>
 
-<div class="flex flex-wrap p-2 gap-2">
-    @for (kiosk of kiosks.values(); track kiosk.id) {
-    <element-streamer-kiosk [kiosk]="kiosk" [users]="users" [currentUser]="currentUser" [timelineTemplates]="timelineTemplates" [timelines]="timelines" [ownStreamTTids]="ownStreamTTids" [otherStreamTTids]="otherStreamTTids" [selectedTTid]="selectedTTid"></element-streamer-kiosk>
-    }
+<div class="flex flex-col w-fit rounded-xl border border-highlight p-3 gap-2 m-2">
+    <div>
+        2) Select Kiosk as display:
+    </div>
+    <div class="flex flex-wrap w-fit gap-2">
+        @for (kiosk of kiosks.values(); track kiosk.id) {
+        <element-streamer-kiosk [kiosk]="kiosk" [users]="users" [currentUser]="currentUser" [timelineTemplates]="timelineTemplates" [timelines]="timelines" [ownStreamTTids]="ownStreamTTids" [otherStreamTTids]="otherStreamTTids" [selectedTTid]="selectedTTid"></element-streamer-kiosk>
+        }
+    </div>
 </div>

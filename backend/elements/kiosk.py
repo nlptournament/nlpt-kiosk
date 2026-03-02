@@ -121,6 +121,8 @@ apply_timelinetemplate(template_id) : bool
         from elements import TimelineTemplate, Timeline
         if self['_id'] is None:
             return False
+        if self['default_timeline_id'] is None:
+            return False
         tt = TimelineTemplate.get(template_id)
         if tt['_id'] is None:
             return False

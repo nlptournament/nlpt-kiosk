@@ -1,35 +1,43 @@
 <p-dialog [modal]="true" appendTo="body" [(visible)]="isVisible" [dismissableMask]="true" (onHide)="closeDialog()">
     <ng-template #headless>
-        <div class="max-w-53% p-2 pt-1">
+        <div class="max-w-53% p-4 pt-1">
             <div class="w-fill flex flex-row justify-between items-start gap-5 mb-2">
                 <div>&nbsp;</div>
                 <div class="text-2xl">Stream Wizard</div>
                 <i class="pi pi-times !text-1xl hover:cursor-pointer hover:text-danger" (click)="closeDialog()"></i>
             </div>
-            <div class="flex flex-col justify-start items-center gap-2 mb-2">
-                <div>
-                    For User:
-                    <p-select [(ngModel)]="selectedUser" inputId="selectUser" [options]="selectableUsers" optionValue="code" optionLabel="name" (onChange)="userChanged()" />
+            <div class="flex flex-col justify-start items-center gap-3 mb-2">
+                <div class="flex flex-col w-fill rounded-xl border border-highlight gap-2 p-2">
+                    <div class="flex flex-col gap-1">
+                        <div>For User:</div>
+                        <p-select [(ngModel)]="selectedUser" inputId="selectUser" [options]="selectableUsers" optionValue="code" optionLabel="name" (onChange)="userChanged()" />
+                    </div>
+                    <div class="flex flex-col gap-1" *ngIf="selectedUser">
+                        Common Description:
+                        <input pInputText id="commonDesc" [(ngModel)]="commonDesc" autocomplete="off" />
+                    </div>
                 </div>
-                <div *ngIf="selectedUser">
-                    Common Description:
-                    <input pInputText id="commonDesc" [(ngModel)]="commonDesc" autocomplete="off" />
+
+                <div class="flex flex-col w-fill rounded-xl border border-highlight gap-2 p-2" *ngIf="selectedUser">
+                    <div class="flex flex-col gap-1" *ngIf="selectedUser">
+                        <div>Media Element:</div>
+                        <p-select [(ngModel)]="selectedMedia" inputId="selectMedia" [options]="selectableMedias" optionValue="code" optionLabel="name" />
+                    </div>
+                    <div class="flex flex-col gap-1" *ngIf="selectedUser && selectedMedia == null">
+                        <div>Stream URL:</div>
+                        <input pInputText id="streamUrl" [(ngModel)]="streamUrl" placeholder="http://..." autocomplete="off" />
+                    </div>
                 </div>
-                <div *ngIf="selectedUser">
-                    Media Element:
-                    <p-select [(ngModel)]="selectedMedia" inputId="selectMedia" [options]="selectableMedias" optionValue="code" optionLabel="name" />
-                </div>
-                <div *ngIf="selectedUser && selectedMedia == null">
-                    Stream URL:
-                    <input pInputText id="streamUrl" [(ngModel)]="streamUrl" placeholder="http://..." autocomplete="off" />
-                </div>
-                <div *ngIf="selectedMedia != null || streamUrl != ''">
-                    Screen Element
-                    <p-select [(ngModel)]="selectedScreen" inputId="selectScreen" [options]="selectableScreens" optionValue="code" optionLabel="name" />
-                </div>
-                <div *ngIf="selectedMedia != null || streamUrl != ''">
-                    TimelineTemplate
-                    <p-select [(ngModel)]="selectedTimelineTemplate" inputId="selectTimelineTemplate" [options]="selectableTimelineTemplates" optionValue="code" optionLabel="name" />
+
+                <div class="flex flex-col w-fill rounded-xl border border-highlight gap-2 p-2" *ngIf="selectedMedia != null || streamUrl != ''">
+                    <div class="flex flex-col gap-1" *ngIf="selectedMedia != null || streamUrl != ''">
+                        <div>Screen Element</div>
+                        <p-select [(ngModel)]="selectedScreen" inputId="selectScreen" [options]="selectableScreens" optionValue="code" optionLabel="name" />
+                    </div>
+                    <div class="flex flex-col gap-1" *ngIf="selectedMedia != null || streamUrl != ''">
+                        <div>TimelineTemplate</div>
+                        <p-select [(ngModel)]="selectedTimelineTemplate" inputId="selectTimelineTemplate" [options]="selectableTimelineTemplates" optionValue="code" optionLabel="name" />
+                    </div>
                 </div>
                 <div *ngIf="selectedMedia != null || streamUrl != ''">
                     <p-button label="Save" (onClick)="saveMedia()" />
