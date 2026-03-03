@@ -19,10 +19,11 @@ timeline_id : str | None
 default_timeline_id : str | None
     Timeline, that is defined as the default for this Kiosk, which can be applied with a quick-access.
 
-apply_default() : bool
+apply_default(at_time : int = None) : bool
     Sets the default_timeline_id as timeline_id with resetting the current_pos of Timeline
     returns False if default_timeline_id is None, otherwise True
-apply_timelinetemplate(template_id) : bool
+    at_time: optional, if given, sets the start_time of Timeline
+apply_timelinetemplate(template_id : str) : bool
     Accepts a TimelineTemplate id, creates a Timeline of of this, and applys it as the active Timeline for the Kiosk
     """
     _attrdef = dict(
@@ -104,7 +105,7 @@ apply_timelinetemplate(template_id) : bool
             t.delete()
         transmit_kiosk_delete(self)
 
-    def apply_default(self):
+    def apply_default(self, at_time=None):
         if self['default_timeline_id'] is None:
             return False
         else:
@@ -112,6 +113,8 @@ apply_timelinetemplate(template_id) : bool
             self['timeline_id'] = None
             self.save()
             t = Timeline.get(self['default_timeline_id'])
+            if at_time is not None:
+                t['start_time'] = at_time
             t.save()
             self['timeline_id'] = self['default_timeline_id']
             self.save()

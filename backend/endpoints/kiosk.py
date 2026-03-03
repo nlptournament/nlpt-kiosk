@@ -69,6 +69,18 @@ class KioskEndpoint(ElementEndpointBase):
                 cherrypy.response.status = 404
                 return {'error': f'id {element_id} not found'}
 
+            is_allowed = False
+            if session.admin():
+                is_allowed = True
+            elif session['user_id'] == element[self._owner_attr]:
+                is_allowed = True
+            elif element[self._other_attr]:
+                is_allowed = True
+
+            if not is_allowed:
+                cherrypy.response.status = 403
+                return {'error': 'access not allowed'}
+
             result = element.apply_default()
             if result:
                 return True
@@ -118,6 +130,18 @@ class KioskEndpoint(ElementEndpointBase):
             if element['_id'] is None:
                 cherrypy.response.status = 404
                 return {'error': f'id {element_id} not found'}
+
+            is_allowed = False
+            if session.admin():
+                is_allowed = True
+            elif session['user_id'] == element[self._owner_attr]:
+                is_allowed = True
+            elif element[self._other_attr]:
+                is_allowed = True
+
+            if not is_allowed:
+                cherrypy.response.status = 403
+                return {'error': 'access not allowed'}
 
             result = element.apply_timelinetemplate(attr['template_id'])
             if result:
@@ -176,7 +200,7 @@ class KioskEndpoint(ElementEndpointBase):
                 is_allowed = True
             else:
                 for k, t in data:
-                    if not k[self._other_attr]:
+                    if not k[self._other_attr] and not session['user_id'] == k[self._owner_attr]:
                         is_allowed = False
                         break
                 else:
@@ -192,6 +216,67 @@ class KioskEndpoint(ElementEndpointBase):
                 t.save()
                 k['timeline_id'] = t['_id']
                 k.save()
+
+            return attr
+        else:
+            cherrypy.response.headers['Allow'] = 'OPTIONS, PUT'
+            cherrypy.response.status = 405
+            return {'error': 'method not allowed'}
+
+    @cherrypy.expose()
+    @cherrypy.tools.json_in()
+    @cherrypy.tools.json_out()
+    def synced_apply_default(self, element_id=None):
+        if cherrypy.request.method == 'OPTIONS':
+            cherrypy.response.headers['Allow'] = 'OPTIONS, PUT'
+            cherrypy_cors.preflight(allowed_methods=['PUT'])
+            return
+        elif cherrypy.request.method == 'PUT':
+            is_authorized = False
+            cookie = cherrypy.request.cookie.get(self._session_cls.cookie_name)
+            if cookie:
+                session = self._session_cls.get(cookie.value)
+                if len(session.validate_base()) == 0:
+                    is_authorized = True
+
+            if not is_authorized:
+                cherrypy.response.status = 401
+                return {'error': 'not authorized'}
+
+            attr = cherrypy.request.json
+            if not isinstance(attr, list):
+                cherrypy.response.status = 400
+                return {'error': 'Submitted data need to be of type list'}
+            elif len(attr) == 0:
+                cherrypy.response.status = 400
+                return {'error': 'data is needed to be submitted'}
+
+            kiosks = list()
+            for kiosk_id in attr:
+                k = self._element.get(kiosk_id)
+                if k['_id'] is None:
+                    cherrypy.response.status = 400
+                    return {'error': f'could not find Kiosk with id {kiosk_id}'}
+                kiosks.append(k)
+
+            is_allowed = False
+            if session.admin():
+                is_allowed = True
+            else:
+                for k in kiosks:
+                    if not k[self._other_attr] and not session['user_id'] == k[self._owner_attr]:
+                        is_allowed = False
+                        break
+                else:
+                    is_allowed = True
+
+            if not is_allowed:
+                cherrypy.response.status = 403
+                return {'error': 'access not allowed'}
+
+            target = math.ceil(time.time()) + 1
+            for k in kiosks:
+                k.apply_default(target)
 
             return attr
         else:

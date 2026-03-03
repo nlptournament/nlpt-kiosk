@@ -33,6 +33,7 @@ import { MediaPanelComponent } from '../media-panel/media-panel.component';
 import { StreamWizardComponent } from '../stream-wizard/stream-wizard.component';
 import { UpdatePwComponent } from '../update-pw/update-pw.component';
 import { SettingsPanelComponent } from '../settings-panel/settings-panel.component';
+import { SyncedDefaultComponent } from '../synced-default/synced-default.component';
 
 import { ConfirmationService, MenuItem } from 'primeng/api';
 import { MenubarModule } from 'primeng/menubar';
@@ -41,7 +42,7 @@ import { ConfirmDialog } from 'primeng/confirmdialog';
 
 @Component({
   selector: 'app-admin-screen',
-  imports: [CommonModule, MenubarModule, KioskComponent, ScreensPanelComponent, TimelineTemplatesPanelComponent, PresetsPanelComponent, UsersPanelComponent, MediaPanelComponent, UpdatePwComponent, SettingsPanelComponent, ConfirmDialog, StreamWizardComponent],
+  imports: [CommonModule, MenubarModule, KioskComponent, ScreensPanelComponent, TimelineTemplatesPanelComponent, PresetsPanelComponent, UsersPanelComponent, MediaPanelComponent, UpdatePwComponent, SettingsPanelComponent, ConfirmDialog, StreamWizardComponent, SyncedDefaultComponent],
   providers: [ConfirmationService],
   templateUrl: './admin-screen.component.html',
   styleUrl: './admin-screen.component.scss'
@@ -67,6 +68,7 @@ export class AdminScreenComponent implements OnInit, OnDestroy {
     panelUsersActive: boolean = false;
     panelSettingsActive: boolean = false;
     streamWizardActive: boolean = false;
+    syncedDefaultActive: boolean = false;
     updatePwActive: boolean = false;
     timelinesChanged: boolean = false;
     selectedNextTimelines: Map<string, string> = new Map<string, string>;
@@ -178,20 +180,6 @@ export class AdminScreenComponent implements OnInit, OnDestroy {
                         disabled: true
                     },
                     {
-                        label: 'Logout',
-                        icon: 'pi pi-sign-out',
-                        command: () => {
-                            this.router.navigate(['/logout']);
-                        }
-                    },
-                    {
-                        label: 'Streamer Interface',
-                        icon: 'pi pi-hammer',
-                        command: () => {
-                            this.router.navigate(['/streamer']);
-                        }
-                    },
-                    {
                         label: 'Change Password',
                         icon: 'pi pi-key',
                         command: () => {
@@ -217,6 +205,19 @@ export class AdminScreenComponent implements OnInit, OnDestroy {
                         }
                     },
                     {
+                        separator: true
+                    },
+                    {
+                        label: 'Streamer Interface',
+                        icon: 'pi pi-hammer',
+                        command: () => {
+                            this.router.navigate(['/streamer']);
+                        }
+                    },
+                    {
+                        separator: true
+                    },
+                    {
                         label: 'Create Kiosk',
                         icon: 'pi pi-building-columns',
                         command: () => {
@@ -238,15 +239,18 @@ export class AdminScreenComponent implements OnInit, OnDestroy {
                         command: () => {
                             this.panelSettingsActive = true;
                         }
+                    },
+                    {
+                        separator: true
+                    },
+                    {
+                        label: 'Logout',
+                        icon: 'pi pi-sign-out',
+                        command: () => {
+                            this.router.navigate(['/logout']);
+                        }
                     }
                 ]
-            },
-            {
-                label: 'Manage Screens',
-                icon: 'pi pi-file',
-                command: () => {
-                    this.panelScreensActive = true;
-                }
             },
             {
                 label: 'Manage Timelines',
@@ -256,17 +260,17 @@ export class AdminScreenComponent implements OnInit, OnDestroy {
                 }
             },
             {
+                label: 'Manage Screens',
+                icon: 'pi pi-file',
+                command: () => {
+                    this.panelScreensActive = true;
+                }
+            },
+            {
                 label: 'Manage Media',
                 icon: 'pi pi-images',
                 command: () => {
                     this.panelMediaActive = true;
-                }
-            },
-            {
-                label: 'Stream Wizard',
-                icon: 'pi pi-sparkles',
-                command: () => {
-                    this.streamWizardActive = true;
                 }
             },
             {
@@ -278,19 +282,39 @@ export class AdminScreenComponent implements OnInit, OnDestroy {
                 }
             },
             {
-                label: 'Create Preset',
-                icon: 'pi pi-clipboard',
-                disabled: this.selectedPresetTimelines.size == 0,
+                label: 'Stream Wizard',
+                icon: 'pi pi-sparkles',
                 command: () => {
-                    this.createPresetFromSelection();
+                    this.streamWizardActive = true;
                 }
             },
             {
                 label: 'Synced Apply',
                 icon: 'pi pi-desktop',
-                disabled: this.selectedNextTimelines.size < 2,
+                items: [
+                    {
+                        label: 'Selected Timelines',
+                        icon: 'pi pi-verified',
+                        disabled: this.selectedNextTimelines.size < 2,
+                        command: () => {
+                            this.syncedCurrentTimelineApply();
+                        }
+                    },
+                    {
+                        label: 'Default Timelines',
+                        icon: 'pi pi-star-fill',
+                        command: () => {
+                            this.syncedDefaultActive = true;
+                        }
+                    }
+                ]
+            },
+            {
+                label: 'Create Preset',
+                icon: 'pi pi-clipboard',
+                disabled: this.selectedPresetTimelines.size == 0,
                 command: () => {
-                    this.syncedCurrentTimelineApply();
+                    this.createPresetFromSelection();
                 }
             },
             {

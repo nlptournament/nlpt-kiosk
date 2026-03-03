@@ -1,0 +1,28 @@
+<p-dialog [modal]="true" appendTo="body" [(visible)]="isVisible" [dismissableMask]="true" (onHide)="closeDialog()">
+    <ng-template #headless>
+        <div class="max-w-53% p-2 pt-1">
+            <div class="w-fill flex flex-row justify-between items-start gap-5 mb-2">
+                <div>&nbsp;</div>
+                <div class="text-2xl">Synced Apply Default</div>
+                <i class="pi pi-times !text-1xl hover:cursor-pointer hover:text-danger" (click)="closeDialog()"></i>
+            </div>
+            <div class="text-1xl m-1 mb-2">
+                Select Kiosks to apply default:
+            </div>
+            <div class="flex x-fill max-h-35% justify-center overflow-x-hidden overflow-y-auto">
+                <div class="flex flex-col w-fit gap-2">
+                    @for (kiosk of selectableKiosks; track kiosk.id) {
+                    <div class="flex flex-row items-start">
+                        <p-toggleswitch [(ngModel)]="kiosk.selected" inputId="{{kiosk.id}}" [disabled]="!kiosk.enabled" />
+                        <label for="{{kiosk.id}}" class="ml-2 text-text" *ngIf="kiosk.enabled">{{ kiosk.name }}</label>
+                        <label for="{{kiosk.id}}" class="ml-2 text-watermark" *ngIf="!kiosk.enabled">{{ kiosk.name }}</label>
+                    </div>
+                    }
+                </div>
+            </div>
+            <div class="flex justify-end m-1">
+                <p-button label="Apply" (onClick)="applyDefaults()" />
+            </div>
+        </div>
+    </ng-template>
+</p-dialog>

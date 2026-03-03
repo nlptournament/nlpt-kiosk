@@ -13,6 +13,7 @@ module.exports = {
         },
         colors: {
             'background': '#000000',
+            'light-accent': '#191919',
             'card': '#666666',
             'text': '#f0f0f0',
             'watermark': '#999999',

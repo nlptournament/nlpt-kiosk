@@ -1,6 +1,6 @@
 <p-menubar class="!text-1xl" [model]="menuItems"></p-menubar>
 
-<div class="flex flex-col w-fit rounded-xl border border-highlight p-3 gap-2 m-2">
+<div class="flex flex-col w-fit rounded-xl border border-highlight bg-light-accent p-3 gap-2 m-2">
     <div>
         1) Choose stream to display:
     </div>
@@ -15,13 +15,13 @@
     </div>
 </div>
 
-<div class="flex flex-col w-fit rounded-xl border border-highlight p-3 gap-2 m-2">
+<div class="flex flex-col w-fit rounded-xl border border-highlight bg-light-accent p-3 gap-2 m-2">
     <div>
         2) Select Kiosk as display:
     </div>
     <div class="flex flex-wrap w-fit gap-2">
         @for (kiosk of kiosks.values(); track kiosk.id) {
-        <element-streamer-kiosk [kiosk]="kiosk" [users]="users" [currentUser]="currentUser" [timelineTemplates]="timelineTemplates" [timelines]="timelines" [ownStreamTTids]="ownStreamTTids" [otherStreamTTids]="otherStreamTTids" [selectedTTid]="selectedTTid"></element-streamer-kiosk>
+        <element-streamer-kiosk [kiosk]="kiosk" [users]="users" [currentUser]="currentUser" [timelineTemplates]="timelineTemplates" [timelines]="timelines" [ownStreamTTids]="ownStreamTTids" [otherStreamTTids]="otherStreamTTids" [selectedTTid]="selectedTTid" *ngIf="showHiddenKiosks || !currentUser.hidden_elements.includes(kiosk.id)"></element-streamer-kiosk>
         }
     </div>
 </div>

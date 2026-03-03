@@ -42,6 +42,10 @@ export class KioskService {
         return this.http.put<string>(this.kioskUrl + 'synced_apply/', data, {withCredentials:true});
     }
 
+    public syncedApplyDefault(kiosk_ids: string[]): Observable<any> {
+        return this.http.put<string>(this.kioskUrl + 'synced_apply_default/', kiosk_ids, {withCredentials:true});
+    }
+
     public applyDefault(id: string): Observable<boolean> {
         return this.http.put<boolean>(this.kioskUrl + 'apply_default/' + id + '/', {}, {withCredentials:true});
     }
