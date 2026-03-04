@@ -37,8 +37,15 @@ def build_container_images(c):
     if version.return_code > 0:
         version = None
     else:
-        version = version.stdout.strip().replace('v', '', 1).rsplit('-', 1)[0].replace('-', '.')
-        version_arg = f' --version {version}'
+        version = version.stdout.strip().replace('v', '', 1)
+        if '-' in version:
+            version, build = version.rsplit('-', 1)[0].rsplit('-', 1)
+            major, minor, _ = version.split('.')
+            minor = int(minor) + 1
+            version = f'{major}.{minor}.0.beta{build}'
+            version_arg = f' --version {version} --beta'
+        else:
+            version_arg = f' --version {version}'
 
     if version:
         with open('backend/helpers/version.py', 'w') as f:
@@ -55,8 +62,19 @@ def push_container_images(c):
     if version.return_code > 0:
         version = None
     else:
-        version = version.stdout.strip().replace('v', '', 1).rsplit('-', 1)[0].replace('-', '.')
-        version_arg = f' --version {version}'
+        version = version.stdout.strip().replace('v', '', 1)
+        if '-' in version:
+            version, build = version.rsplit('-', 1)[0].rsplit('-', 1)
+            major, minor, _ = version.split('.')
+            minor = int(minor) + 1
+            version = f'{major}.{minor}.0.beta{build}'
+            version_arg = f' --version {version} --beta'
+        else:
+            version_arg = f' --version {version}'
 
+    if version:
+        with open('backend/helpers/version.py', 'w') as f:
+            f.write(f"version = '{version}'")
     c.run(f'cd backend; invoke container-image-push{version_arg}')
+    c.run('git restore backend/helpers/version.py')
     c.run(f'cd frontend; invoke container-image-push{version_arg}')

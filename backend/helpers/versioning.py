@@ -120,6 +120,8 @@ def test_compares():
     print('Success' if versions_lt('1.2.0.alpha1', '1.2.0.alpha2') is True else 'Fail')
     print('Success' if versions_lt('1.2.0.beta1', '1.2.0') is True else 'Fail')
     print('Success' if versions_gt('1.2.0', '1.2.0.alpha1') is True else 'Fail')
+    print('Success' if versions_gt('1.2.0.1', '1.2.0.alpha1') is True else 'Fail')
+    print('Success' if versions_gt('1.2.0.1', '1.2.0.beta1') is True else 'Fail')
     print('Success' if versions_gt('1.2.0.beta1', '1.2.0.alpha1') is True else 'Fail')
     print('Success' if versions_gt('1.2.0.alpha2', '1.2.0.alpha1') is True else 'Fail')
     print('Success' if versions_gt('1.2.0', '1.2.0.beta1') is True else 'Fail')
