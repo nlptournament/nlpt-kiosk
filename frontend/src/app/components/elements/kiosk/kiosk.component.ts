@@ -188,7 +188,7 @@ export class KioskComponent implements OnInit {
     timelineCreate() {
         if (this.timelineTemplates().has(this.selectedTimelineTemplate)) {
             let tt: TimelineTemplate = this.timelineTemplates().get(this.selectedTimelineTemplate)!;
-            let tl: Timeline = <Timeline>{template_id: tt.id, kiosk_id: this.kiosk().id, screen_ids: tt.screen_ids};
+            let tl: Timeline = <Timeline>{template_id: tt.id, kiosk_id: this.kiosk().id, screen_ids: tt.screen_ids, single_shot: this.currentUser().prefer_single_shot};
             this.timelineService
                 .createTimeline(tl)
                 .subscribe((result: any) => {});

@@ -29,6 +29,7 @@ import { ScreensPanelComponent } from '../screens-panel/screens-panel.component'
 import { TimelineTemplatesPanelComponent } from '../timeline-templates-panel/timeline-templates-panel.component';
 import { PresetsPanelComponent } from '../presets-panel/presets-panel.component';
 import { UsersPanelComponent } from '../users-panel/users-panel.component';
+import { ProfilePanelComponent } from '../profile-panel/profile-panel.component';
 import { MediaPanelComponent } from '../media-panel/media-panel.component';
 import { StreamWizardComponent } from '../stream-wizard/stream-wizard.component';
 import { UpdatePwComponent } from '../update-pw/update-pw.component';
@@ -42,7 +43,7 @@ import { ConfirmDialog } from 'primeng/confirmdialog';
 
 @Component({
   selector: 'app-admin-screen',
-  imports: [CommonModule, MenubarModule, KioskComponent, ScreensPanelComponent, TimelineTemplatesPanelComponent, PresetsPanelComponent, UsersPanelComponent, MediaPanelComponent, UpdatePwComponent, SettingsPanelComponent, ConfirmDialog, StreamWizardComponent, SyncedDefaultComponent],
+  imports: [CommonModule, MenubarModule, KioskComponent, ScreensPanelComponent, TimelineTemplatesPanelComponent, PresetsPanelComponent, UsersPanelComponent, ProfilePanelComponent, MediaPanelComponent, UpdatePwComponent, SettingsPanelComponent, ConfirmDialog, StreamWizardComponent, SyncedDefaultComponent],
   providers: [ConfirmationService],
   templateUrl: './admin-screen.component.html',
   styleUrl: './admin-screen.component.scss'
@@ -66,6 +67,7 @@ export class AdminScreenComponent implements OnInit, OnDestroy {
     panelPresetsActive: boolean = false;
     panelMediaActive: boolean = false;
     panelUsersActive: boolean = false;
+    panelProfileActive: boolean = false;
     panelSettingsActive: boolean = false;
     streamWizardActive: boolean = false;
     syncedDefaultActive: boolean = false;
@@ -184,6 +186,13 @@ export class AdminScreenComponent implements OnInit, OnDestroy {
                         icon: 'pi pi-key',
                         command: () => {
                             this.updatePwActive = true;
+                        }
+                    },
+                    {
+                        label: 'Profile',
+                        icon: 'pi pi-cog',
+                        command: () => {
+                            this.panelProfileActive = true;
                         }
                     },
                     {

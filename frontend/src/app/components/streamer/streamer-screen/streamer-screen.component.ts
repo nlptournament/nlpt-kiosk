@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Subscription } from 'rxjs';
+import { CommonModule } from '@angular/common';
 
 import { Kiosk } from '../../../interfaces/kiosk';
 import { User } from '../../../interfaces/user';
@@ -19,16 +20,16 @@ import { MediaService } from '../../../services/media.service';
 import { ErrorHandlerService } from '../../../services/error-handler.service';
 import { WebSocketService } from '../../../services/web-socket.service';
 
-import { CommonModule } from '@angular/common';
+import { StreamerKioskComponent } from '../../elements/streamer-kiosk/streamer-kiosk.component';
+import { ProfilePanelComponent } from '../../admin/profile-panel/profile-panel.component';
+import { UpdatePwComponent } from '../../admin/update-pw/update-pw.component';
 import { MenubarModule } from 'primeng/menubar';
 import { TooltipModule } from 'primeng/tooltip';
-
 import { MenuItem } from 'primeng/api';
-import { StreamerKioskComponent } from '../../elements/streamer-kiosk/streamer-kiosk.component';
 
 @Component({
   selector: 'app-streamer-screen',
-  imports: [CommonModule, MenubarModule, StreamerKioskComponent, TooltipModule],
+  imports: [CommonModule, MenubarModule, StreamerKioskComponent, TooltipModule, ProfilePanelComponent, UpdatePwComponent],
   templateUrl: './streamer-screen.component.html',
   styleUrl: './streamer-screen.component.scss'
 })
@@ -45,6 +46,8 @@ export class StreamerScreenComponent implements OnInit {
     wssSubscription: Subscription | undefined;
 
     showHiddenKiosks: boolean = false;
+    updatePwActive: boolean = false;
+    panelProfileActive: boolean = false;
     ownStreamTTids: string[] = [];
     otherStreamTTids: string[] = [];
     selectedTTid: string | undefined;
@@ -140,17 +143,17 @@ export class StreamerScreenComponent implements OnInit {
                         disabled: true
                     },
                     {
-                        label: 'Logout',
-                        icon: 'pi pi-sign-out',
+                        label: 'Change Password',
+                        icon: 'pi pi-key',
                         command: () => {
-                            this.router.navigate(['/logout']);
+                            this.updatePwActive = true;
                         }
                     },
                     {
-                        label: 'Admin Interface',
-                        icon: 'pi pi-hammer',
+                        label: 'Profile',
+                        icon: 'pi pi-cog',
                         command: () => {
-                            this.router.navigate(['/admin']);
+                            this.panelProfileActive = true;
                         }
                     },
                     {
@@ -169,6 +172,26 @@ export class StreamerScreenComponent implements OnInit {
                         command: () => {
                             this.showHiddenKiosks = false;
                             this.populateMenu();
+                        }
+                    },
+                    {
+                        separator: true
+                    },
+                    {
+                        label: 'Admin Interface',
+                        icon: 'pi pi-hammer',
+                        command: () => {
+                            this.router.navigate(['/admin']);
+                        }
+                    },
+                    {
+                        separator: true
+                    },
+                    {
+                        label: 'Logout',
+                        icon: 'pi pi-sign-out',
+                        command: () => {
+                            this.router.navigate(['/logout']);
                         }
                     },
                 ]

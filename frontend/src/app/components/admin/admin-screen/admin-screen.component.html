@@ -22,6 +22,9 @@
 <!-- USERS PANEL MODAL -->
 <panel-users [users]="users" [currentUser]="currentUser" [(isActive)]="panelUsersActive" *ngIf="panelUsersActive"></panel-users>
 
+<!-- PROFILE PANEL MODAL -->
+<panel-profile [currentUser]="currentUser" [(isActive)]="panelProfileActive" *ngIf="panelProfileActive"></panel-profile>
+
 <!-- SETTINGS PANEL MODAL -->
 <panel-settings [(isActive)]="panelSettingsActive" *ngIf="panelSettingsActive"></panel-settings>
 
