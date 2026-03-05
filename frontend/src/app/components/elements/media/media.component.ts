@@ -66,12 +66,12 @@ export class MediaComponent implements OnInit, OnChanges {
         this.selectableCommons.push(<selectableCommon>{code: false, 'name': 'just4owner'});
         this.createSelectableUsers();
         this.createSelectableTypes();
-        this.mediaUri = this.mediaService.getMediaUrl(this.media());
+        this.mediaUri = this.mediaService.getMediaUrl(this.media(), undefined, true);
         this.editActive = this.editMode();
     }
 
     ngOnChanges(changes: SimpleChanges): void {
-        if (Object.keys(changes).includes('media')) this.mediaUri = this.mediaService.getMediaUrl(this.media());
+        if (Object.keys(changes).includes('media')) this.mediaUri = this.mediaService.getMediaUrl(this.media(), undefined, true);
     }
 
     createSelectableTypes() {

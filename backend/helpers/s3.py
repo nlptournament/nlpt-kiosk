@@ -1,9 +1,10 @@
 import boto3
+import json
 from botocore.exceptions import ConnectionClosedError
 from elements import Setting
 
 bkt = {
-    'media': 'nlptkc-media'
+    'media': 'nkc-media'
 }
 
 botoClient = boto3.client(
@@ -12,6 +13,36 @@ botoClient = boto3.client(
     aws_access_key_id=Setting.value('s3_access_key'),
     aws_secret_access_key=Setting.value('s3_access_secret')
 )
+
+download_policy = {
+  'Version': '2012-10-17',
+  'Statement': [
+    {
+      'Effect': 'Allow',
+      'Principal': {
+        'AWS': ['*']
+      },
+      'Action': [
+        's3:GetBucketLocation'
+      ],
+      'Resource': [
+        'arn:aws:s3:::BucketName'
+      ]
+    },
+    {
+      'Effect': 'Allow',
+      'Principal': {
+        'AWS': ['*']
+      },
+      'Action': [
+        's3:GetObject'
+      ],
+      'Resource': [
+        'arn:aws:s3:::BucketName/*'
+      ]
+    }
+  ]
+}
 
 
 def is_connected():
@@ -42,6 +73,7 @@ def setup_storage():
     for bucket in bkt.values():
         if bucket not in buckets:
             botoClient.create_bucket(Bucket=bucket)
+        botoClient.put_bucket_policy(Bucket=bucket, Policy=json.dumps(download_policy).replace('BucketName', bucket))
 
 
 if is_connected():

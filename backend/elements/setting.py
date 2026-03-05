@@ -11,7 +11,7 @@ class Setting(SettingBase):
         'wss_port':              {'order': 13, 'type': 'int',  'value': 8765,       'desc': 'Port the websocket-server should be listening on'},
         's3_host':               {'order': 20, 'type': 'str',  'value': 'minio',    'desc': 'Address of S3 server'},
         's3_port':               {'order': 21, 'type': 'int',  'value': 9000,       'desc': 'Port S3 server is listening on'},
-        's3_access_key':         {'order': 22, 'type': 'str',  'value': 'nlptkc',   'desc': 'Username for S3 connection'},
+        's3_access_key':         {'order': 22, 'type': 'str',  'value': 'nkc',      'desc': 'Username for S3 connection'},
         's3_access_secret':      {'order': 23, 'type': 'str',  'value': 'password', 'desc': 'Password for S3 connection'},
         'anno_src_uri':          {'order': 30, 'type': 'str',  'value': None,       'desc': 'NLPT.online source URI from where the Announcements are pulled'},
         'anno_img_user_id':      {'order': 31, 'type': 'str',  'value': None,       'desc': 'user_id of User who is owning Media for Announcements Screen'},

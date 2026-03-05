@@ -40,16 +40,20 @@ export class MediaService {
         return this.http.post<any>(this.mediaUrl + id + '/s3/', formData, {withCredentials:true});
     }
 
-    public getMediaUrl(media: Media | undefined = undefined, s3_id: string | undefined = undefined): string {
+    public getMediaUrl(media: Media | undefined = undefined, s3_id: string | undefined = undefined, preview: boolean = false): string {
         if (media) {
             if (media.src_type == 1) {
-                return this.mediaUrl + media.id + '/s3/';
+                if (preview) return this.mediaUrl + media.id + '/s3/';
+                else return environment.s3MediaUrl + '/' + media.id;
             }
             else {
                 return media.src;
             }
         }
-        if (s3_id) return this.mediaUrl + s3_id + '/s3/';
+        if (s3_id) {
+            if (preview) return this.mediaUrl + s3_id + '/s3/';
+            else return environment.s3MediaUrl + '/' + s3_id;
+        }
         return '';
     }
 }

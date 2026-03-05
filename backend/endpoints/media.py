@@ -80,6 +80,7 @@ class MediaEndpoint(ElementEndpointBase):
             element.save()
             return json.dumps({'uploaded': f"{element['src']} to {element['_id']}"}).encode('utf-8')
 
+        # GET should only be used for previews, as it delivers sufficient headers, but requires more computeing power than direct s3 access
         elif cherrypy.request.method == 'GET':
             from helpers.s3 import media_get, media_exists
             if not media_exists(element['_id']):
