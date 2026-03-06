@@ -42,8 +42,13 @@ def build_container_images(c):
             version, build = version.rsplit('-', 1)[0].rsplit('-', 1)
             major, minor, _ = version.split('.')
             minor = int(minor) + 1
-            version = f'{major}.{minor}.0.beta{build}'
-            version_arg = f' --version {version} --beta'
+            branch = c.run('git describe', warn=True, hide=True).stdout.strip()
+            if branch == 'main':
+                version = f'{major}.{minor}.0.{build}beta'
+                version_arg = f' --version {version} --beta'
+            else:
+                version = f'{major}.{minor}.0.{build}alpha'
+                version_arg = f' --version {version} --alpha'
         else:
             version_arg = f' --version {version}'
 
@@ -67,8 +72,13 @@ def push_container_images(c):
             version, build = version.rsplit('-', 1)[0].rsplit('-', 1)
             major, minor, _ = version.split('.')
             minor = int(minor) + 1
-            version = f'{major}.{minor}.0.beta{build}'
-            version_arg = f' --version {version} --beta'
+            branch = c.run('git describe', warn=True, hide=True).stdout.strip()
+            if branch == 'main':
+                version = f'{major}.{minor}.0.{build}beta'
+                version_arg = f' --version {version} --beta'
+            else:
+                version = f'{major}.{minor}.0.{build}alpha'
+                version_arg = f' --version {version} --alpha'
         else:
             version_arg = f' --version {version}'
 

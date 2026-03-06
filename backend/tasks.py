@@ -39,11 +39,14 @@ def generate_testdata(c):
 
 
 @task(name='container-image-build')
-def build_container_image(c, version=None, beta=False):
+def build_container_image(c, version=None, beta=False, alpha=False):
     if version is not None:
         c.run(f'sudo docker buildx build --platform linux/amd64 -t nilsost/nlpt-kiosk-controller-backend:{version} --load .')
         c.run(f'sudo docker buildx build --platform linux/arm64 -t nilsost/nlpt-kiosk-controller-backend:{version} .')
-    if beta:
+    if alpha:
+        c.run('sudo docker buildx build --platform linux/amd64 -t nilsost/nlpt-kiosk-controller-backend:alpha --load .')
+        c.run('sudo docker buildx build --platform linux/arm64 -t nilsost/nlpt-kiosk-controller-backend:alpha .')
+    elif beta:
         c.run('sudo docker buildx build --platform linux/amd64 -t nilsost/nlpt-kiosk-controller-backend:beta --load .')
         c.run('sudo docker buildx build --platform linux/arm64 -t nilsost/nlpt-kiosk-controller-backend:beta .')
     else:
@@ -52,10 +55,12 @@ def build_container_image(c, version=None, beta=False):
 
 
 @task(name='container-image-push')
-def push_container_image(c, version=None, beta=False):
+def push_container_image(c, version=None, beta=False, alpha=False):
     if version is not None:
         c.run(f'sudo docker buildx build --platform linux/amd64,linux/arm64 -t nilsost/nlpt-kiosk-controller-backend:{version} --push .')
-    if beta:
+    if alpha:
+        c.run('sudo docker buildx build --platform linux/amd64,linux/arm64 -t nilsost/nlpt-kiosk-controller-backend:alpha --push .')
+    elif beta:
         c.run('sudo docker buildx build --platform linux/amd64,linux/arm64 -t nilsost/nlpt-kiosk-controller-backend:beta --push .')
     else:
         c.run('sudo docker buildx build --platform linux/amd64,linux/arm64 -t nilsost/nlpt-kiosk-controller-backend:latest --push .')
