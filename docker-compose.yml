@@ -8,13 +8,14 @@ services:
       - MONGO_HOST=mongodb
     ports:
       - ${BIND_IP:-0.0.0.0}:8765:8765
+      - ${MONITORING_IP:-0.0.0.0}:8001:8001
 
   frontend:
     image: nilsost/nlpt-kiosk-controller-frontend:${NKC_VERSION:-latest}
     restart: unless-stopped
 
   haproxy:
-    image: haproxy:lts-alpine
+    image: nilsost/nlpt-kiosk-controller-haproxy:${NKC_VERSION:-latest}
     restart: unless-stopped
     depends_on:
       - backend
@@ -25,8 +26,6 @@ services:
       - ${MONITORING_IP:-0.0.0.0}:8404:8404
     sysctls:
       - net.ipv4.ip_unprivileged_port_start=0
-    volumes:
-      - ./haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro
 
   mongodb:
     image: mongo:4.4

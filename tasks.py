@@ -58,6 +58,7 @@ def build_container_images(c):
     c.run(f'cd backend; invoke container-image-build{version_arg}')
     c.run('git restore backend/helpers/version.py')
     c.run(f'cd frontend; invoke container-image-build{version_arg}')
+    c.run(f'cd haproxy; invoke container-image-build{version_arg}')
 
 
 @task(name='container-images-push', aliases=['cip', ])
@@ -88,3 +89,4 @@ def push_container_images(c):
     c.run(f'cd backend; invoke container-image-push{version_arg}')
     c.run('git restore backend/helpers/version.py')
     c.run(f'cd frontend; invoke container-image-push{version_arg}')
+    c.run(f'cd haproxy; invoke container-image-push{version_arg}')

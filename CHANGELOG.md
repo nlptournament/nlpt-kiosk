@@ -11,8 +11,10 @@
   * Timelines can now be defined as *single_shot*. They get automatically deleted after been displayed
   * Prometheus endpoint, that can be enabled in Settings. This currently only provides collected data from Discord
   * *User->Profile* dialog to change personal preferences
+  * direct access to S3 stored media, to reduce processing power on backend
 
 ### Fixes/Improvements
 
   * Reorganized menu on Admin-Interface
   * Design-tweaks in Admin-Interface on Kiosk representation
+  * haproxy got it's own container, to bundle config better to versioning and make it more stable
