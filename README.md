@@ -1,62 +1,71 @@
 # NLPT-Kiosk(-Controller)
 
-Ziel: System um aus einer Oberfläche heraus alle Kiosk-Clients (Beamer) zu steuern und synchronisieren.
+## The Goal
 
-Soll bieten: Loops von Statistiken, Ankündigungen während des normalen Events. Aber auch AdHoc-Anzeige von Informationen, Videos oder statischen Bildern während Präsentationen oder der Nachtpause.
+Having a single interface to remote controll a bunch of kiosks (projectors) to display variing information in sync during LAN-Partys (it's not limited to LAN-Partys but the provided Screens are focused to be used on those)
 
-## Infos für Dimi
+Some of the features are: Looping over different statistics (played games count, gameserver usage) and announcements (NLPT specific) during the the event.
+But also ad-hoc information, videos, streams or static/animated pictures during presentations or the night-break.
 
-Die Anzeigen, welche von den Beamern präsentiert werden, sollen ordentlich aussehen und der "Marke" NLPT entsprechen. Ich habe so einige Unzulänglichkeiten was das Thema Design angeht, daher würde ich das Tehma lieber in deine Hände übergeben.
+## The Architecture
 
-Bitte nur auf dem **styling** Branch arbeiten, diesen werde ich in Ruhe lassen, bis du ferig bist. Und ich werde auf meinem dev Branch (wo ich mich schonmal um das Backend kümmere) dafür sorgen, dass dein styling Branch mergebar bleibt.
+### Hardware
 
-Ich arbeite wieder mit Angular habe dir dieses mal aber auch Tailwind eingebunden, das habe ich als größte Kritik mitgenommen ;)  
-Wenn du ein Dev-Setup wi (oder ähnlich) dem weiter unten beschriebenen hast. Musst du eigentlich nur ins frontend Verzeichnis wechseln und `ng serve` ausführen und solltest alles haben was du fürs styling brauchst. Auf allen Seiten sind Beispieldaten enthalten, wenn du minimum diese alle auf einem Sceen unter bekommst passt das für mich, wenn du mehr unterbringst ist gut, aber achte darauf, dass Schriften und Ähnliches nich tzu klein werden. Es muss ja aus ein paar Metern Entfernung erkennbar sein.
+First you need to have a KioskController, this should be installed on some kind of (Linux) server, that is always available during an Event.
+It permanently communicates with the Kiosk(-Clients), backends to collect data and provides the userinterface to configure the system and what is displayed.
 
-Der Dev-Server ist zu erreichen unter: [http://localhost:4200](http://localhost:4200)  
-Du wirst von einer Index-Seite begrüßt (auf dieser musst du nichts anpassen, ist nur für Dev-Zwecke) die dich auf alle Seiten bringt, die ich dich bitte hübsch zu machen.
+Second you need to have at least one (but as many as you like) Kiosk(-Clients) these are hooked up to a projector or tv and show the information the controller sends them.
+This project is designed to use RaspberryPi as Kiosks but every client that is able to show a WebPage in fullscreen is possible to use, but the setup guide
+for those is more generic and you might have to tinker around to get everything working as expected.
 
-Ein paar Worte zu Tailwind: Ich habe, wie du sehen wirst, in der `tailwind.config.js` alle Werte, die Abstände oder Größen definieren, auf eine **vw** Basis umgeschrieben. Dies soll dafür sorgen, dass ein Screen immer gleich aussieht solange er eine 16:9 Auflösung hat. Die Auflösung der Beamer ist derzeit noch nicht bekannt und sie können unter Umständen auch unterschiedliche Auflösungen haben. Achso: Und um die nervigen Scrollbars zu verhindern, habe ich auf allen Screens soweit, den vertikalen Overflow verboten, das auch bitte beibehalten.  
-Du musst also darauf achten, dass dein Browser eine 16:9 Auflösung darstellt, wenn du die Elemente ausrichtest, damit zum schluss alles passt. Solltest du außerdem weitere Abstände oder Größen benötigen, so bitte ich dich auch diese in der config mit einem vw Wert zu definieren.
+Setup Guides:
 
-> [!NOTE]
-> Bei einer Browser-Breite von 2560px entsprechen alle Größen wieder ihren ursprünglichen rem Werten.
+  * KioskController (TBD)
+  * [KioskPi](docs/pi-2025-setup.md)
+  * generic Kiosk-Client (TBD)
 
-Alles was ich bisher an "Design" gemacht habe, ist nur eine Idee. So könnte ich mir die Screens grb vorstellen. Feel free alles weg zu werfen und neu zu machen, falls du es für angebracht hältst ;) ... Es soll zum Schluss hübsch sein und nach NLPT aussehen ^^
+### Controller configuration
 
-Und wenn du zu irgendwas Fragen hast, oder etwas unklar ist, immer gerne bei mir melden, soll ja, wie immer, perfekt werden ;)
+The system uses a lot of different elements but for the general usage only five do really matter:
 
-Und nun, der Vollständigkeithalber, alle Dateien, um die ich dich bitte, zu kümmern:
+  * Kiosk
+  * Timeline
+  * TimelineTemplate
+  * Screen
+  * Media
 
-  * `frontend/src/app/components/announcements/announcements.component.html`
-  * `frontend/src/app/components/player-counts/player-counts.component.html`
-  * `frontend/src/app/components/tas/tas.component.html`
-  * `frontend/src/app/components/timer/timer.component.html`
+The **Kiosk** is the representation of a Kiosk(-Client) displaying information from the system. It does have one active Timeline (also refered as displayed)
+and might have a bunch of *other Timelines* ready to be activated at any time and replacing the currently active Timeline to be displayed.
 
-## Development Environment Setup
+**Timelines** are always linked to a Kiosk, they can't exist without them, and are just an instance of a TimelineTemplate for a specific Kiosk.
+They hold information like the current position in the rotation or where the rotation should start for this Kiosk when the Timeline gets activated.
 
-Folgende Schritte nutze ich für mein Dev-Setup auf Ubuntu, funktioniert genauso in einer Ubuntu WSL2 unter Windows.  
-Muss aber unter Umständen für andere Umgebungen adaptiert werden.
+As mentioned **TimelineTemplates** are the basis for Timelines, they contain the information which Screen(s) should be displayed on the Kiosk and in which order.
 
-```
-sudo apt update; sudo apt install -y python3 virtualenv direnv curl
-curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash -
-sudo apt update; sudo apt install -y nodejs
-virtualenv -p /usr/bin/python3 venv
-venv/bin/pip install -r requirements.txt
-venv/bin/pre-commit install
-sed -nr '/direnv hook bash/!p;$aeval "\$(direnv hook bash)"' -i ~/.bashrc
-source ~/.bashrc
-cd frontend; npm install; cd ..
-ln -s ng.js frontend/node_modules/@angular/cli/bin/ng
-echo -e "source venv/bin/activate\nunset PS1\nPATH_add frontend/node_modules/@angular/cli/bin\nsource <(ng completion script)" > .envrc
-direnv allow
-```
+**Screens** are the definition of what is displayed. These are the elements that refer to different sources of information and bind them together in a pleasent way to be displayed.
+There are a lot of different ScreenTemplates for variing use-cases on what and how to display information (see below for a list of all options)
 
-## Setup Build-Environment
+To be more flexible from where Screens get their information **Media** elements are the way to got. A Media can be a video, pricture, animation or stream.
+The Media element ties together what kind of Media it is and where to get it (e.g. the internal S3 storage or a generic web URL)
 
-```
-sudo docker buildx create --name multi-arch --platform "linux/arm64,linux/amd64,linux/arm/v7" --driver "docker-container"
-sudo docker buildx use multi-arch
-sudo docker buildx inspect --bootstrap
-```
+## The Screen(Templates)
+
+As mentioned above Screens are the representation of WHAT is displayed from WHERE and HOW, to cover the different use-cases the following ScreenTemplates are available:
+
+  * **Plain Text** *Just displays some text on the Screen*
+  * **Background Image** *Image Media displayed in background, with the option to display text on top*
+  * **Countdown** *Counts down the seconds to a target time*
+  * **Announcements** *displays nlpt.online announcements*
+  * **Player Counts - Multi** *shows the number of players playing the same game, allows multiple sources*
+  * **Player Counts - Prometheus** *shows the number of players currently active on game-servers*
+  * **[Player Counts - Discord](docs/discord-playercount.md)** *shows the number of players playing the same game within Discord guild*
+  * **TrackMania Stats** *a reduced form of the TrackMania TimeAttackServer wallboard*
+  * **Video** *Video (Media) is played fullscreen*
+  * **Stream** *Stream (Media) is played fullscreen*
+  * **Challonge Round Completion** *Shows the pairs and their completion of the current round in a challonge tournament*
+  * **Challonge Parallel Tournament** *Shows the pairs and their completion of the current round in two parallel executed Tournaments*
+
+## The User-Interfaces
+
+  * Admin-Interface (TBD)
+  * [Streamer-Interface](docs/streamer-interface.md)
