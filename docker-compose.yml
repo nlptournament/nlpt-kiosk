@@ -5,6 +5,7 @@ services:
     depends_on:
       - mongodb
     environment:
+      - TZ=${TZ:-Europe/Berlin}
       - MONGO_HOST=mongodb
     ports:
       - ${BIND_IP:-0.0.0.0}:8765:8765
@@ -13,6 +14,8 @@ services:
   frontend:
     image: nilsost/nlpt-kiosk-controller-frontend:${NKC_VERSION:-latest}
     restart: unless-stopped
+    environment:
+      - TZ=${TZ:-Europe/Berlin}
 
   haproxy:
     image: nilsost/nlpt-kiosk-controller-haproxy:${NKC_VERSION:-latest}
@@ -20,6 +23,8 @@ services:
     depends_on:
       - backend
       - frontend
+    environment:
+      - TZ=${TZ:-Europe/Berlin}
     ports:
       - ${BIND_IP:-0.0.0.0}:80:80
       - ${BIND_IP:-0.0.0.0}:443:443
@@ -30,19 +35,22 @@ services:
   mongodb:
     image: mongo:4.4
     restart: unless-stopped
+    environment:
+      - TZ=${TZ:-Europe/Berlin}
     volumes:
-      - mongo_data:/data/db:rw
+      - ./mongo_data:/data/db:rw
 
   minio:
     image: minio/minio:RELEASE.2025-04-22T22-12-26Z
     restart: unless-stopped
     command: server /data --console-address ":9001"
     environment:
+      - TZ=${TZ:-Europe/Berlin}
       - MINIO_ROOT_USER=nkc
-      - MINIO_ROOT_PASSWORD=password
+      - MINIO_ROOT_PASSWORD=${MINIO_PW:-password}
       - MINIO_PROMETHEUS_AUTH_TYPE=public
     volumes:
-      - minio_data:/data:rw
+      - ./minio_data:/data:rw
 
   timeserver:
     image: cturra/ntp:latest
@@ -50,9 +58,5 @@ services:
     ports:
       - ${BIND_IP:-0.0.0.0}:123:123/udp
     environment:
-      - NTP_SERVERS=de.pool.ntp.org
-      - TZ=Europe/Berlin
-
-volumes:
-  mongo_data:
-  minio_data:
+      - TZ=${TZ:-Europe/Berlin}
+      - NTP_SERVERS=${NTP_SERVER:-de.pool.ntp.org}

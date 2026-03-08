@@ -20,7 +20,7 @@ for those is more generic and you might have to tinker around to get everything 
 
 Setup Guides:
 
-  * KioskController (TBD)
+  * [KioskController](docs/install-controller.md)
   * [KioskPi](docs/pi-2025-setup.md)
   * generic Kiosk-Client (TBD)
 
