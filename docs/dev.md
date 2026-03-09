@@ -35,3 +35,17 @@ Du musst also darauf achten, dass dein Browser eine 16:9 Auflösung darstellt, w
 
 > [!NOTE]
 > Bei einer Browser-Breite von 2560px entsprechen alle Größen wieder ihren ursprünglichen rem Werten.
+
+## Chromium Infos
+
+For Kiosks it's recomended to disable some "security" features in Chromium for a smooth experience.
+
+disable CORS: `--user-data-dir="/tmp/chrome-dev-data" --disable-web-security`
+
+allow auto-play for videos: `--autoplay-policy=no-user-gesture-required`
+
+Chromium startcommand for testing:
+
+```
+chromium-browser http://localhost:4200/?name=testkiosk1 --no-first-run --autoplay-policy=no-user-gesture-required --user-data-dir="/tmp/chrome-dev-data" --disable-web-security
+```
