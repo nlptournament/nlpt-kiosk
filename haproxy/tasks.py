@@ -3,27 +3,29 @@ from invoke import task
 
 @task(name='container-image-build')
 def build_container_image(c, version=None, beta=False, alpha=False):
+    image = 'nilsost/nlpt-kiosk-controller-haproxy'
+    tags = ''
     if version is not None:
-        c.run(f'sudo docker buildx build --platform linux/amd64 -t nilsost/nlpt-kiosk-controller-haproxy:{version} --load .')
-        c.run(f'sudo docker buildx build --platform linux/arm64 -t nilsost/nlpt-kiosk-controller-haproxy:{version} .')
+        tags += f' -t {image}:{version}'
     if alpha:
-        c.run('sudo docker buildx build --platform linux/amd64 -t nilsost/nlpt-kiosk-controller-haproxy:alpha --load .')
-        c.run('sudo docker buildx build --platform linux/arm64 -t nilsost/nlpt-kiosk-controller-haproxy:alpha .')
+        tags += f' -t {image}:alpha'
     elif beta:
-        c.run('sudo docker buildx build --platform linux/amd64 -t nilsost/nlpt-kiosk-controller-haproxy:beta --load .')
-        c.run('sudo docker buildx build --platform linux/arm64 -t nilsost/nlpt-kiosk-controller-haproxy:beta .')
+        tags += f' -t {image}:beta'
     else:
-        c.run('sudo docker buildx build --platform linux/amd64 -t nilsost/nlpt-kiosk-controller-haproxy:latest --load .')
-        c.run('sudo docker buildx build --platform linux/arm64 -t nilsost/nlpt-kiosk-controller-haproxy:latest .')
+        tags += f' -t {image}:latest'
+    c.run(f'sudo docker buildx build --platform linux/amd64{tags} --load .')
 
 
 @task(name='container-image-push')
 def push_container_image(c, version=None, beta=False, alpha=False):
+    image = 'nilsost/nlpt-kiosk-controller-haproxy'
+    tags = ''
     if version is not None:
-        c.run(f'sudo docker buildx build --platform linux/amd64,linux/arm64 -t nilsost/nlpt-kiosk-controller-haproxy:{version} --push .')
+        tags += f' -t {image}:{version}'
     if alpha:
-        c.run('sudo docker buildx build --platform linux/amd64,linux/arm64 -t nilsost/nlpt-kiosk-controller-haproxy:alpha --push .')
+        tags += f' -t {image}:alpha'
     elif beta:
-        c.run('sudo docker buildx build --platform linux/amd64,linux/arm64 -t nilsost/nlpt-kiosk-controller-haproxy:beta --push .')
+        tags += f' -t {image}:beta'
     else:
-        c.run('sudo docker buildx build --platform linux/amd64,linux/arm64 -t nilsost/nlpt-kiosk-controller-haproxy:latest --push .')
+        tags += f' -t {image}:latest'
+    c.run(f'sudo docker buildx build --platform linux/amd64,linux/arm64{tags} --push .')
