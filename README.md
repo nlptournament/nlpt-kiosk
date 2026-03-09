@@ -22,7 +22,7 @@ Setup Guides:
 
   * [KioskController](docs/install-controller.md)
   * [KioskPi](docs/install-kiosk-rpi.md)
-  * generic Kiosk-Client (TBD)
+  * [generic Kiosk-Client](docs/install-kiosk-generic.md)
 
 ### Controller configuration
 
