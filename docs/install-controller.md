@@ -15,7 +15,7 @@ docker compose pull
 docker compose up -d
 ```
 
-Thats already it, you can now keep reading, to get some additional information, or continue with a [first walktrough](./first-setup.md) to get an idea on how to use the controller.
+Thats already it, you can now keep reading, to get some additional information, or continue with a [first walktrough](./first-steps.md) to get an idea on how to use the controller.
 
 > [!NOTE]
 > All containers are provided as amd64 and arm64, in this manner it is also possible to setup the contoller on a RaspberryPI (A RaspberryPi5 with at least 2GB of RAM is recommended)
