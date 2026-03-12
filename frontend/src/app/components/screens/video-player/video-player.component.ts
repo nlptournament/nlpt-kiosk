@@ -12,6 +12,7 @@ import { Media } from '../../../interfaces/media';
 })
 export class VideoPlayerComponent {
     isActive = input.required<boolean>();
+    header = input.required<string>();
     variables = input.required<any>();
     finished = output<null>();
 

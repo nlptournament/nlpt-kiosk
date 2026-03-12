@@ -3,6 +3,7 @@ export interface Screen {
     desc: string;
     template_id?: string;
     user_id?: string;
+    header: string;
     duration: number | null;
     till: number | null;
     repeat: number;

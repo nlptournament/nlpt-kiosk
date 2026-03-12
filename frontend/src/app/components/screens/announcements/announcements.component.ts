@@ -13,6 +13,7 @@ import { MediaService } from '../../../services/media.service';
 })
 export class AnnouncementsComponent implements OnInit, OnDestroy {
     isActive = input.required<boolean>();
+    header = input.required<string>();
 
     refreshTimesTimer = timer(1000, 1000);
     refreshTimesTimerSubscription: Subscription | undefined;

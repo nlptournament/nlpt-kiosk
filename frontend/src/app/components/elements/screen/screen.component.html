@@ -87,6 +87,11 @@
     </p-iftalabel>
 
     <p-iftalabel class="w-full mb-2">
+        <input pInputText id="header" [(ngModel)]="screen().header" autocomplete="off" />
+        <label for="header">Custom Header</label>
+    </p-iftalabel>
+
+    <p-iftalabel class="w-full mb-2">
         <p-inputnumber [(ngModel)]="screen().duration" inputId="duration" mode="decimal" [min]="1" suffix="s" locale="de-DE" [disabled]="!screen().template_id || !screenTemplates().get(screen().template_id!)!.endless || screen().till != null" />
         <label for="duration">Duration</label>
     </p-iftalabel>

@@ -22,6 +22,7 @@ import { faBoltLightning } from '@fortawesome/free-solid-svg-icons';
 export class ChallongeRoundCompletionComponent implements OnInit, OnDestroy {
     faBoltLightning = faBoltLightning;
     isActive = input.required<boolean>();
+    header = input.required<string>();
     variables = input.required<any>();
     finished = output<null>();
 

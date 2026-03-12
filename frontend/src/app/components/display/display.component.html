@@ -13,15 +13,15 @@
 
 @for (screenDP of screens.values(); track screenDP.screen.id) {
     <div class="mx-auto max-h-screen overflow-hidden w-fill flex flex-col h-screen items-center justify-center" [style.display]="screenDP.active ? 'flex' : 'none'">
-        <screen-text [isActive]="screenDP.active" [variables]="screenDP.screen.variables" *ngIf="screenDP.screen.key == 'text'"></screen-text>
-        <screen-announcements [isActive]="screenDP.active" *ngIf="screenDP.screen.key == 'announcements'"></screen-announcements>
-        <screen-background-image [isActive]="screenDP.active" [variables]="screenDP.screen.variables" *ngIf="screenDP.screen.key == 'background-image'"></screen-background-image>
-        <screen-player-counts [isActive]="screenDP.active" [variables]="screenDP.screen.variables" *ngIf="screenDP.screen.key == 'player-counts'"></screen-player-counts>
-        <screen-tas [isActive]="screenDP.active" *ngIf="screenDP.screen.key == 'tas'"></screen-tas>
-        <screen-timer [isActive]="screenDP.active" [variables]="screenDP.screen.variables" (finished)="loadNextScreen(true)" *ngIf="screenDP.screen.key == 'timer'"></screen-timer>
-        <screen-video-player [isActive]="screenDP.active" [variables]="screenDP.screen.variables" (finished)="loadNextScreen(true)" *ngIf="screenDP.screen.key == 'video-player'"></screen-video-player>
-        <screen-stream-player [isActive]="screenDP.active" [variables]="screenDP.screen.variables" *ngIf="screenDP.screen.key == 'stream-player'"></screen-stream-player>
-        <screen-challonge-round-completion [isActive]="screenDP.active" [variables]="screenDP.screen.variables" (finished)="loadNextScreen(true)" *ngIf="screenDP.screen.key == 'challonge-rc'"></screen-challonge-round-completion>
-        <screen-challonge-parallel-tournaments [isActive]="screenDP.active" [variables]="screenDP.screen.variables" (finished)="loadNextScreen(true)" *ngIf="screenDP.screen.key == 'challonge-pt'"></screen-challonge-parallel-tournaments>
+        <screen-text [isActive]="screenDP.active" [header]="screenDP.screen.header" [variables]="screenDP.screen.variables" *ngIf="screenDP.screen.key == 'text'"></screen-text>
+        <screen-announcements [isActive]="screenDP.active" [header]="screenDP.screen.header" *ngIf="screenDP.screen.key == 'announcements'"></screen-announcements>
+        <screen-background-image [isActive]="screenDP.active" [header]="screenDP.screen.header" [variables]="screenDP.screen.variables" *ngIf="screenDP.screen.key == 'background-image'"></screen-background-image>
+        <screen-player-counts [isActive]="screenDP.active" [header]="screenDP.screen.header" [variables]="screenDP.screen.variables" *ngIf="screenDP.screen.key == 'player-counts'"></screen-player-counts>
+        <screen-tas [isActive]="screenDP.active" [header]="screenDP.screen.header" *ngIf="screenDP.screen.key == 'tas'"></screen-tas>
+        <screen-timer [isActive]="screenDP.active" [header]="screenDP.screen.header" [variables]="screenDP.screen.variables" (finished)="loadNextScreen(true)" *ngIf="screenDP.screen.key == 'timer'"></screen-timer>
+        <screen-video-player [isActive]="screenDP.active" [header]="screenDP.screen.header" [variables]="screenDP.screen.variables" (finished)="loadNextScreen(true)" *ngIf="screenDP.screen.key == 'video-player'"></screen-video-player>
+        <screen-stream-player [isActive]="screenDP.active" [header]="screenDP.screen.header" [variables]="screenDP.screen.variables" *ngIf="screenDP.screen.key == 'stream-player'"></screen-stream-player>
+        <screen-challonge-round-completion [isActive]="screenDP.active" [header]="screenDP.screen.header" [variables]="screenDP.screen.variables" (finished)="loadNextScreen(true)" *ngIf="screenDP.screen.key == 'challonge-rc'"></screen-challonge-round-completion>
+        <screen-challonge-parallel-tournaments [isActive]="screenDP.active" [header]="screenDP.screen.header" [variables]="screenDP.screen.variables" (finished)="loadNextScreen(true)" *ngIf="screenDP.screen.key == 'challonge-pt'"></screen-challonge-parallel-tournaments>
     </div>
 }

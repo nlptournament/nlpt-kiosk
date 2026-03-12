@@ -1,7 +1,7 @@
 <div class="mx-auto h-screen overflow-hidden w-fill flex flex-col gap-6">
     <div class="mx-auto w-fill font-orbitron flex items-center justify-center">
         <div class="text-7xl text-text bg-card rounded-b-lg p-7">
-            Ankündigungen
+            {{ header() == '' ? 'Ankündigungen' : header() }}
         </div>
     </div>
 

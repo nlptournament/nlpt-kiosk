@@ -17,6 +17,7 @@ export class StreamPlayerComponent implements OnInit, OnChanges, OnDestroy {
     player: Player | undefined;
 
     isActive = input.required<boolean>();
+    header = input.required<string>();
     variables = input.required<any>();
 
     media_id: string = '';

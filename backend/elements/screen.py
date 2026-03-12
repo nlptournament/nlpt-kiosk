@@ -12,6 +12,8 @@ template_id : str
     the parent template a Screen inherits from
 user_id : str
     creator/owner of a Screen
+header : str
+    allows overwriting the default header-text for Screen
 duration : int | None
     how long the Screen is displayed on Timeline (in seconds). needs to be bigger than 0 or None.
     can only be changed if template is endless, otherwise copied from template
@@ -44,6 +46,7 @@ key() : str
         desc=ElementBase.addAttr(type=str, default='', notnone=True),
         template_id=ElementBase.addAttr(type=str, notnone=True, fk='ScreenTemplate'),
         user_id=ElementBase.addAttr(type=str, notnone=True, fk='User'),
+        header=ElementBase.addAttr(type=str, default='', notnone=True),
         duration=ElementBase.addAttr(type=int, default=None),
         till=ElementBase.addAttr(type=int, default=None),
         repeat=ElementBase.addAttr(type=int, default=0, notnone=True),

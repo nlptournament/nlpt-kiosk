@@ -9,6 +9,7 @@ import { CommonModule } from '@angular/common';
 })
 export class TextComponent implements OnInit, OnChanges {
     isActive = input.required<boolean>();
+    header = input.required<string>();
     variables = input.required<any>();
 
     text: string[] = [];

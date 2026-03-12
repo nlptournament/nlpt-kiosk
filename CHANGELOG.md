@@ -12,6 +12,7 @@
   * Prometheus endpoint, that can be enabled in Settings. This currently only provides collected data from Discord
   * *User->Profile* dialog to change personal preferences
   * direct access to S3 stored media, to reduce processing power on backend
+  * header of Screens can now be customized on per-Screen basis
 
 ### Fixes/Improvements
 

@@ -12,6 +12,7 @@ import { PlayercountPrometheus, PlayercountDiscord } from '../../../interfaces/p
 })
 export class PlayerCountsComponent implements OnInit, OnDestroy {
     isActive = input.required<boolean>();
+    header = input.required<string>();
     variables = input.required<any>();
 
     refreshPlayercountsPrometheusTimer = timer(8000, 8000);

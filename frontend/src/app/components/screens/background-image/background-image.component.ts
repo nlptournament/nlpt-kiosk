@@ -11,6 +11,7 @@ import { Media } from '../../../interfaces/media';
 })
 export class BackgroundImageComponent implements OnInit, OnChanges {
     isActive = input.required<boolean>();
+    header = input.required<string>();
     variables = input.required<any>();
 
     text_upper: string | undefined | null;

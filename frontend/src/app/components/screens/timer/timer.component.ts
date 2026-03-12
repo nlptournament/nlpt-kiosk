@@ -10,6 +10,7 @@ import { Subscription, timer } from 'rxjs';
 })
 export class TimerComponent implements OnInit {
     isActive = input.required<boolean>();
+    header = input.required<string>();
     variables = input.required<any>();
     finished = output<null>();
 

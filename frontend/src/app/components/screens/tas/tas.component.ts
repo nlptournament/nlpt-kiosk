@@ -15,6 +15,7 @@ import { faCarOn } from '@fortawesome/free-solid-svg-icons';
 export class TasComponent implements OnInit, OnDestroy {
     faCarOn = faCarOn;
     isActive = input.required<boolean>();
+    header = input.required<string>();
 
     refreshTasTimer = timer(10000, 10000);
     refreshTasTimerSubscription: Subscription | undefined;
