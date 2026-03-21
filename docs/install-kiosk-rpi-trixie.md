@@ -29,9 +29,9 @@ systemctl enable ssh
 systemctl start ssh
 echo "bpi1" > /etc/hostname
 sed -i -e 's/raspberrypi/bpi1/g' /etc/hosts
-nmcli con mod "Wired connection 1" ipv4.addresses 10.13.66.31/24 ipv4.method manual
-nmcli con mod "Wired connection 1" ipv4.gateway 10.13.66.1
-nmcli con mod "Wired connection 1" ipv4.dns "10.13.66.5"
+nmcli con mod "netplan-eth0" ipv4.addresses 10.13.66.31/24 ipv4.method manual
+nmcli con mod "netplan-eth0" ipv4.gateway 10.13.66.1
+nmcli con mod "netplan-eth0" ipv4.dns "10.13.66.5"
 reboot
 ```
 
@@ -63,6 +63,12 @@ sudo raspi-config nonint do_change_timezone Europe/Berlin
 install `wtype` for the HideCursor shortcut to take effect:
 
 `sudo apt update && sudo apt install wtype`
+
+### Disable keyring
+
+Chromium likes to have it's passwords saved securely, for a Kiosk this is not needed and quiet anoying. Therefor disable keyring globally like this:
+
+`sudo chmod a-x /usr/bin/gnome-keyring*`
 
 ### Configure shortcut to hide cursor
 
@@ -114,7 +120,7 @@ The content should now look like the following:
 ```
 
 
-## Configure NTP Server
+## Configure NTP Client
 
 It's strongly recommended that all Kiosks use the same (local) NTP server, for the Kiosks beeing able to work in sync (for example executing Screen changes at the same time if the Admin is requesting this)  
 The default stack of KioskController serves it's own NTP servers, this is now configured to be used.

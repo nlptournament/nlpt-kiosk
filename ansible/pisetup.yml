@@ -3,17 +3,33 @@
   become: true
 
   tasks:
+    - name: Setting distribution_release shortcuts
+      ansible.builtin.set_fact:
+        is_bookworm: "{{ ansible_facts['distribution_release'] == 'bookworm' }}"
+        is_trixie: "{{ ansible_facts['distribution_release'] == 'trixie' }}"
+
+    ### Enable wayland
+
     - name: check wayland is enabled
       ansible.builtin.command: raspi-config nonint is_wayfire
       ignore_errors: true
       register: wayland
       changed_when: wayland.rc != 0
+      when: is_bookworm
+
+    - name: check wayland is enabled
+      ansible.builtin.command: raspi-config nonint is_labwc
+      ignore_errors: true
+      register: wayland
+      changed_when: wayland.rc != 0
+      when: is_trixie
 
     - name: enable wayland
       ansible.builtin.command: raspi-config nonint do_wayland W2
       when: wayland.rc != 0
       notify: Reboot Pi
 
+    ### Enable autologin
 
     - name: check autologin is enabled
       ansible.builtin.command: raspi-config nonint get_autologin
@@ -26,6 +42,7 @@
       when: wayland.rc == 0 and autologin.stdout != "0"
       notify: Reboot Pi
 
+    ### Set timezone
 
     - name: check timezone
       ansible.builtin.command: cat /etc/timezone
@@ -33,21 +50,35 @@
       changed_when: timezone.rc != 0
 
     - name: change timezone
-      ansible.builtin.command: raspi-config nonint do_change_timezone Europe/Berlin
-      when: timezone.stdout != "Europe/Berlin"
+      ansible.builtin.command: "raspi-config nonint do_change_timezone {{ kiosk_timezone }}"
+      when: timezone.stdout != kiosk_timezone
       notify: Reboot Pi
 
+    ### Enable vnc-server
 
-    - name: check vnc-vnc is enabled
+    - name: check vnc-server is enabled
       ansible.builtin.command: raspi-config nonint get_vnc
       register: vnc
-      when: wayland.rc == 0
+      when: kiosk_enable_vnc and wayland.rc == 0
       changed_when: vnc.rc != 0
 
     - name: enable vnc-server
       ansible.builtin.command: raspi-config nonint do_vnc 0
-      when: wayland.rc == 0 and vnc.stdout != "0"
+      when: kiosk_enable_vnc and wayland.rc == 0 and vnc.stdout != "0"
 
+    # TODO: disable wayvnc auth
+
+
+    ### Configure NTP Client
+
+    - name: copy ntp (client) configuration
+      template:
+        src: templates/timesyncd.conf.j2
+        dest: /etc/systemd/timesyncd.conf
+      when: timezone.stdout == kiosk_timezone
+      notify: Restart Timesynced
+
+    ### Configure Bookworm specific autostart
 
     - name: hide-cursor plugin config
       ansible.builtin.copy:
@@ -56,6 +87,7 @@
         owner: root
         group: root
         mode: '0644'
+      when: is_bookworm
 
     - name: hide-cursor plugin binary
       ansible.builtin.copy:
@@ -64,24 +96,59 @@
         owner: root
         group: root
         mode: '0755'
-
-
-    - name: copy ntp (client) configuration
-      template:
-        src: templates/timesyncd.conf.j2
-        dest: /etc/systemd/timesyncd.conf
-      when: timezone.stdout == "Europe/Berlin"
-      notify: Restart Timesynced
-
+      when: is_bookworm
 
     - name: copy wayfire configuration
       template:
         src: templates/wayfire.ini.j2
         dest: /home/pi/.config/wayfire.ini
-        owner: pi
-        group: pi
+        owner: "{{ ansible_user }}"
         mode: '0644'
       notify: Reboot Pi
+      when: is_bookworm
+
+    ### Configure Trixie specific autostart
+
+    - name: install wtype
+      ansible.builtin.apt:
+        update_cache: true
+        name:
+          - wtype
+        state: present
+      when: is_trixie
+
+    - name: copy rc.xml configuration
+      template:
+        src: templates/trixie/rc.xml.j2
+        dest: "/home/{{ ansible_user }}/.config/labwc/rc.xml"
+        owner: "{{ ansible_user }}"
+        mode: '0644'
+      notify: Reboot Pi
+      when: is_trixie
+
+    - name: copy autostart configuration
+      template:
+        src: templates/trixie/autostart.j2
+        dest: "/home/{{ ansible_user }}/.config/labwc/autostart"
+        owner: "{{ ansible_user }}"
+        mode: '0644'
+      register: autostart_conf
+      notify: Reboot Pi
+      when: is_trixie
+
+    - name: copy autostart configuration to etc
+      template:
+        src: templates/trixie/etc-autostart.j2
+        dest: /etc/xdg/labwc/autostart
+        owner: root
+        group: root
+        mode: '0644'
+      notify: Reboot Pi
+      when: is_trixie
+
+    - name: disable keyring
+      ansible.builtin.command: bash -c "chmod a-x /usr/bin/gnome-keyring*"
+      when: autostart_conf.changed
 
   handlers:
     - name: Restart Timesynced
@@ -91,4 +158,4 @@
 
     - name: Reboot Pi
       ansible.builtin.reboot:
-        msg: "Rebooting machine do to Ansible run"
+        msg: "Rebooting machine due to Ansible run"

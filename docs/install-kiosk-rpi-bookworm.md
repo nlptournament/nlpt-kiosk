@@ -85,7 +85,7 @@ screensaver = false
 dpms = false
 ```
 
-## Configure NTP Server
+## Configure NTP Client
 
 It's strongly recommended that all Kiosks use the same (local) NTP server, for the Kiosks beeing able to work in sync (for example executing Screen changes at the same time if the Admin is requesting this)  
 The default stack of KioskController serves it's own NTP servers, this is now configured to be used.

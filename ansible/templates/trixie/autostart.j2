@@ -1,0 +1,2 @@
+chromium {{ kiosk_controller }}/?name={{ inventory_hostname }} --kiosk --noerrdialogs --disable-infobars --no-first-run --ozone-platform=wayland --enable-features=OverlayScrollbar --start-maximized --autoplay-policy=no-user-gesture-required --user-data-dir="/tmp/chrome-kiosk-data" --disable-web-security &
+sleep 1 && wtype -M alt -M logo -k h -m alt -m logo
