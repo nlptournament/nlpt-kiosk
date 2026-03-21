@@ -21,7 +21,7 @@ for those is more generic and you might have to tinker around to get everything 
 Setup Guides:
 
   * [KioskController](docs/install-controller.md)
-  * [KioskPi](docs/install-kiosk-rpi.md)
+  * [KioskPi](docs/install-kiosk-rpi-trixie.md)
   * [generic Kiosk-Client](docs/install-kiosk-generic.md)
 
 ### Controller configuration

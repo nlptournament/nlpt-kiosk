@@ -12,6 +12,7 @@
   * Prometheus endpoint, that can be enabled in Settings. This currently only provides collected data from Discord
   * *User->Profile* dialog to change personal preferences
   * direct access to S3 stored media, to reduce processing power on backend
+  * setup guide for debian-trixie based Raspberry Pi OS Kiosks
 
 ### Fixes/Improvements
 

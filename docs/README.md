@@ -1,10 +1,10 @@
-# KioskControlelr docs
+# KioskController docs
 
 ## Hardware installation
 
-  * [KioskController](./install-controller.md)
-  * [KioskPi](./install-kiosk-rpi.md)
-  * [generic Kiosk-Client](./install-kiosk-generic.md)
+  * [KioskController](./install-controller.md) *the brain of the operation*
+  * [KioskPi](./install-kiosk-rpi-trixie.md) *using a RaspberryPi as a Kiosk*
+  * [generic Kiosk-Client](./install-kiosk-generic.md) *using some generic hardware as a Kiosk*
 
 ## Tutorials
 

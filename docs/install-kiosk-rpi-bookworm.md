@@ -1,14 +1,18 @@
 # Installing a Raspberry Pi to be used as Kiosk
 
+> [!CAUTION]
+> This guide covers specific setup for Debian-Bookworm based Raspberry Pi OS. Which is NOT the latest Raspberry Pi OS version -- see the [Trixie guide](install-kiosk-rpi-trixie.md) if you are using up to date version
+
 > [!TIP]
 > The usage of a Raspberry Pi 4 or 5 with at least 2GB of RAM is strongly recommended. Other platforms are not covered by this guide
 
 ## Baseconfiguration
 
-Flash an SD-Card with the latest Raspberry Pi OS including the Desktop int the 64bit variant. (Trixie based OS not yet tested, but Bookworm)
+Flash an SD-Card with the latest Raspberry Pi OS including the Desktop in the 64bit variant.
 
 Start the Pi, login via SSH and configure the following basics:
 
+  * enable and start ssh(-daemon)
   * Hostname (in the following example this is **bpi1**)
   * IP-address (in the following example this is **10.13.66.31/24**)
   * Default-Gateway (in the following example this is **10.13.66.1**)
@@ -21,6 +25,8 @@ Then do a reboot and continue with the next section
 ```bash
 sudo su
 
+systemctl enable ssh
+systemctl start ssh
 echo "bpi1" > /etc/hostname
 sed -i -e 's/raspberrypi/bpi1/g' /etc/hosts
 nmcli con mod "Wired connection 1" ipv4.addresses 10.13.66.31/24 ipv4.method manual
@@ -51,9 +57,18 @@ sudo raspi-config nonint do_change_timezone Europe/Berlin
 
 ## Configure Autostart of Chromium
 
+First wayfire needs a plugin to hide the cursor, when displaying chromium in fullscreen mode. Fetch it from this repository and place it in the apropriate locations:
+
+```
+sudo curl https://raw.githubusercontent.com/nlptournament/nlpt-kiosk/refs/heads/main/ansible/files/hide-cursor.xml -o /usr/share/wayfire/metadata/hide-cursor.xml
+sudo curl https://raw.githubusercontent.com/nlptournament/nlpt-kiosk/refs/heads/main/ansible/files/libhide-cursor.so -o /usr/lib/aarch64-linux-gnu/wayfire/libhide-cursor.so
+```
+
+Then do:
+
 `sudo nano .config/wayfire.ini`
 
-create or append the following sections:
+and create or append the following sections:
 
 > [!IMPORTANT]
 > Replace **your.server.goes.here** with the IP or DNS name of your KioskController
