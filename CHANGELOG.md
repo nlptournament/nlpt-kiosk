@@ -19,3 +19,4 @@
   * Reorganized menu on Admin-Interface
   * Design-tweaks in Admin-Interface on Kiosk representation
   * haproxy got it's own container, to bundle config better to versioning and make it more stable
+  * moved ansible playbook to setup Raspberry Pi into [nils_ost.nlpt_kiosk](https://github.com/nils-ost/ansible-collection-nlpt_kiosk) collection, see [automated install with ansible](docs/install-with-ansible.md) to get an idea how to use it

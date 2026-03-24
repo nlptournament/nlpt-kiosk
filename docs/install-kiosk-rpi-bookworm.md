@@ -3,8 +3,11 @@
 > [!CAUTION]
 > This guide covers specific setup for Debian-Bookworm based Raspberry Pi OS. Which is NOT the latest Raspberry Pi OS version -- see the [Trixie guide](install-kiosk-rpi-trixie.md) if you are using up to date version
 
-> [!TIP]
+> [!NOTE]
 > The usage of a Raspberry Pi 4 or 5 with at least 2GB of RAM is strongly recommended. Other platforms are not covered by this guide
+
+> [!TIP]
+> If you are deploying multipe Raspberry Pis as Kiosks, it might be interesting for you to [automate the configuration using ansible](./install-with-ansible.md)
 
 ## Baseconfiguration
 

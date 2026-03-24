@@ -23,6 +23,7 @@ Setup Guides:
   * [KioskController](docs/install-controller.md)
   * [KioskPi](docs/install-kiosk-rpi-trixie.md)
   * [generic Kiosk-Client](docs/install-kiosk-generic.md)
+  * [automated install with ansible](docs/install-with-ansible.md)
 
 ### Controller configuration
 

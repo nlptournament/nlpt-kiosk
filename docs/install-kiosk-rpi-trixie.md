@@ -3,8 +3,26 @@
 > [!CAUTION]
 > This guide covers specific setup for Debian-Trixie based Raspberry Pi OS. It does not work for Debian-Bookworm -- see the [Bookworm guide](install-kiosk-rpi-bookworm.md) if you still use an older OS
 
-> [!TIP]
+> [!NOTE]
 > The usage of a Raspberry Pi 4 or 5 with at least 2GB of RAM is strongly recommended. Other platforms are not covered by this guide
+
+> [!TIP]
+> If you are deploying multipe Raspberry Pis as Kiosks, it might be interesting for you to [automate the configuration using ansible](./install-with-ansible.md)
+
+- [Baseconfiguration](#baseconfiguration)
+  - [Example bash commands for this Section](#example-bash-commands-for-this-section)
+- [raspi-config](#raspi-config)
+  - [Alternate way](#alternate-way)
+- [Configure Autostart](#configure-autostart)
+  - [Install dependency](#install-dependency)
+  - [Disable keyring](#disable-keyring)
+  - [Configure shortcut to hide cursor](#configure-shortcut-to-hide-cursor)
+  - [Configure Chromium to autostart](#configure-chromium-to-autostart)
+  - [Optional: disable the desktop](#optional-disable-the-desktop)
+- [Configure NTP Client](#configure-ntp-client)
+- [Optional: Configure a VNC-Server](#optional-configure-a-vnc-server)
+  - [enable Server](#enable-server)
+  - [disable Auth](#disable-auth)
 
 ## Baseconfiguration
 
