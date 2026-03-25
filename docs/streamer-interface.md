@@ -53,7 +53,7 @@ From top to bottom these are:
 
 ## Technical perspective
 
-Just for curiosity here is what happens on the Kios button clicks.
+Just for curiosity here is what happens on the Kiosk button clicks.
 
 ### play-button
 

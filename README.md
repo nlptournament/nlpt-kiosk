@@ -21,8 +21,9 @@ for those is more generic and you might have to tinker around to get everything 
 Setup Guides:
 
   * [KioskController](docs/install-controller.md)
-  * [KioskPi](docs/install-kiosk-rpi.md)
-  * generic Kiosk-Client (TBD)
+  * [KioskPi](docs/install-kiosk-rpi-trixie.md)
+  * [generic Kiosk-Client](docs/install-kiosk-generic.md)
+  * [automated install with ansible](docs/install-with-ansible.md)
 
 ### Controller configuration
 
@@ -48,24 +49,26 @@ There are a lot of different ScreenTemplates for variing use-cases on what and h
 To be more flexible from where Screens get their information **Media** elements are the way to got. A Media can be a video, pricture, animation or stream.
 The Media element ties together what kind of Media it is and where to get it (e.g. the internal S3 storage or a generic web URL)
 
+As an startpoint you can do the [basics tutorial](docs/first-steps.md) to get used to the functions of KioskController.
+
 ## The Screen(Templates)
 
 As mentioned above Screens are the representation of WHAT is displayed from WHERE and HOW, to cover the different use-cases the following ScreenTemplates are available:
 
-  * **Plain Text** *Just displays some text on the Screen*
-  * **Background Image** *Image Media displayed in background, with the option to display text on top*
-  * **Countdown** *Counts down the seconds to a target time*
+  * **[Plain Text](docs/screens/plain-text.md)** *Just displays some text on the Screen*
+  * **[Background Image](docs/screens/background-image.md)** *Image Media displayed in background, with the option to display text on top*
+  * **[Countdown](docs/screens/countdown.md)** *Counts down the seconds to a target time*
   * **Announcements** *displays nlpt.online announcements*
   * **Player Counts - Multi** *shows the number of players playing the same game, allows multiple sources*
   * **Player Counts - Prometheus** *shows the number of players currently active on game-servers*
-  * **[Player Counts - Discord](docs/discord-playercount.md)** *shows the number of players playing the same game within Discord guild*
+  * **[Player Counts - Discord](docs/screens/discord-playercount.md)** *shows the number of players playing the same game within Discord guild*
   * **TrackMania Stats** *a reduced form of the TrackMania TimeAttackServer wallboard*
-  * **Video** *Video (Media) is played fullscreen*
-  * **Stream** *Stream (Media) is played fullscreen*
+  * **[Video](docs/screens/video.md)** *Video (Media) is played fullscreen*
+  * **[Stream](docs/screens/stream.md)** *Stream (Media) is played fullscreen*
   * **Challonge Round Completion** *Shows the pairs and their completion of the current round in a challonge tournament*
   * **Challonge Parallel Tournament** *Shows the pairs and their completion of the current round in two parallel executed Tournaments*
 
 ## The User-Interfaces
 
-  * Admin-Interface (TBD)
+  * [Admin-Interface](docs/first-steps.md)
   * [Streamer-Interface](docs/streamer-interface.md)

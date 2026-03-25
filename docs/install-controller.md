@@ -15,7 +15,7 @@ docker compose pull
 docker compose up -d
 ```
 
-Thats already it, you can now keep reading, to get some additional information, or continue with a [first walktrough](./first-setup.md) to get an idea on how to use the controller.
+Thats already it, you can now keep reading, to get some additional information, or continue with a [first walktrough](./first-steps.md) to get an idea on how to use the controller.
 
 > [!NOTE]
 > All containers are provided as amd64 and arm64, in this manner it is also possible to setup the contoller on a RaspberryPI (A RaspberryPi5 with at least 2GB of RAM is recommended)
@@ -63,4 +63,22 @@ tar czvpf backup.tar.gz * .env
 
 ## Behind the Scenes
 
-TBD: some more information on the conatianers involved
+The compose stack currently consits of 6 containers. Those are:
+
+  * **backend** - *REST like API, that does all the business logic*
+  * **frontend** - *serves a Angular single-page-application that is used for all (Admin, Streamer and Kiosk) Interfaces*
+  * **minio** - *holds and serves all locally stored Media*
+  * **haproxy** - *single http entrypoint that routes the traffic to backend, frontend and minio*
+  * **mongodb** - *database that holds all business data from backend*
+  * **timeserver** - *local NTP server to be used by Kiosks, for them to have the exact same time*
+
+The ports exposed by the stack are:
+
+  * **80** by haproxy *for http traffic to the main application*
+  * **433** by haproxy *for https traffic to the main application*
+  * **8404** by haproxy *as monitoring endpoint for haproxy it-self*
+  * **8765** by backend *for websocket communication to the web-interfaces*
+  * **8001** by backend *as moinitoring endpoint for the backend it-self (if enabled)*
+  * **123** by timeserver *as default NTP server*
+
+All other ports (mongodb, minio, ...) are just used within the stack and not exposed to the outside
