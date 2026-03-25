@@ -11,12 +11,16 @@
   * Timelines can now be defined as *single_shot*. They get automatically deleted after been displayed
   * Prometheus endpoint, that can be enabled in Settings. This currently only provides collected data from Discord
   * *User->Profile* dialog to change personal preferences
-  * direct access to S3 stored media, to reduce processing power on backend
-  * setup guide for debian-trixie based Raspberry Pi OS Kiosks
+  * setup guide for debian-trixie based Raspberry Pi OS Kiosks ([KioskPi](docs/install-kiosk-rpi-trixie.md)) - to be able to move away from bookworm-based Raspberry Pi OS
 
 ### Fixes/Improvements
 
+  * direct access to S3 stored media, to reduce processing power on backend
   * Reorganized menu on Admin-Interface
   * Design-tweaks in Admin-Interface on Kiosk representation
   * haproxy got it's own container, to bundle config better to versioning and make it more stable
+
+### Minor Changes
+
   * moved ansible playbook to setup Raspberry Pi into [nils_ost.nlpt_kiosk](https://github.com/nils-ost/ansible-collection-nlpt_kiosk) collection, see [automated install with ansible](docs/install-with-ansible.md) to get an idea how to use it
+  * wrote a bunch of docs to give newcomers at least an idea what NLPT-Kiosk-Controller is about and what one can do with it
