@@ -2,7 +2,8 @@ import cherrypy
 import cherrypy_cors
 from noapiframe import docDB, ElementEndpointBase
 from noapiframe.endpoints import SettingEndpointBase, LoginEndpointBase
-from elements import Setting, Session, ScreenTemplate, Screen, ChallongeTournament, ChallongeParticipant, ChallongeMatch, DiscordGuild, DiscordRole
+from elements import Setting, Session, ScreenTemplate, Screen, GameAbbr
+from elements import ChallongeTournament, ChallongeParticipant, ChallongeMatch, DiscordGuild, DiscordRole
 from endpoints import UserEndpoint, TimelineTemplateEndpoint, PresetEndpoint, KioskEndpoint, TimelineEndpoint, MediaEndpoint
 from endpoints import AnnouncementsEndpoint, PlayercountsEndpoint, TASEndpoint
 from endpoints.metrics import start_metrics_exporter
@@ -24,6 +25,7 @@ class API():
         self.kiosk = KioskEndpoint()
         self.preset = PresetEndpoint()
         self.media = MediaEndpoint()
+        self.gameabbr = GameAbbrEndpoint()
         self.announcements = AnnouncementsEndpoint()
         self.playercounts = PlayercountsEndpoint()
         self.tas = TASEndpoint()
@@ -65,6 +67,15 @@ class ScreenEndpoint(ElementEndpointBase):
     ]
     _other_createable = list(['desc', 'template_id', 'user_id', 'header', 'duration', 'till', 'repeat', 'loop', 'variables'])
     _all_readable = list(['id', 'header', 'duration', 'till', 'repeat', 'loop', 'variables', 'key'])
+
+
+class GameAbbrEndpoint(ElementEndpointBase):
+    _session_cls = Session
+    _element = GameAbbr
+    _other_readable = ['id', 'game', 'abbr', 'enabled']
+    _other_createable = list(['game', 'abbr', 'enabled'])
+    _other_updateable = list(['game', 'abbr', 'enabled'])
+    _other_delete = True
 
 
 class ChallongeTournamentEndpoint(ElementEndpointBase):

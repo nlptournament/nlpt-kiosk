@@ -7,7 +7,7 @@ class PlayercountsEndpoint(object):
     @cherrypy.tools.json_in()
     @cherrypy.tools.json_out()
     def index(self):
-        from elements import Setting
+        from elements import Setting, GameAbbr
 
         if cherrypy.request.method == 'OPTIONS':
             cherrypy.response.headers['Allow'] = 'OPTIONS, GET'
@@ -18,8 +18,9 @@ class PlayercountsEndpoint(object):
         elif cherrypy.request.method == 'GET':
             result = list()
             if Setting.value('mock_pc'):
+                game_translation = GameAbbr.translation_map()
                 for s in self.prometheus_mock_data():
-                    s['game'] = self.translate_game(s['game'])
+                    s['game'] = game_translation.get(s['game'], s['game'])
                     result.append(s)
             else:
                 from helpers.prometheus_connect import PrometheusConnect
@@ -28,13 +29,14 @@ class PlayercountsEndpoint(object):
                     cherrypy.response.status = 500
                     return {'error': 'Settings are missing the source for PlayerCounts'}
                 try:
+                    game_translation = GameAbbr.translation_map()
                     prom = PrometheusConnect(url=src_uri, disable_ssl=True)
                     tmp = dict()
                     for s in prom.custom_query(query='playercount_num and on (server) up==1'):
                         try:
                             tmp[s['metric']['instance']] = {
                                 'name': s['metric']['iname'],
-                                'game': self.translate_game(s['metric']['game']),
+                                'game': game_translation.get(s['metric']['game'], s['metric']['game']),
                                 'count': s['value'][-1]
                             }
                         except Exception:
@@ -74,18 +76,6 @@ class PlayercountsEndpoint(object):
             cherrypy.response.status = 405
             return {'error': 'method not allowed'}
 
-    def translate_game(self, name):
-        translations = {
-            'bf2': 'BF 2',
-            'ut2k4': 'UT 2004',
-            'ut3': 'UT 3',
-            'cod2': 'CoD 2',
-            'cod4': 'CoD 4',
-            'mc': 'Minecraft',
-            'gmod': "Garry's Mod"
-        }
-        return translations.get(name, name)
-
     def prometheus_mock_data(self):
         result = list()
         result.append({'name': 'Server3', 'count': 2, 'max': 24, 'game': 'ut2k4'})
@@ -112,7 +102,7 @@ class PlayercountsEndpoint(object):
 
     @classmethod
     def discord_counts(cls, guild=None, role=None):
-        from elements import Setting, DiscordMember
+        from elements import Setting, DiscordMember, GameAbbr
 
         if Setting.value('mock_pc_discord'):
             members = cls.discord_mock_data()
@@ -132,9 +122,10 @@ class PlayercountsEndpoint(object):
             else:
                 games[member['game']] += 1
 
+        game_translation = GameAbbr.translation_map()
         result = list()
         for name, count in games.items():
-            result.append({'game': name, 'count': count})
+            result.append({'game': game_translation.get(name, name), 'count': count})
         return result
 
     @classmethod
