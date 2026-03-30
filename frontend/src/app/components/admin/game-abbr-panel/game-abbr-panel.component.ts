@@ -30,7 +30,7 @@ export class GameAbbrPanelComponent implements OnInit {
     refreshGameAbbrs() {
         this.gameAbbrService.getGameAbbrs().subscribe({
             next: (gameAbbrs: GameAbbr[]) => {
-                this.gameAbbrs = gameAbbrs;
+                this.gameAbbrs = gameAbbrs.sort((a, b) => (a.game.localeCompare(b.game)));
             }
         });
     }
