@@ -1,0 +1,23 @@
+<p-dialog [modal]="true" appendTo="body" [(visible)]="isVisible" [dismissableMask]="true" (onHide)="closeDialog()">
+    <ng-template #headless>
+        <div class="w-fit max-w-52% p-3 pt-1">
+            <div class="w-fill flex flex-row justify-between items-start gap-5 mb-2">
+                <div>&nbsp;</div>
+                <div class="text-2xl">Game Abbriviations Manager</div>
+                <i class="pi pi-times !text-1xl hover:cursor-pointer hover:text-danger" (click)="closeDialog()"></i>
+            </div>
+            <div class="flex flex-row justify-center items-center text-1xl m-2">
+                Translate incomming game-names to more user-friendly ones for Screens
+            </div>
+            <div class="flex flex-col max-h-35% overflow-x-hidden overflow-y-auto gap-2">
+                @for (gameAbbr of gameAbbrs; track gameAbbr.id) {
+                <element-game-abbr [gameAbbr]="gameAbbr" (editResult)="updatedGameAbbr()"></element-game-abbr>
+                }
+                <element-game-abbr [gameAbbr]="dummyGameAbbr" [editMode]="true" (editResult)="updatedGameAbbr()" *ngIf="dummyGameAbbr"></element-game-abbr>
+                <div class="w-fill h-14 bg-add-card rounded-xl shadow-md flex items-center justify-center" *ngIf="!dummyGameAbbr">
+                    <i class="pi pi-plus-circle !text-3xl hover:cursor-pointer hover:text-highlight" (click)="createGameAbbr()"></i>
+                </div>
+            </div>
+        </div>
+    </ng-template>
+</p-dialog>

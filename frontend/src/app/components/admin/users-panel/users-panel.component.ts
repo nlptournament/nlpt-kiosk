@@ -24,7 +24,7 @@ export class UsersPanelComponent {
     }
 
     createUser() {
-        this.dummyUser = <User>{login: "", pw: "dummy", admin: false}
+        this.dummyUser = <User>{login: "", pw: "dummy", admin: false};
     }
 
     createdUser() {

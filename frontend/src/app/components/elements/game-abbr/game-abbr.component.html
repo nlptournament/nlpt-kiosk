@@ -1,0 +1,18 @@
+<div class="flex flex-row w-fit max-w-50% justify-between items-center gap-3">
+    <div>
+        <input pInputText id="game" [(ngModel)]="gameAbbr().game" placeholder="Game-Name" autocomplete="off" [disabled]="!editActive" />
+    </div>
+    <div>
+        <input pInputText id="abbr" [(ngModel)]="gameAbbr().abbr" placeholder="Translation" autocomplete="off" [disabled]="!editActive" />
+    </div>
+    <div class="flex flex-row gap-2 items-center">
+        <p-checkbox inputId="enabled" [(ngModel)]="gameAbbr().enabled" [binary]="true" [disabled]="!editActive" />
+        <label for="enabled">Enabled</label>
+    </div>
+    <div class="flex flex-row gap-2">
+        <i class="pi pi-pencil !text-1xl hover:cursor-pointer hover:text-highlight" pTooltip="edit" showDelay="300" tooltipPosition="top" (click)="editActive = true" *ngIf="!editActive"></i>
+        <i class="pi pi-trash !text-1xl hover:cursor-pointer hover:text-danger" pTooltip="delete" showDelay="300" tooltipPosition="top" *ngIf="editActive && gameAbbr().id" (click)="deleteGameAbbr()"></i>
+        <i class="pi pi-save !text-1xl hover:cursor-pointer hover:text-highlight" pTooltip="save" showDelay="300" tooltipPosition="top" *ngIf="editActive" (click)="saveGameAbbr()"></i>
+        <i class="pi pi-times !text-1xl hover:cursor-pointer hover:text-danger" pTooltip="drop changes" showDelay="300" tooltipPosition="top" *ngIf="editActive" (click)="editClose()"></i>
+    </div>
+</div>

@@ -9,6 +9,7 @@
   * Stream Wizard to create Media, Screen and TimelineTemplate for URL based Streams in one go
   * Kiosks can now have a default Timeline, with quick (synced) apply options
   * Timelines can now be defined as *single_shot*. They get automatically deleted after been displayed
+  * Created tool **GameAbbr** to change the displayed name of incomming game statistics (prometheus & discord) to be displayed on Screens
   * Prometheus endpoint, that can be enabled in Settings. This currently only provides collected data from Discord
   * *User->Profile* dialog to change personal preferences
   * header of Screens can now be customized on per-Screen basis

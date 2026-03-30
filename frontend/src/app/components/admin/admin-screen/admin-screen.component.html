@@ -28,6 +28,9 @@
 <!-- SETTINGS PANEL MODAL -->
 <panel-settings [(isActive)]="panelSettingsActive" *ngIf="panelSettingsActive"></panel-settings>
 
+<!-- GAME ABBR PANEL MODAL -->
+<panel-game-abbr [(isActive)]="panelGameAbbrActive" *ngIf="panelGameAbbrActive"></panel-game-abbr>
+
 <!-- STREAM WIZARD MODAL -->
 <stream-wizard [users]="users" [currentUser]="currentUser" [medias]="medias" [screens]="screens" [screenTemplates]="screenTemplates" [timelineTemplates]="timelineTemplates" [(isActive)]="streamWizardActive" *ngIf="streamWizardActive"></stream-wizard>
 

@@ -34,6 +34,7 @@ import { MediaPanelComponent } from '../media-panel/media-panel.component';
 import { StreamWizardComponent } from '../stream-wizard/stream-wizard.component';
 import { UpdatePwComponent } from '../update-pw/update-pw.component';
 import { SettingsPanelComponent } from '../settings-panel/settings-panel.component';
+import { GameAbbrPanelComponent } from '../game-abbr-panel/game-abbr-panel.component';
 import { SyncedDefaultComponent } from '../synced-default/synced-default.component';
 
 import { ConfirmationService, MenuItem } from 'primeng/api';
@@ -43,7 +44,7 @@ import { ConfirmDialog } from 'primeng/confirmdialog';
 
 @Component({
   selector: 'app-admin-screen',
-  imports: [CommonModule, MenubarModule, KioskComponent, ScreensPanelComponent, TimelineTemplatesPanelComponent, PresetsPanelComponent, UsersPanelComponent, ProfilePanelComponent, MediaPanelComponent, UpdatePwComponent, SettingsPanelComponent, ConfirmDialog, StreamWizardComponent, SyncedDefaultComponent],
+  imports: [CommonModule, MenubarModule, KioskComponent, ScreensPanelComponent, TimelineTemplatesPanelComponent, PresetsPanelComponent, UsersPanelComponent, ProfilePanelComponent, MediaPanelComponent, UpdatePwComponent, SettingsPanelComponent, ConfirmDialog, StreamWizardComponent, SyncedDefaultComponent, GameAbbrPanelComponent],
   providers: [ConfirmationService],
   templateUrl: './admin-screen.component.html',
   styleUrl: './admin-screen.component.scss'
@@ -69,6 +70,7 @@ export class AdminScreenComponent implements OnInit, OnDestroy {
     panelUsersActive: boolean = false;
     panelProfileActive: boolean = false;
     panelSettingsActive: boolean = false;
+    panelGameAbbrActive: boolean = false;
     streamWizardActive: boolean = false;
     syncedDefaultActive: boolean = false;
     updatePwActive: boolean = false;
@@ -262,6 +264,26 @@ export class AdminScreenComponent implements OnInit, OnDestroy {
                 ]
             },
             {
+                label: 'Tools',
+                icon: 'pi pi-wrench',
+                items: [
+                    {
+                        label: 'Stream Wizard',
+                        icon: 'pi pi-sparkles',
+                        command: () => {
+                            this.streamWizardActive = true;
+                        }
+                    },
+                    {
+                        label: 'GameAbbr',
+                        icon: 'pi pi-arrow-right-arrow-left',
+                        command: () => {
+                            this.panelGameAbbrActive = true;
+                        }
+                    }
+                ]
+            },
+            {
                 label: 'Manage Timelines',
                 icon: 'pi pi-folder',
                 command: () => {
@@ -288,13 +310,6 @@ export class AdminScreenComponent implements OnInit, OnDestroy {
                 disabled: this.presets.size == 0,
                 command: () => {
                     this.panelPresetsActive = true;
-                }
-            },
-            {
-                label: 'Stream Wizard',
-                icon: 'pi pi-sparkles',
-                command: () => {
-                    this.streamWizardActive = true;
                 }
             },
             {
