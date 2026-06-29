@@ -94,6 +94,9 @@ export class DisplayComponent implements OnInit, OnDestroy {
                 this.refreshTimeline();
             }
         }
+        if (Object.keys(msg).includes('presentation')) {
+            this.presentation(msg['presentation']);
+        }
     }
 
     refreshTimeline() {
@@ -174,6 +177,33 @@ export class DisplayComponent implements OnInit, OnDestroy {
                 if (nowScreenDP.screen.duration) target = new Date((currentTS + nowScreenDP.screen.duration - 2) * 1000);
                 else target = new Date((nowScreenDP.screen.till! - 2) * 1000);
                 this.loadNextScreenTimerSubscription = timer(target).subscribe(() => this.loadNextScreen());
+            }
+        }
+    }
+
+    presentation(action: string) {
+        if (this.timeline) {
+            if (action == 'restart') {
+                this.loadNextScreenTimerSubscription?.unsubscribe();
+                this.activateScreenTimerSubscription?.unsubscribe();
+                this.timeline.current_pos = ((this.timeline.screen_ids.length - 1) % this.timeline.screen_ids.length) * 2;
+                this.loadNextScreen(true);
+            }
+            if (action == 'forward') {
+                this.loadNextScreenTimerSubscription?.unsubscribe();
+                this.activateScreenTimerSubscription?.unsubscribe();
+                if (this.screens.size > 1 && !this.screens.get(this.screensNextKey - 1)?.active) this.activateNextScreen();
+                else this.loadNextScreen(true);
+            }
+            if (action == 'backward') {
+                this.loadNextScreenTimerSubscription?.unsubscribe();
+                this.activateScreenTimerSubscription?.unsubscribe();
+                if (this.screens.size > 1 && !this.screens.get(this.screensNextKey - 1)?.active) {
+                    this.screens.delete(this.screensNextKey - 1);
+                    this.screensNextKey = this.screensNextKey - 1;
+                }
+                this.timeline.current_pos = ((this.timeline.screen_ids.length + Math.floor((this.timeline.current_pos / 2) - 2)) % this.timeline.screen_ids.length) * 2;
+                this.loadNextScreen(true);
             }
         }
     }
