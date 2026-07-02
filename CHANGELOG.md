@@ -4,7 +4,7 @@
 
 ### New Features
 
-  * Video Screen is now capable of looping a video endless
+  * Video Screen is now capable of looping a video endless or repeat it for a specific amount
 
 ### Fixes/Improvements
 
