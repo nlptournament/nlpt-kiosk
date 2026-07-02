@@ -123,6 +123,13 @@ export class DisplayComponent implements OnInit, OnDestroy {
     }
 
     loadNextScreen(forceActivate: boolean = false) {
+        if (forceActivate) {
+            this.activateScreenTimerSubscription?.unsubscribe();
+            if (this.screens.get(this.screensNextKey - 1)?.active == false) {
+                this.activateNextScreen();
+                return;
+            }
+        }
         this.loadNextScreenTimerSubscription?.unsubscribe();
         if (this.timeline) {
             let load_pos = Math.floor((this.timeline.current_pos / 2) + 1) % this.timeline.screen_ids.length;
@@ -169,7 +176,7 @@ export class DisplayComponent implements OnInit, OnDestroy {
         this.activateScreenTimerSubscription?.unsubscribe();
         if (nowScreenDP) {
             if (this.timeline) this.sendCurrentPos(this.timeline.current_pos + 1);
-            if (nowScreenDP.screen.duration || nowScreenDP.screen.till) {
+            if ((nowScreenDP.screen.duration || nowScreenDP.screen.till) && !nowScreenDP.screen.loop && nowScreenDP.screen.repeat == 0) {
                 let target: Date;
                 if (nowScreenDP.screen.duration) target = new Date((currentTS + nowScreenDP.screen.duration - 2) * 1000);
                 else target = new Date((nowScreenDP.screen.till! - 2) * 1000);

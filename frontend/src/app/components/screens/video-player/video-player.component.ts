@@ -14,6 +14,7 @@ export class VideoPlayerComponent {
     isActive = input.required<boolean>();
     header = input.required<string>();
     variables = input.required<any>();
+    loop = input.required<boolean>();
     finished = output<null>();
 
     media_id: string = '';
@@ -39,6 +40,7 @@ export class VideoPlayerComponent {
                     var myVideo: any = document.getElementById("player");
                     this.media_id = media.id;
                     myVideo.src = this.mediaService.getMediaUrl(media);
+                    myVideo.loop = this.loop();
                     myVideo.currentTime = 0;
                     this.startPlaying();
                 },

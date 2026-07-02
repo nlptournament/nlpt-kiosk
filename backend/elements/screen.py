@@ -82,13 +82,18 @@ key() : str
         if self.template()['endless']:
             self['repeat'] = 0
             self['loop'] = False
-        else:
+        elif self['duration'] is None:
             self['duration'] = self.template()['duration']
         if not self.template()['endless'] or self['duration'] is not None:
             self['till'] = None
         for k, v in self.template()['variables_def'].items():
             if 'ro' in v and v['ro']:
                 self['variables'][k] = v['default']
+            if self['duration'] is None and v.get('type') == 'media2':
+                from elements import Media
+                duration = Media.get(self['variables'][k]).get_video_duration()
+                if duration is not None:
+                    self['duration'] = round(duration)
         if not len(self['variables']) == len(self.template()['variables_def']):
             variables_to_remove = list()
             for k in self['variables'].keys():
