@@ -4,14 +4,19 @@
             <div class="text-highlight" *ngIf="!editActive">{{ timelineTemplate().desc }}</div>
             <input pInputText id="desc" [(ngModel)]="timelineTemplate().desc" autocomplete="off" *ngIf="editActive" />
         </div>
+        <div class="flex flex-row self-center gap-2 mt-1" *ngIf="editActive">
+            <i class="pi pi-graduation-cap !text-1xl text-ok hover:cursor-pointer hover:text-highlight" pTooltip="disable presentation mode" showDelay="300" tooltipPosition="top" (click)="togglePresentation()" *ngIf="timelineTemplate().presentation"></i>
+            <i class="pi pi-graduation-cap !text-1xl hover:cursor-pointer hover:text-highlight" pTooltip="enable presentation mode" showDelay="300" tooltipPosition="top" (click)="togglePresentation()" *ngIf="!timelineTemplate().presentation"></i>
+        </div>
         <div class="flex flex-row items-center gap-1 mt-1">
             <i class="pi pi-user !text-1xl"></i>
             <div *ngIf="!editActive">{{ users().get(timelineTemplate().user_id!)!.login }}</div>
             <p-select [(ngModel)]="timelineTemplate().user_id" inputId="user_id" [options]="selectableUsers" optionValue="code" optionLabel="name" [disabled]="!currentUser().admin" *ngIf="editActive" />
         </div>
         <div class="flex flex-row gap-2">
-            <i class="pi pi-eye !text-1xl hover:cursor-pointer hover:text-highlight" pTooltip="hide TimelineTemplate" showDelay="300" tooltipPosition="bottom" (click)="hideTT()" *ngIf="timelineTemplate().id && !currentUser().hidden_elements.includes(timelineTemplate().id!)"></i>
-            <i class="pi pi-eye-slash !text-1xl hover:cursor-pointer hover:text-highlight" pTooltip="unhide (show) TimelineTemplate" showDelay="300" tooltipPosition="bottom" (click)="unhideTT()" *ngIf="timelineTemplate().id && currentUser().hidden_elements.includes(timelineTemplate().id!)"></i>
+            <i class="pi pi-graduation-cap !text-1xl" pTooltip="is presentation" showDelay="300" tooltipPosition="top" *ngIf="!editActive && timelineTemplate().presentation"></i>
+            <i class="pi pi-eye !text-1xl hover:cursor-pointer hover:text-highlight" pTooltip="hide TimelineTemplate" showDelay="300" tooltipPosition="bottom" (click)="hideTT()" *ngIf="!editActive && timelineTemplate().id && !currentUser().hidden_elements.includes(timelineTemplate().id!)"></i>
+            <i class="pi pi-eye-slash !text-1xl hover:cursor-pointer hover:text-highlight" pTooltip="unhide (show) TimelineTemplate" showDelay="300" tooltipPosition="bottom" (click)="unhideTT()" *ngIf="!editActive && timelineTemplate().id && currentUser().hidden_elements.includes(timelineTemplate().id!)"></i>
             <i class="pi pi-clone !text-1xl hover:cursor-pointer hover:text-highlight" pTooltip="duplicate" showDelay="300" tooltipPosition="top" (click)="duplicateTimelineTemplate()" *ngIf="!editActive"></i>
             <i class="pi pi-file-export !text-1xl hover:cursor-pointer hover:text-highlight" pTooltip="update related Timelines" showDelay="300" tooltipPosition="top" (click)="updateTimelines()" *ngIf="!editActive"></i>
             <i class="pi pi-pencil !text-1xl hover:cursor-pointer hover:text-highlight" pTooltip="edit" showDelay="300" tooltipPosition="top" (click)="editActivate()" *ngIf="!editActive && (currentUser().admin || timelineTemplate().user_id == currentUser().id)"></i>

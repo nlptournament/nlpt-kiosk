@@ -3,4 +3,5 @@ export interface TimelineTemplate {
     desc: string;
     user_id: string;
     screen_ids: string[];
+    presentation: boolean;
 }

@@ -99,10 +99,17 @@ preset() : bool
         from elements import Preset
         return (Preset.count({'timeline_ids': self['_id']}) > 0)
 
+    def presentation(self):
+        from elements import TimelineTemplate
+        if self['template_id'] is None or self['_id'] is None:
+            return False
+        return TimelineTemplate.get(self['template_id'])['presentation']
+
     def json(self):
         result = super().json()
         result['locked'] = self.locked()
         result['displayed'] = self.displayed()
         result['default'] = self.default()
         result['preset'] = self.preset()
+        result['presentation'] = self.presentation()
         return result

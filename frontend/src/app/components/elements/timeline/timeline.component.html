@@ -11,6 +11,7 @@
         </div>
         <div class="flex flex-row gap-2">
             <i class="pi pi-star-fill !text-1xl" pTooltip="default Timeline of this Kiosk" showDelay="300" tooltipPosition="top" *ngIf="timeline().default"></i>
+            <i class="pi pi-graduation-cap !text-1xl" pTooltip="can be controlled by presentation interface" showDelay="300" tooltipPosition="top" *ngIf="timeline().presentation"></i>
             <i class="pi pi-gauge !text-1xl" pTooltip="gets deleted after been displayed" showDelay="300" tooltipPosition="top" *ngIf="!editActive && timeline().single_shot"></i>
             <i class="pi pi-history !text-1xl" pTooltip="returns to other Timelines after been displayed" showDelay="300" tooltipPosition="top" *ngIf="!timeline().default && !editActive && !timeline().single_shot"></i>
             <i class="pi pi-gauge !text-1xl hover:cursor-pointer hover:text-highlight" pTooltip="single use - change to multi usage" showDelay="300" tooltipPosition="top" (click)="timeline().single_shot = false" *ngIf="!timeline().default && editActive && timeline().single_shot"></i>

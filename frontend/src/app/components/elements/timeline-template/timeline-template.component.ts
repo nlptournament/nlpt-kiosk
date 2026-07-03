@@ -172,4 +172,8 @@ export class TimelineTemplateComponent implements OnInit {
                 .updateTimelines(this.timelineTemplate().id!)
                 .subscribe((result: any) => {});
     }
+
+    togglePresentation() {
+        this.timelineTemplate().presentation = !this.timelineTemplate().presentation;
+    }
 }

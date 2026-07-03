@@ -11,6 +11,8 @@ user_id : str
     creator/owner of the TimelineTemplate
 screen_ids : list
     list of Screens used by this TimelineTemplate, this also sets the order of apperance on the Kiosk
+presentation : bool
+    if True, linked Timelines accept presentation WSS events when displayed
 
 update_timelines()
     writes screen_ids to linked (unlocked) Timelines
@@ -18,12 +20,16 @@ update_timelines()
     _attrdef = dict(
         desc=ElementBase.addAttr(type=str, default='', notnone=True),
         user_id=ElementBase.addAttr(type=str, notnone=True, fk='User'),
-        screen_ids=ElementBase.addAttr(type=list, default=list(), notnone=True, fk='Screen')
+        screen_ids=ElementBase.addAttr(type=list, default=list(), notnone=True, fk='Screen'),
+        presentation=ElementBase.addAttr(type=bool, default=False, notnone=True)
     )
 
     def save_post(self):
+        from elements import Timeline
         from helpers.wss import transmit_timelinetemplate_update
         transmit_timelinetemplate_update(self)
+        for t in [Timeline(t) for t in docDB.search_many('Timeline', {'template_id': self['_id']})]:
+            t.save()
 
     def delete_post(self):
         from elements import Timeline

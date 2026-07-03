@@ -182,7 +182,7 @@ export class DisplayComponent implements OnInit, OnDestroy {
     }
 
     presentation(action: string) {
-        if (this.timeline) {
+        if (this.timeline && this.timeline.presentation) {
             if (action == 'restart') {
                 this.loadNextScreenTimerSubscription?.unsubscribe();
                 this.activateScreenTimerSubscription?.unsubscribe();

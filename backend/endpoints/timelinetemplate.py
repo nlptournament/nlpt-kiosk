@@ -8,8 +8,8 @@ class TimelineTemplateEndpoint(ElementEndpointBase):
     _session_cls = Session
     _element = TimelineTemplate
     _owner_attr = 'user_id'
-    _other_readable = list(['id', 'desc', 'user_id', 'screen_ids'])
-    _other_createable = list(['desc', 'user_id', 'screen_ids'])
+    _other_readable = list(['id', 'desc', 'user_id', 'screen_ids', 'presentation'])
+    _other_createable = list(['desc', 'user_id', 'screen_ids', 'presentation'])
 
     @cherrypy.expose()
     @cherrypy.tools.json_in()
