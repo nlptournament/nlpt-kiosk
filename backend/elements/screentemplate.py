@@ -13,7 +13,7 @@ desc : str
     some helpful description
 endless : bool
     wether the Screen(Template) does have a defined end or the displyed information can be displayed endless
-duraion : int|None
+duration : int|None
     in seconds, how long the content of the Screen is "playing". if this value is None the duraion is unknown or even endless
 variables_def : dict
     dictionary of variables definitions, that can (or have to) be filled by a Screen instance

@@ -1,5 +1,15 @@
 # NLPT-Kiosk Changelog
 
+## v1.2.0
+
+### New Features
+
+  * Video Screen is now capable of looping a video endless or repeat it for a specific amount
+
+### Fixes/Improvements
+
+  * The duration of video media is now determined to be displayed on Screen element
+
 ## v1.1.0
 
 ### New Features

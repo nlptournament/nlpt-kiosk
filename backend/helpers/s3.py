@@ -160,3 +160,7 @@ def media_upload(id, content):
 
 def media_delete(id):
     return generic_delete(bucket=bkt['media'], name=id)
+
+
+def media_get_internal_url(id):
+    return f"http://{Setting.value('s3_host')}:{Setting.value('s3_port')}/{bkt['media']}/{id}"

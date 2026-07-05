@@ -10,6 +10,7 @@ FROM python:3.10-alpine
 LABEL org.opencontainers.image.authors="Nils Ost"
 ENV HOME=/app
 WORKDIR $HOME
+RUN apk add --no-cache ffmpeg
 COPY --from=build /usr/local/lib/python3.10 /usr/local/lib/python3.10
 COPY . .
 EXPOSE 8000/tcp 8765/tcp

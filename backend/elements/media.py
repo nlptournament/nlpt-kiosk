@@ -87,3 +87,53 @@ common : bool (default: True)
             except Exception:
                 return False
         return False
+
+    def get_video_duration(self):
+        """
+        Determines the duration of a video source in seconds if type is 2 (video).
+
+        Returns:
+            float: Duration in seconds, or None if the video type is not 2, or if duration cannot be determined
+        """
+        import subprocess
+
+        if self['type'] != 2:
+            return None
+
+        try:
+            video_source = None
+
+            # Handle different source types
+            if self['src_type'] == 0:
+                # Web URL
+                video_source = self['src']
+            elif self['src_type'] == 1:
+                # S3 storage - get the file from S3
+                from helpers.s3 import media_exists, media_get_internal_url
+                if media_exists(self['_id']):
+                    video_source = media_get_internal_url(self['_id'])
+
+            if video_source is None:
+                return None
+
+            # Use ffprobe to get video duration
+            result = subprocess.run(
+                [
+                    'ffprobe',
+                    '-v', 'error',
+                    '-show_entries', 'format=duration',
+                    '-of', 'default=noprint_wrappers=1:nokey=1:noprint_wrappers=1',
+                    video_source
+                ],
+                capture_output=True,
+                text=True,
+                timeout=30
+            )
+
+            if result.returncode == 0 and result.stdout.strip():
+                return float(result.stdout.strip())
+
+            return None
+
+        except Exception:
+            pass
