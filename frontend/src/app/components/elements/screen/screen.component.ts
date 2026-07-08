@@ -78,6 +78,7 @@ export class ScreenComponent implements OnInit, OnChanges {
     allowEdit = input(false, {transform: booleanAttribute});  // shows edit button if true
     allowDuplicate = input(false, {transform: booleanAttribute});  // shows duplicate button if true
     allowHide = input(false, {transform: booleanAttribute});  // shows hide and show (eye) buttons if true
+    highlight = input(false, {transform: booleanAttribute});  // highlights the screen card when true
     editResult = output<string|null|undefined>();
 
     overrideDetails: boolean = false;

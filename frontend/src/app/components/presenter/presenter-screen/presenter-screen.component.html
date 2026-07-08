@@ -1,3 +1,11 @@
-<i class="pi pi-forward !text-3xl text-text hover:cursor-pointer hover:text-highlight" (click)="exec_forward()"></i>
-<i class="pi pi-backward !text-3xl text-text hover:cursor-pointer hover:text-highlight" (click)="exec_backward()"></i>
-<i class="pi pi-refresh !text-3xl text-text hover:cursor-pointer hover:text-highlight" (click)="exec_restart()"></i>
+<p-menubar class="!text-1xl" [model]="menuItems"></p-menubar>
+
+<i class="pi pi-forward !text-3xl text-text hover:cursor-pointer hover:text-highlight" (click)="execForward()"></i>
+<i class="pi pi-backward !text-3xl text-text hover:cursor-pointer hover:text-highlight" (click)="execBackward()"></i>
+<i class="pi pi-refresh !text-3xl text-text hover:cursor-pointer hover:text-highlight" (click)="execRestart()"></i>
+
+<!-- UPDATE PW MODAL -->
+<update-pw [currentUser]="currentUser" [(isActive)]="updatePwActive" *ngIf="updatePwActive"></update-pw>
+
+<!-- PROFILE PANEL MODAL -->
+<panel-profile [currentUser]="currentUser" [(isActive)]="panelProfileActive" *ngIf="panelProfileActive"></panel-profile>
