@@ -289,3 +289,13 @@ def system_screentemplates():
             'key': 'challonge-pt', 'name': 'Challonge Parallel Tournaments',
             'desc': 'Shows the pairs and their completion of the current round in two parallel executed Tournaments',
             'endless': True, 'duration': None, 'variables_def': vardef}).save()
+    # Jump-to Timeline
+    if ScreenTemplate.count({'name': 'Jump-to Timeline'}) == 0:
+        vardef = dict({
+            'use_default': {'type': 'bool', 'default': False, 'desc': 'if True the Kiosks defaut Timeline is used as the jump target'},
+            'timeline': {'type': 'tt', 'default': '', 'desc': 'the Timeline to be used as jump target, ignored if use_default is True'}
+        })
+        ScreenTemplate({
+            'key': 'jump-to', 'name': 'Jump-to Timeline',
+            'desc': 'Leaves the current Timeline and jumps to a different one as defined in this Screen',
+            'endless': True, 'duration': None, 'variables_def': vardef}).save()
