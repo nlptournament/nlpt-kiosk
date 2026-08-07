@@ -1,6 +1,7 @@
 import { Component, input, model, OnInit } from '@angular/core';
 
 import { ScreenTemplate } from '../../../interfaces/screen-template';
+import { TimelineTemplate } from '../../../interfaces/timeline-template';
 import { User } from '../../../interfaces/user';
 import { Screen } from '../../../interfaces/screen';
 import { Media } from '../../../interfaces/media';
@@ -32,6 +33,7 @@ interface selectableTemplate {
 export class ScreensPanelComponent implements OnInit {
     screens = input.required<Map<string, Screen>>();
     screenTemplates = input.required<Map<string, ScreenTemplate>>();
+    timelineTemplates = input.required<Map<string, TimelineTemplate>>();
     users = input.required<Map<string, User>>();
     currentUser = input.required<User>();
     medias = input.required<Map<string, Media>>();

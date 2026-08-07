@@ -32,6 +32,7 @@ interface selectableScreen {
 })
 export class TimelineTemplateComponent implements OnInit {
     timelineTemplate = input.required<TimelineTemplate>();
+    timelineTemplates = input.required<Map<string, TimelineTemplate>>();
     screens = input.required<Map<string, Screen>>();
     screenTemplates = input.required<Map<string, ScreenTemplate>>();
     medias = input.required<Map<string, Media>>();

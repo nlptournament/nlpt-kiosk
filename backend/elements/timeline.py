@@ -70,6 +70,18 @@ preset() : bool
         for s in [Screen.get(s) for s in self['screen_ids']]:
             transmit_screen_update(s)
         transmit_timeline_update(self)
+        self.check_for_jump()
+
+    def check_for_jump(self):
+        from elements import Screen
+        if (self['current_pos'] % 2) == 1:
+            cp = int(self['current_pos'] / 2)
+            s = Screen.get(self['screen_ids'][cp])
+            if s.template()['key'] == 'jump-to':
+                if s['variables'].get('use_default'):
+                    self.kiosk().apply_default()
+                elif not s['variables'].get('timeline', '') == '':
+                    self.kiosk().apply_timelinetemplate(s['variables'].get('timeline', ''))
 
     def delete_pre(self):
         if self.displayed() or self.default():

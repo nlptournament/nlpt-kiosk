@@ -35,7 +35,7 @@ export class StreamerKioskComponent {
 
     startStream() {
         if (this.selectedTTid()) {
-            this.kioskService.applyTimelineTemplate(this.kiosk().id, this.selectedTTid()!).subscribe({
+            this.kioskService.applyTimelineTemplate(this.kiosk().id, this.selectedTTid()!, true).subscribe({
                 next: () => {},
                 error: (err: HttpErrorResponse) => {
                     this.errorHandler.handleError(err);

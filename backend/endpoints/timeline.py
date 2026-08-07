@@ -58,6 +58,7 @@ class TimelineEndpoint(ElementEndpointBase):
             docDB.update('Timeline', t['_id'], {'$set': {'current_pos': val}})
             t['current_pos'] = val
             transmit_timeline_update(t)
+            t.check_for_jump()
 
             return val
         else:

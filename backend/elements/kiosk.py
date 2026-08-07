@@ -120,11 +120,11 @@ apply_timelinetemplate(template_id : str) : bool
             self.save()
             return True
 
-    def apply_timelinetemplate(self, template_id):
+    def apply_timelinetemplate(self, template_id, require_default=False):
         from elements import TimelineTemplate, Timeline
         if self['_id'] is None:
             return False
-        if self['default_timeline_id'] is None:
+        if require_default and self['default_timeline_id'] is None:
             return False
         tt = TimelineTemplate.get(template_id)
         if tt['_id'] is None:
@@ -133,4 +133,4 @@ apply_timelinetemplate(template_id : str) : bool
         tl.save()
         self['timeline_id'] = tl['_id']
         self.save()
-        return False
+        return True

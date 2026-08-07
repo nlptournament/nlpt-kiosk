@@ -110,6 +110,7 @@ export class ScreenComponent implements OnInit, OnChanges {
         if (this.editMode()) {
             this.createSelectableTemplates();
             this.createSelectableUsers();
+            this.createSelectableTimelineTemplates();
             this.selectableLoops.push(<selectableLoop>{code: true, 'name': 'endless'});
             this.selectableLoops.push(<selectableLoop>{code: false, 'name': 'just repeat'});
         }
@@ -183,9 +184,6 @@ export class ScreenComponent implements OnInit, OnChanges {
                 if (o.type == 'discordguild') {
                     this.refreshDiscordGuilds();
                     this.refreshDiscordRoles(o.val);
-                }
-                if (o.type == 'tt') {
-                    this.createSelectableTemplates();
                 }
                 v.set(key, o);
             }
