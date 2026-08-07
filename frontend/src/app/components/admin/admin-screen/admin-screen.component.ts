@@ -226,6 +226,14 @@ export class AdminScreenComponent implements OnInit, OnDestroy {
                         }
                     },
                     {
+                        label: 'Presenter Interface',
+                        icon: 'pi pi-graduation-cap',
+                        visible: this.currentUser?.admin || this.currentUser?.presenter,
+                        command: () => {
+                            this.router.navigate(['/present']);
+                        }
+                    },
+                    {
                         separator: true
                     },
                     {
