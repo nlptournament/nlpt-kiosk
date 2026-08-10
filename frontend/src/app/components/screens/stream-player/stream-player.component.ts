@@ -5,6 +5,7 @@ import { Media } from '../../../interfaces/media';
 
 import videojs from 'video.js';
 import Player from 'video.js/dist/types/player';
+import 'videojs-overlay';
 
 @Component({
   selector: 'screen-stream-player',
@@ -27,7 +28,26 @@ export class StreamPlayerComponent implements OnInit, OnChanges, OnDestroy {
     ) { }
 
     ngOnInit(): void {
-        this.player = videojs(this.playerElement!.nativeElement, {'width': window.screen.width, 'preload': 'auto'});
+        let player_conf = {
+            'width': window.screen.width,
+            'preload': 'auto',
+            'plugins': {}
+        }
+        if (this.header() != '') {
+            player_conf['plugins'] = {
+                overlay: {
+                    overlays: [{
+                        start: 'play',
+                        end: 'pause',
+                        content: this.header,
+                        align: 'top',
+                        class: 'text-7xl font-orbitron ml-3 mr-3',
+                        showBackground: true
+                    }]
+                }
+            }
+        }
+        this.player = videojs(this.playerElement!.nativeElement, player_conf);
         this.extractVariables();
     }
 
