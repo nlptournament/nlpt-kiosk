@@ -67,6 +67,7 @@ As mentioned above Screens are the representation of WHAT is displayed from WHER
   * **[Stream](docs/screens/stream.md)** *Stream (Media) is played fullscreen*
   * **Challonge Round Completion** *Shows the pairs and their completion of the current round in a challonge tournament*
   * **Challonge Parallel Tournament** *Shows the pairs and their completion of the current round in two parallel executed Tournaments*
+  * **[Jump-to Timeline](docs/screens/jump-to-timeline.md)** *When Screen is activated the corresponding Kiosk is switching to the defined Timeline*
 
 ## The User-Interfaces
 

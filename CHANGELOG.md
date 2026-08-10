@@ -5,6 +5,7 @@
 ### New Features
 
   * Video Screen is now capable of looping a video endless or repeat it for a specific amount
+  * New *Jump-to Timeline* Screen, that allows automatic Timeline switching on Kiosks (see: [docs/screens/jump-to-timeline.md](docs/screens/jump-to-timeline.md) for more info)
 
 ### Fixes/Improvements
 
