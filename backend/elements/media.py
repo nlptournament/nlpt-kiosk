@@ -22,6 +22,7 @@ type : int (default: 0)
         1: animated image
         2: video
         3: stream
+        4: other
 user_id : str | None
     creator/owner of Media, gets None if the corresponding User is deleted
 common : bool (default: True)
@@ -48,8 +49,8 @@ common : bool (default: True)
         errors = dict()
         if self['src_type'] not in range(2):
             errors['src_type'] = {'code': 5, 'desc': 'needs to be one of: [0, 1]'}
-        if self['type'] not in range(4):
-            errors['type'] = {'code': 5, 'desc': 'needs to be one of: [0, 1, 2, 3]'}
+        if self['type'] not in range(5):
+            errors['type'] = {'code': 5, 'desc': 'needs to be one of: [0, 1, 2, 3, 4]'}
         if self['type'] == 3 and not self['src_type'] == 0:
             errors['src_type'] = {'code': 5, 'desc': 'needs to be 0 for type of 3'}
         return errors

@@ -6,6 +6,7 @@
 
   * Video Screen is now capable of looping a video endless or repeat it for a specific amount
   * Timelines can be used like presentations and be actively controlled by Presenter-Interface (see: [docs/presenter-interface.md](docs/presenter-interface.md) for more information)
+  * Presentation Wizard to import PDFs as presentation TimelineTemplates, creating all required Media, Screens and TimelineTemplate with one click
 
 ### Fixes/Improvements
 

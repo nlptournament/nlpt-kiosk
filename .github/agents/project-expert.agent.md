@@ -76,11 +76,11 @@ Current version: v1.2.0, Repository owner: nils-ost
 | `User` | Auth user with admin/streamer/presenter flags, prefer_single_shot, hidden_elements | Cascading delete logic on deletion |
 | `ScreenTemplate` | Template definition for screens with typed variables (str, text, int, ts, float, bool, media0-3, discordguild, discordrole) | Validated on save; `_ro_attr=['key','name','desc','endless','duration','variables_def']` |
 | `Screen` | Instance of a ScreenTemplate with variables, duration, repeat/loop settings | State methods: `locked()`, `displayed()`, `default()` |
-| `TimelineTemplate` | Reusable blueprint containing ordered list of screen IDs. Can be applied to multiple kiosks. | `presentation` flag for WSS events |
+| `TimelineTemplate` | Reusable blueprint containing ordered list of screen IDs. Can be applied to multiple kiosks. | `presentation` flag for WSS events, `import_pdf(pdf_media, prefix, png_width)` — converts a PDF (Media type=4) into Screens using the "Background Image" template |
 | `Timeline` | Instance linked to a Kiosk, contains ordered screen IDs with position tracking (start_pos, current_pos) | Supports single_shot auto-delete; state methods: `locked()`, `displayed()`, `default()`, `preset()` |
 | `Kiosk` | Represents a display device. Unique by name. Has timeline_id and default_timeline_id. | Methods: `apply_default()`, `apply_timelinetemplate()`, `id_by_name()` |
 | `Preset` | Collection of timelines that can be duplicated and applied quickly to kiosks. | Owned by User, common flag for shared presets |
-| `Media` | Container for images (static/animated), videos, streams. src_type: 0=web URL, 1=S3 storage. type: 0=image, 1=animated, 2=video, 3=stream. Uses ffprobe to determine video duration. | S3 upload/download via MinIO |
+| `Media` | Container for images (static/animated), videos, streams, other. src_type: 0=web URL, 1=S3 storage. type: 0=image, 1=animated, 2=video, 3=stream, 4=other. Uses ffprobe to determine video duration. | S3 upload/download via MinIO |
 | `GameAbbr` | Game name abbreviation translator with translate() and translation_map() class methods | CRUD for game abbreviations |
 | `ChallongeTournament` | Cached tournament data from Challonge API. States: 0=unknown, 1=pending, 2=underway, 3=complete. | Tracks available/completed rounds |
 | `ChallongeParticipant` | Tournament participant with portrait image (stored as Media). Has fetch_portrait() method. | CRUD — mostly read-only from API |
@@ -130,7 +130,7 @@ Current version: v1.2.0, Repository owner: nils-ost
 5. `cherrypy.quickstart(API(), '/', conf)` — launches the app
 
 ### Backend Dependencies (`backend/requirements.txt`)
-- boto3, cherrypy, cherrypy-cors, discord.py, noapiframe (git), pychallonge (git), pymongo, requests, websockets
+- boto3, cherrypy, cherrypy-cors, discord.py, noapiframe (git), pdf2image, pychallonge (git), pymongo, requests, websockets
 
 ## Frontend Details
 
@@ -263,7 +263,7 @@ interface Timeline { id, template_id, kiosk_id, screen_ids[], start_pos, current
 
 // media.ts
 interface Media { id, desc, src_type, src, type, user_id, common }
-// src_type: 0=web URL, 1=S3 storage | type: 0=image, 1=animated, 2=video, 3=stream
+// src_type: 0=web URL, 1=S3 storage | type: 0=image, 1=animated, 2=video, 3=stream, 4=other
 
 // user.ts
 interface User { id, login, admin, streamer, presenter, prefer_single_shot, hidden_elements[] }

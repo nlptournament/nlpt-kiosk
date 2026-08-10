@@ -37,4 +37,13 @@ export class TimelineTemplateService {
     public updateTimelines(id: string): Observable<any> {
         return this.http.put<any>(this.ttUrl + 'update_timelines/' + id + '/', {}, {withCredentials:true});
     }
+
+    public importPdf(id: string, media_id: string, prefix: string = 'pdf_importer', image_width: number = 1920): Observable<any> {
+        let data = {
+            media_id: media_id,
+            prefix: prefix,
+            image_width: image_width
+        }
+        return this.http.put<any>(this.ttUrl + 'import_pdf/' + id + '/', data, {withCredentials:true});
+    }
 }

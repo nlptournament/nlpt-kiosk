@@ -6,6 +6,8 @@ This interface is available for Users with the **Presenter** role. It can be rea
 
   * Go to *User->Manage Users* and tick the checkbox **Presenter** for a particular User
 
+Check out *Tools->Presentation Wizard* in the Admin-Interface to import PDFs as presentation TimelineTemplates in one go.
+
 > [!NOTE]
 > Timelines must be configured as presentation to be controled by *Presenter Interface*. To do so go to *Timelines Manager* (in *Admin Interface*) edit a Timeline and toggle the *graduation-cap*
 > ![Timeline enable Presentation](img/timeline-enable-presentation.png)

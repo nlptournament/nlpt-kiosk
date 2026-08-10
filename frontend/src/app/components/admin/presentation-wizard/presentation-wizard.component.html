@@ -1,10 +1,13 @@
 <p-dialog [modal]="true" appendTo="body" [(visible)]="isVisible" [dismissableMask]="true" (onHide)="closeDialog()">
     <ng-template #headless>
         <div class="max-w-53% p-2 pt-1">
-            <div class="w-fill flex flex-row justify-between items-start gap-5 mb-2">
+            <div class="w-fill flex flex-row justify-between items-start gap-5 mb-1">
                 <div>&nbsp;</div>
-                <div class="text-2xl">Stream Wizard</div>
+                <div class="text-2xl">Presentation Wizard</div>
                 <i class="pi pi-times !text-1xl hover:cursor-pointer hover:text-danger" (click)="closeDialog()"></i>
+            </div>
+            <div class="w-fill flex flex-row justify-center gap-5 mb-2">
+                <div class="text-1xl">converts a PDF to a Timeline</div>
             </div>
             <div class="flex flex-col justify-start items-left text-1xl gap-3 mb-2 p-2 pt-0">
                 <div class="flex flex-col w-full rounded-xl border border-highlight gap-2 p-2">
@@ -20,26 +23,25 @@
 
                 <div class="flex flex-col w-full rounded-xl border border-highlight gap-2 p-2" *ngIf="selectedUser">
                     <div class="flex flex-col gap-1" *ngIf="selectedUser">
-                        <div>Media Element:</div>
+                        <div>PDF:</div>
                         <p-select [(ngModel)]="selectedMedia" inputId="selectMedia" [options]="selectableMedias" optionValue="code" optionLabel="name" />
                     </div>
                     <div class="flex flex-col gap-1" *ngIf="selectedUser && selectedMedia == null">
-                        <div>Stream URL:</div>
-                        <input pInputText id="streamUrl" [(ngModel)]="streamUrl" placeholder="http://..." autocomplete="off" />
+                        <p-fileupload mode="basic" chooseLabel="Upload" chooseIcon="pi pi-upload" maxFileSize="104857600" (onSelect)="mediaFileSelected($event)" />
                     </div>
                 </div>
 
-                <div class="flex flex-col w-full rounded-xl border border-highlight gap-2 p-2" *ngIf="selectedMedia != null || streamUrl != ''">
-                    <div class="flex flex-col gap-1" *ngIf="selectedMedia != null || streamUrl != ''">
-                        <div>Screen Element:</div>
-                        <p-select [(ngModel)]="selectedScreen" inputId="selectScreen" [options]="selectableScreens" optionValue="code" optionLabel="name" />
-                    </div>
-                    <div class="flex flex-col gap-1" *ngIf="selectedMedia != null || streamUrl != ''">
+                <div class="flex flex-col w-full rounded-xl border border-highlight gap-2 p-2" *ngIf="selectedMedia != null || selectedMediaFile != null">
+                    <div class="flex flex-col gap-1" *ngIf="selectedMedia != null || selectedMediaFile != null">
                         <div>TimelineTemplate:</div>
                         <p-select [(ngModel)]="selectedTimelineTemplate" inputId="selectTimelineTemplate" [options]="selectableTimelineTemplates" optionValue="code" optionLabel="name" />
                     </div>
+                    <div class="flex flex-col gap-1" *ngIf="selectedMedia != null || selectedMediaFile != null">
+                        <div>Resulting Image Width:</div>
+                        <p-inputnumber [(ngModel)]="image_width" mode="decimal" [min]="720" [max]="4000" suffix=" px" locale="de-DE" />
+                    </div>
                 </div>
-                <div *ngIf="selectedMedia != null || streamUrl != ''">
+                <div *ngIf="selectedMedia != null || selectedMediaFile != null">
                     <p-button label="Save" (onClick)="saveMedia()" />
                 </div>
             </div>
