@@ -11,7 +11,7 @@ You are a general-purpose expert AI assistant with deep knowledge of the NLPT-Ki
 - A **KioskController server** that manages all clients and provides the admin UI
 - Multiple **Kiosk Clients** (typically Raspberry Pis) that display content in fullscreen
 
-Current version: v1.2.0, Repository owner: nils-ost
+Current version: v1.1.0, Repository owner: nils-ost
 
 ## Architecture Summary
 
@@ -74,11 +74,11 @@ Current version: v1.2.0, Repository owner: nils-ost
 | `Session` | Auth session with cookie name `NLPT-Kiosk-Controller`, references User class | Validates against User MD5 hash |
 | `Setting` | Key-value settings store with 20+ configurable values (S3, Discord, Challonge, Prometheus, mock flags) | `_setting_cls=Setting`, admin-writable attrs include: server_port, new_kiosks, wss_port, metrics_enabled, s3_host/port/key/secret, anno_src_uri, pc_prometheus_uri, discord_bot_token, tas_uri, challonge_user/key/img_user_id, mock_anno/pc/tas/chal |
 | `User` | Auth user with admin/streamer/presenter flags, prefer_single_shot, hidden_elements | Cascading delete logic on deletion |
-| `ScreenTemplate` | Template definition for screens with typed variables (str, text, int, ts, float, bool, media0-3, discordguild, discordrole) | Validated on save; `_ro_attr=['key','name','desc','endless','duration','variables_def']` |
+| `ScreenTemplate` | Template definition for screens with typed variables (str, text, int, ts, float, bool, media0-3, discordguild, discordrole, tt) | Validated on save; `_ro_attr=['key','name','desc','endless','duration','variables_def']` |
 | `Screen` | Instance of a ScreenTemplate with variables, duration, repeat/loop settings | State methods: `locked()`, `displayed()`, `default()` |
-| `TimelineTemplate` | Reusable blueprint containing ordered list of screen IDs. Can be applied to multiple kiosks. | `presentation` flag for WSS events, `import_pdf(pdf_media, prefix, png_width)` — converts a PDF (Media type=4) into Screens using the "Background Image" template |
-| `Timeline` | Instance linked to a Kiosk, contains ordered screen IDs with position tracking (start_pos, current_pos) | Supports single_shot auto-delete; state methods: `locked()`, `displayed()`, `default()`, `preset()` |
-| `Kiosk` | Represents a display device. Unique by name. Has timeline_id and default_timeline_id. | Methods: `apply_default()`, `apply_timelinetemplate()`, `id_by_name()` |
+| `TimelineTemplate` | Reusable blueprint containing ordered list of screen IDs. Can be applied to multiple kiosks. | `presentation` flag for WSS events, `import_pdf(pdf_media, prefix, png_width)` — converts a PDF (Media type=4) into Screens using the "Background Image" template; creates Media elements (type=0) and Screen instances per page |
+| `Timeline` | Instance linked to a Kiosk, contains ordered screen IDs with position tracking (start_pos, current_pos) | Supports single_shot auto-delete; state methods: `locked()`, `displayed()`, `default()`, `preset()`; **jump-to**: `check_for_jump()` — when `current_pos % 2 == 1` and the screen at that position has template key 'jump-to', either applies default timeline or a specified TimelineTemplate |
+| `Kiosk` | Represents a display device. Unique by name. Has timeline_id and default_timeline_id. | Methods: `apply_default()`, `apply_timelinetemplate(template_id, require_default=False)`, `id_by_name()` |
 | `Preset` | Collection of timelines that can be duplicated and applied quickly to kiosks. | Owned by User, common flag for shared presets |
 | `Media` | Container for images (static/animated), videos, streams, other. src_type: 0=web URL, 1=S3 storage. type: 0=image, 1=animated, 2=video, 3=stream, 4=other. Uses ffprobe to determine video duration. | S3 upload/download via MinIO |
 | `GameAbbr` | Game name abbreviation translator with translate() and translation_map() class methods | CRUD for game abbreviations |
@@ -95,8 +95,8 @@ Current version: v1.2.0, Repository owner: nils-ost
 |---------------|---------------|----------------|-------------|
 | `UserEndpoint` | User | hide_add(), hide_del() | User management with hidden elements feature |
 | `KioskEndpoint` | Kiosk | my_id(), apply_default(), apply_timelinetemplate(), synced_apply(), synced_apply_default() | Kiosk registration, timeline application, synchronized multi-kiosk operations |
-| `TimelineEndpoint` | Timeline | currentPos() | Timeline position tracking for kiosk clients |
-| `TimelineTemplateEndpoint` | TimelineTemplate | (inherited) | CRUD for timeline templates |
+| `TimelineEndpoint` | Timeline | currentPos() — also calls `check_for_jump()` on the timeline after position update | Timeline position tracking for kiosk clients |
+| `TimelineTemplateEndpoint` | TimelineTemplate | (inherited), `update_timelines()`, `import_pdf()` — converts a PDF Media into Screens using the "Background Image" template; requires admin or owner access |
 | `ScreenTemplateEndpoint` | ScreenTemplate | (inherited) | CRUD — read-only for key/name/desc/endless/duration/variables_def |
 | `ScreenEndpoint` | Screen | (inherited) | CRUD with owner-based access control via user_id |
 | `MediaEndpoint` | Media | s3() | Media upload/download with 100MB limit, direct S3 proxy |
@@ -119,7 +119,7 @@ Current version: v1.2.0, Repository owner: nils-ost
 | `challonge.py` | Challonge API fetcher running in daemon Process. Polls every 10 seconds for tournaments with challonge screen templates. Functions: fetch_tournament(), fetch_matches(), fetch_participant(). Includes mock data generator. |
 | `discord.py` | Discord bot worker in daemon Process using discord.py. Captures member presence updates (on_presence_update). Stores guilds, roles, members with current game. Debug command via DM: debug. |
 | `prometheus_connect.py` | Custom Prometheus API client (stripped to avoid matplotlib dependency for ARM builds). Methods: check_prometheus_connection(), custom_query(). Retry logic with backoff. |
-| `versioning.py` | Database migration system. Compares DB version vs software version. Creates default admin user (admin/password) if none exists. Seeds 13+ ScreenTemplates on first install (Plain Text, Background Image, Countdown, Announcements, Player Counts, TAS, Video, Stream, Challonge variants, etc.). Functions: versions_eq(), versions_lt(), versions_gt(), versions_lte(), versions_gte(). |
+| `versioning.py` | Database migration system. Compares DB version vs software version. Creates default admin user (admin/password) if none exists. Seeds 14+ ScreenTemplates on first install (Plain Text, Background Image, Countdown, Announcements, Player Counts, TAS, Video, Stream, Challonge variants, Jump-to Timeline). Functions: versions_eq(), versions_lt(), versions_gt(), versions_lte(), versions_gte(). |
 | `version.py` | Contains current version string. |
 
 ### Startup Sequence (`backend/main.py`)
@@ -185,6 +185,7 @@ providePrimeNG({ theme: Aura, cssLayer: { name: 'primeng', order: 'tailwind-base
 - `timeline-templates-panel/` — Timeline template management
 - `update-pw/` — Password change dialog
 - `users-panel/` — User management (admin only)
+- `presentation-wizard/` — PDF-to-Timeline import wizard (select user, select/upload PDF, choose target TimelineTemplate, set image width)
 
 #### `components/display/` — Kiosk Client Display
 - `display.component.ts/html/scss` — Renders screens on projectors/TVs in fullscreen mode
