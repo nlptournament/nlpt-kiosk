@@ -1,0 +1,25 @@
+<p-menubar class="!text-1xl" [model]="menuItems"></p-menubar>
+
+<div class="flex flex-row justify-center p-2 gap-5" *ngIf="!bigButtons">
+    <i class="pi pi-forward !text-10xl text-text hover:cursor-pointer hover:text-highlight" (click)="execForward()"></i>
+    <i class="pi pi-backward !text-10xl text-text hover:cursor-pointer hover:text-highlight" (click)="execBackward()"></i>
+    <i class="pi pi-refresh !text-10xl text-text hover:cursor-pointer hover:text-highlight" (click)="execRestart()"></i>
+</div>
+
+<div class="flex flex-row justify-center p-2 gap-12" *ngIf="bigButtons">
+    <i class="pi pi-forward !text-14xl text-text hover:cursor-pointer hover:text-highlight" (click)="execForward()"></i>
+    <i class="pi pi-backward !text-14xl text-text hover:cursor-pointer hover:text-highlight" (click)="execBackward()"></i>
+    <i class="pi pi-refresh !text-14xl text-text hover:cursor-pointer hover:text-highlight" (click)="execRestart()"></i>
+</div>
+
+<div class="flex flex-wrap p-2 gap-2">
+    @for (kiosk of kiosks.values(); track kiosk.id) {
+    <element-kiosk [presenterMode]="true" [kiosk]="kiosk" [users]="users" [currentUser]="currentUser" [timelineTemplates]="timelineTemplates" [timelines]="timelines" [medias]="medias" [screens]="screens" [screenTemplates]="screenTemplates" [timelinesChanged]="timelinesChanged" *ngIf="showHiddenKiosks || !currentUser.hidden_elements.includes(kiosk.id)"></element-kiosk>
+    }
+</div>
+
+<!-- UPDATE PW MODAL -->
+<update-pw [currentUser]="currentUser" [(isActive)]="updatePwActive" *ngIf="updatePwActive"></update-pw>
+
+<!-- PROFILE PANEL MODAL -->
+<panel-profile [currentUser]="currentUser" [(isActive)]="panelProfileActive" *ngIf="panelProfileActive"></panel-profile>

@@ -209,3 +209,11 @@ def transmit_challonge_update(chal, what):
 def transmit_challonge_delete(chal, what):
     result = {f'challonge_{what}': chal.json(), 'content': 'delete'}
     com_rx_queue.put({'what': 'send', 'target': 'kiosks', 'msg': json.dumps(result)})
+
+
+def transmit_presentation_update(action):
+    """
+    possible actions: restart, forward, backward
+    """
+    result = {'presentation': action}
+    com_rx_queue.put({'what': 'send', 'target': 'kiosks', 'msg': json.dumps(result)})

@@ -27,9 +27,37 @@ export class TimelineComponent {
     currentUser = input.required<User>();
     timelineTemplates = input.required<Map<string, TimelineTemplate>>();
     roMode = input(false, {transform: booleanAttribute});
+    compactMode = input(false, {transform: booleanAttribute});
     editResult = output<string|null|undefined>();
 
     editActive: boolean = false;
+
+    get visibleScreenIds(): string[] {
+        if (!this.compactMode()) return this.timeline().screen_ids || [];
+        const pos = this.timeline().displayed ? Math.floor(this.timeline().current_pos / 2) : this.timeline().start_pos;
+        if (pos == null) return this.timeline().screen_ids || [];
+        const ids: string[] = [];
+        const len = this.timeline().screen_ids.length;
+        const idx = Math.min(Math.max(0, Math.round(pos)), len - 1);
+        const prevIdx = (idx - 1 + len) % len;
+        const currIdx = idx;
+        const nextIdx = (idx + 1) % len;
+        ids.push(this.timeline().screen_ids[prevIdx]);
+        if (!ids.includes(this.timeline().screen_ids[currIdx])) ids.push(this.timeline().screen_ids[currIdx]);
+        if (!ids.includes(this.timeline().screen_ids[nextIdx])) ids.push(this.timeline().screen_ids[nextIdx]);
+        return ids;
+    }
+
+    get currentScreenId(): string | null {
+        const pos = this.timeline().displayed ? Math.floor(this.timeline().current_pos / 2) : this.timeline().start_pos;
+        if (pos == null || !this.timeline().screen_ids?.length) return null;
+        const idx = Math.min(Math.max(0, Math.round(pos)), this.timeline().screen_ids.length - 1);
+        return this.timeline().screen_ids[idx] ?? null;
+    }
+
+    isCurrentScreen(sid: string): boolean {
+        return sid === this.currentScreenId;
+    }
 
     constructor(
         private timelineService: TimelineService

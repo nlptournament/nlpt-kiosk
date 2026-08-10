@@ -32,6 +32,7 @@ import { UsersPanelComponent } from '../users-panel/users-panel.component';
 import { ProfilePanelComponent } from '../profile-panel/profile-panel.component';
 import { MediaPanelComponent } from '../media-panel/media-panel.component';
 import { StreamWizardComponent } from '../stream-wizard/stream-wizard.component';
+import { PresentationWizardComponent } from '../presentation-wizard/presentation-wizard.component';
 import { UpdatePwComponent } from '../update-pw/update-pw.component';
 import { SettingsPanelComponent } from '../settings-panel/settings-panel.component';
 import { GameAbbrPanelComponent } from '../game-abbr-panel/game-abbr-panel.component';
@@ -44,7 +45,7 @@ import { ConfirmDialog } from 'primeng/confirmdialog';
 
 @Component({
   selector: 'app-admin-screen',
-  imports: [CommonModule, MenubarModule, KioskComponent, ScreensPanelComponent, TimelineTemplatesPanelComponent, PresetsPanelComponent, UsersPanelComponent, ProfilePanelComponent, MediaPanelComponent, UpdatePwComponent, SettingsPanelComponent, ConfirmDialog, StreamWizardComponent, SyncedDefaultComponent, GameAbbrPanelComponent],
+  imports: [CommonModule, MenubarModule, KioskComponent, ScreensPanelComponent, TimelineTemplatesPanelComponent, PresetsPanelComponent, UsersPanelComponent, ProfilePanelComponent, MediaPanelComponent, UpdatePwComponent, SettingsPanelComponent, ConfirmDialog, StreamWizardComponent, PresentationWizardComponent, SyncedDefaultComponent, GameAbbrPanelComponent],
   providers: [ConfirmationService],
   templateUrl: './admin-screen.component.html',
   styleUrl: './admin-screen.component.scss'
@@ -72,6 +73,7 @@ export class AdminScreenComponent implements OnInit, OnDestroy {
     panelSettingsActive: boolean = false;
     panelGameAbbrActive: boolean = false;
     streamWizardActive: boolean = false;
+    presentationWizardActive: boolean = false;
     syncedDefaultActive: boolean = false;
     updatePwActive: boolean = false;
     timelinesChanged: boolean = false;
@@ -226,6 +228,14 @@ export class AdminScreenComponent implements OnInit, OnDestroy {
                         }
                     },
                     {
+                        label: 'Presenter Interface',
+                        icon: 'pi pi-graduation-cap',
+                        visible: this.currentUser?.admin || this.currentUser?.presenter,
+                        command: () => {
+                            this.router.navigate(['/present']);
+                        }
+                    },
+                    {
                         separator: true
                     },
                     {
@@ -272,6 +282,13 @@ export class AdminScreenComponent implements OnInit, OnDestroy {
                         icon: 'pi pi-sparkles',
                         command: () => {
                             this.streamWizardActive = true;
+                        }
+                    },
+                    {
+                        label: 'Presentation Wizard',
+                        icon: 'pi pi-sparkles',
+                        command: () => {
+                            this.presentationWizardActive = true;
                         }
                     },
                     {

@@ -5,6 +5,8 @@
 ### New Features
 
   * Video Screen is now capable of looping a video endless or repeat it for a specific amount
+  * Timelines can be used like presentations and be actively controlled by Presenter-Interface (see: [docs/presenter-interface.md](docs/presenter-interface.md) for more information)
+  * Presentation Wizard to import PDFs as presentation TimelineTemplates, creating all required Media, Screens and TimelineTemplate with one click
   * New *Jump-to Timeline* Screen, that allows automatic Timeline switching on Kiosks (see: [docs/screens/jump-to-timeline.md](docs/screens/jump-to-timeline.md) for more info)
 
 ### Fixes/Improvements

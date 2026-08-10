@@ -11,6 +11,7 @@
         </div>
         <div class="flex flex-row gap-2">
             <i class="pi pi-star-fill !text-1xl" pTooltip="default Timeline of this Kiosk" showDelay="300" tooltipPosition="top" *ngIf="timeline().default"></i>
+            <i class="pi pi-graduation-cap !text-1xl" pTooltip="can be controlled by presentation interface" showDelay="300" tooltipPosition="top" *ngIf="timeline().presentation"></i>
             <i class="pi pi-gauge !text-1xl" pTooltip="gets deleted after been displayed" showDelay="300" tooltipPosition="top" *ngIf="!editActive && timeline().single_shot"></i>
             <i class="pi pi-history !text-1xl" pTooltip="returns to other Timelines after been displayed" showDelay="300" tooltipPosition="top" *ngIf="!timeline().default && !editActive && !timeline().single_shot"></i>
             <i class="pi pi-gauge !text-1xl hover:cursor-pointer hover:text-highlight" pTooltip="single use - change to multi usage" showDelay="300" tooltipPosition="top" (click)="timeline().single_shot = false" *ngIf="!timeline().default && editActive && timeline().single_shot"></i>
@@ -24,10 +25,10 @@
         </div>
     </div>
     <div class="flex flex-row gap-2">
-        @for (sid of timeline().screen_ids; track sid) {
+        @for (sid of visibleScreenIds; track sid) {
         <element-screen [screen]="screens().get(sid)!" [screenTemplates]="screenTemplates()" [timelineTemplates]="timelineTemplates()" [medias]="medias()" [users]="users()" [currentUser]="currentUser()"></element-screen>
         }
     </div>
-    <p-slider class="w-full mt-2 mb-1 pl-1 pr-1" pTooltip="start position" showDelay="300" tooltipPosition="bottom" [(ngModel)]="timeline().start_pos" [disabled]="!editActive" [min]="0" [max]="timeline().screen_ids.length" *ngIf="!timeline().displayed" />
-    <p-slider class="w-full mt-2 mb-1 pl-1 pr-1" pTooltip="current position" showDelay="300" tooltipPosition="bottom" [(ngModel)]="timeline().current_pos" [disabled]="true" [min]="0" [max]="timeline().screen_ids.length * 2" *ngIf="timeline().displayed" />
+    <p-slider class="w-full mt-2 mb-1 pl-1 pr-1" pTooltip="start position" showDelay="300" tooltipPosition="bottom" [(ngModel)]="timeline().start_pos" [disabled]="!editActive" [min]="0" [max]="timeline().screen_ids.length" *ngIf="!timeline().displayed && !compactMode()" />
+    <p-slider class="w-full mt-2 mb-1 pl-1 pr-1" pTooltip="current position" showDelay="300" tooltipPosition="bottom" [(ngModel)]="timeline().current_pos" [disabled]="true" [min]="0" [max]="timeline().screen_ids.length * 2" *ngIf="timeline().displayed && !compactMode()" />
 </div>
