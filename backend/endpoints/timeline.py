@@ -8,12 +8,13 @@ class TimelineEndpoint(ElementEndpointBase):
     _session_cls = Session
     _element = Timeline
     _other_readable = list([
-        'id', 'template_id', 'kiosk_id', 'screen_ids', 'start_pos', 'current_pos', 'start_time', 'single_shot', 'locked', 'displayed', 'default', 'preset'])
+        'id', 'template_id', 'kiosk_id', 'screen_ids', 'start_pos', 'current_pos', 'start_time',
+        'single_shot', 'locked', 'displayed', 'default', 'preset', 'presentation'])
     _other_createable = list(['template_id', 'kiosk_id', 'screen_ids', 'start_pos', 'single_shot'])
     _other_updateable = list(['start_pos', 'start_time'])
     _other_delete = True
-    _all_readable = list(['id', 'screen_ids', 'start_pos', 'current_pos', 'start_time'])
-    _not_updateable = list(['screen_ids'])
+    _all_readable = list(['id', 'screen_ids', 'start_pos', 'current_pos', 'start_time', 'presentation'])
+    _not_updateable = list(['screen_ids', 'presentation'])
 
     @cherrypy.expose()
     @cherrypy.tools.json_in()
@@ -58,6 +59,7 @@ class TimelineEndpoint(ElementEndpointBase):
             docDB.update('Timeline', t['_id'], {'$set': {'current_pos': val}})
             t['current_pos'] = val
             transmit_timeline_update(t)
+            t.check_for_jump()
 
             return val
         else:

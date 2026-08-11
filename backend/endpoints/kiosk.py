@@ -142,13 +142,15 @@ class KioskEndpoint(ElementEndpointBase):
             if not is_allowed:
                 cherrypy.response.status = 403
                 return {'error': 'access not allowed'}
-
-            result = element.apply_timelinetemplate(attr['template_id'])
+            require_default = False
+            if 'require_default' in attr:
+                require_default = bool(attr['require_default'])
+            result = element.apply_timelinetemplate(attr['template_id'], require_default=require_default)
             if result:
                 return True
             else:
                 cherrypy.response.status = 500
-                return {'error': 'there seems to be no default TimelineTemplate with this id'}
+                return {'error': 'there seems to be no TimelineTemplate with this id'}
         else:
             cherrypy.response.headers['Allow'] = 'OPTIONS, PUT'
             cherrypy.response.status = 405

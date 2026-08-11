@@ -51,7 +51,8 @@ variables_def : dict
         'media3': str,        # Media of type 3
         'media01': str,       # Media of type 0 or 1
         'discordguild': str,  # ID of a DiscordGuild
-        'discordrole': str    # ID of a DiscordRole
+        'discordrole': str,   # ID of a DiscordRole
+        'tt': str             # ID of a TimelineTemplate
     }
 
     def validate(self):

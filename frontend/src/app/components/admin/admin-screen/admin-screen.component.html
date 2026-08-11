@@ -8,7 +8,7 @@
 </div>
 
 <!-- SCREENS PANEL MODAL -->
-<panel-screens [screens]="screens" [screenTemplates]="screenTemplates" [medias]="medias" [users]="users" [currentUser]="currentUser" [(isActive)]="panelScreensActive" *ngIf="panelScreensActive"></panel-screens>
+<panel-screens [screens]="screens" [screenTemplates]="screenTemplates" [timelineTemplates]="timelineTemplates" [medias]="medias" [users]="users" [currentUser]="currentUser" [(isActive)]="panelScreensActive" *ngIf="panelScreensActive"></panel-screens>
 
 <!-- TIMELINETEMPLATES PANEL MODAL -->
 <panel-timeline-templates [timelineTemplates]="timelineTemplates" [screens]="screens" [screenTemplates]="screenTemplates" [medias]="medias" [users]="users" [currentUser]="currentUser" [(isActive)]="panelTimelineTemplatesActive" *ngIf="panelTimelineTemplatesActive"></panel-timeline-templates>
@@ -33,6 +33,9 @@
 
 <!-- STREAM WIZARD MODAL -->
 <stream-wizard [users]="users" [currentUser]="currentUser" [medias]="medias" [screens]="screens" [screenTemplates]="screenTemplates" [timelineTemplates]="timelineTemplates" [(isActive)]="streamWizardActive" *ngIf="streamWizardActive"></stream-wizard>
+
+<!-- PRESENTATION WIZARD MODAL -->
+<presentation-wizard [users]="users" [currentUser]="currentUser" [medias]="medias" [timelineTemplates]="timelineTemplates" [(isActive)]="presentationWizardActive" *ngIf="presentationWizardActive"></presentation-wizard>
 
 <!-- UPDATE PW MODAL -->
 <update-pw [currentUser]="currentUser" [(isActive)]="updatePwActive" *ngIf="updatePwActive"></update-pw>

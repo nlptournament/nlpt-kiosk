@@ -1,5 +1,5 @@
 <!-- READ MODE -->
-<div class="p-4 pt-1 pb-1 w-10% bg-screen-card rounded-xl shadow-md flex flex-col items-center text-center text-1xl" *ngIf="!editMode()">
+<div class="p-4 pt-1 pb-1 w-10% bg-screen-card rounded-xl shadow-md flex flex-col items-center text-center text-1xl" [class.border-2]="highlight()" [class.border-highlight]="highlight()" *ngIf="!editMode()">
     <div class="flex flex-row w-10% justify-between pr-2 pl-2 mb-1">
         <div class="flex flex-row gap-2">
             <div class="flex flex-row gap-1" *ngIf="!overrideDetails && !showDetails()">
@@ -45,10 +45,11 @@
             <i class="pi pi-sliders-h !text-1xl" pTooltip="{{ v.value.desc }}" tooltipPosition="left" showDelay="10"></i>
             <div>{{ v.key }}</div>
             <div *ngIf="v.value.type == 'ts'">{{ v.value.val | date:'dd.MM.yy HH:mm:ss' }}</div>
+            <div *ngIf="v.value.type == 'tt'">{{ timelineTemplates().get(v.value.val) ? timelineTemplates().get(v.value.val)!.desc : '---' }}</div>
             <div *ngIf="v.value.type.startsWith('media')">{{ medias().get(v.value.val)!.desc }}</div>
             <div *ngIf="v.value.type == 'discordguild'">{{ (selectableDiscordGuilds | discordObjFind : v.value.val)!.name }}</div>
             <div *ngIf="v.value.type == 'discordrole'">{{ (selectableDiscordRoles | discordObjFind : v.value.val)!.name }}</div>
-            <div *ngIf="v.value.type != 'ts' && !v.value.type.startsWith('media') && !v.value.type.startsWith('discord')">{{ v.value.type == 'str' && v.value.val == '' ? '---' : v.value.val }}</div>
+            <div *ngIf="v.value.type != 'ts' && v.value.type != 'tt' && !v.value.type.startsWith('media') && !v.value.type.startsWith('discord')">{{ v.value.type == 'str' && v.value.val == '' ? '---' : v.value.val }}</div>
         </div>
     </div>
 
@@ -117,6 +118,7 @@
         <p-select [(ngModel)]="v.value.val" inputId="{{v.key}}" [options]="selectableMedias.get(v.key)" optionValue="code" optionLabel="name" styleClass="w-full" [filter]="true" filterBy="name" [showClear]="true" pTooltip="{{ v.value.desc }}" tooltipPosition="left" showDelay="10" *ngIf="v.value.type.startsWith('media')" />
         <p-select [(ngModel)]="v.value.val" inputId="{{v.key}}" [options]="selectableDiscordGuilds" optionValue="id" optionLabel="name" (onChange)="refreshDiscordRoles(v.value.val)" styleClass="w-full" [filter]="true" filterBy="name" pTooltip="{{ v.value.desc }}" tooltipPosition="left" showDelay="10" *ngIf="v.value.type == 'discordguild'" />
         <p-select [(ngModel)]="v.value.val" inputId="{{v.key}}" [options]="selectableDiscordRoles" optionValue="id" optionLabel="name" styleClass="w-full" [filter]="true" filterBy="name" pTooltip="{{ v.value.desc }}" tooltipPosition="left" showDelay="10" *ngIf="v.value.type == 'discordrole'" />
+        <p-select [(ngModel)]="v.value.val" inputId="{{v.key}}" [options]="selectableTimelineTemplates" optionValue="code" optionLabel="name" styleClass="w-full" [filter]="true" filterBy="name" pTooltip="{{ v.value.desc }}" tooltipPosition="left" showDelay="10" *ngIf="v.value.type == 'tt'" />
         <textarea pTextarea [(ngModel)]="v.value.val" id="{{v.key}}" rows="3" style="resize: none" pTooltip="{{ v.value.desc }}" tooltipPosition="left" showDelay="10" *ngIf="v.value.type == 'text'"></textarea>
         <label for="{{v.key}}" *ngIf="v.value.type == 'bool'" class="ml-8 text-text">{{v.key}}</label>
         <label for="{{v.key}}" *ngIf="v.value.type != 'bool'">{{v.key}}</label>
@@ -131,6 +133,6 @@
 <!-- EDIT MODAL -->
 <p-dialog [modal]="true" appendTo="body" [(visible)]="editActive">
     <ng-template #headless>
-        <element-screen [screen]="screen()" [screenTemplates]="screenTemplates()" [medias]="medias()" [users]="users()" [currentUser]="currentUser()" [editMode]="true" (editResult)="editClosed($event)" *ngIf="editActive"></element-screen>
+        <element-screen [screen]="screen()" [screenTemplates]="screenTemplates()" [timelineTemplates]="timelineTemplates()" [medias]="medias()" [users]="users()" [currentUser]="currentUser()" [editMode]="true" (editResult)="editClosed($event)" *ngIf="editActive"></element-screen>
     </ng-template>
 </p-dialog>

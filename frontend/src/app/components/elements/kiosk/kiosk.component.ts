@@ -56,6 +56,7 @@ export class KioskComponent implements OnInit {
     editResult = output<string|null|undefined>();
     timelineSelection = output<KioskTlSelection>();
     editMode = input(false, {transform: booleanAttribute});
+    presenterMode = input(false, {transform: booleanAttribute});
 
     relevantTimelines: Timeline[] = [];
     defaultTimeline: Timeline | undefined;

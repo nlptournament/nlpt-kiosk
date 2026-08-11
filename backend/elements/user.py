@@ -8,6 +8,8 @@ Representation of a User, that is able to login and administrate Kiosks
 
 streamer : bool
     Users with this attribute set to True are redirected to streamer-screen after login (but are also able to access the regular admin-screen)
+presenter : bool
+    Users with this attribute set to True are allowed to control presentation Timelines (therefore execute a presentation)
 prefer_single_shot : bool
     if set to True, it indicates to the frontend, that this User prefers to create single_shot Timelines
 hidden_elements : list[str]
@@ -15,6 +17,7 @@ hidden_elements : list[str]
     """
 
     UserBase._attrdef['streamer'] = UserBase.addAttr(type=bool, default=False, notnone=True)
+    UserBase._attrdef['presenter'] = UserBase.addAttr(type=bool, default=False, notnone=True)
     UserBase._attrdef['prefer_single_shot'] = UserBase.addAttr(type=bool, default=False, notnone=True)
     UserBase._attrdef['hidden_elements'] = UserBase.addAttr(type=list, default=[], notnone=True)
 

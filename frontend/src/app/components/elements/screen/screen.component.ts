@@ -8,6 +8,7 @@ import { Screen } from '../../../interfaces/screen';
 import { ScreenTemplate } from '../../../interfaces/screen-template';
 import { User } from '../../../interfaces/user';
 import { Media } from '../../../interfaces/media';
+import { TimelineTemplate } from '../../../interfaces/timeline-template';
 import { DiscordGuild, DiscordRole } from '../../../interfaces/discord';
 
 import { CommonModule } from '@angular/common';
@@ -51,6 +52,11 @@ interface selectableMedia {
     name: string;
 }
 
+interface selectableTimelineTemplate {
+    code: string;
+    name: string;
+}
+
 // Also works for DiscordRole, as the values are mapped correctly
 @Pipe({name: 'discordObjFind', })
 export class DiscordFindObjectPipe implements PipeTransform {
@@ -73,11 +79,13 @@ export class ScreenComponent implements OnInit, OnChanges {
     users = input.required<Map<string, User>>();
     currentUser = input.required<User>();
     medias = input.required<Map<string, Media>>();
+    timelineTemplates = input.required<Map<string, TimelineTemplate>>();
     showDetails = input(false, {transform: booleanAttribute});
     editMode = input(false, {transform: booleanAttribute});
     allowEdit = input(false, {transform: booleanAttribute});  // shows edit button if true
     allowDuplicate = input(false, {transform: booleanAttribute});  // shows duplicate button if true
     allowHide = input(false, {transform: booleanAttribute});  // shows hide and show (eye) buttons if true
+    highlight = input(false, {transform: booleanAttribute});  // highlights the screen card when true
     editResult = output<string|null|undefined>();
 
     overrideDetails: boolean = false;
@@ -88,6 +96,7 @@ export class ScreenComponent implements OnInit, OnChanges {
     selectableLoops: selectableLoop[] = [];
     selectableUsers: selectableUser[] = [];
     selectableMedias: Map<string, selectableMedia[]> = new Map<string, selectableMedia[]>;
+    selectableTimelineTemplates: selectableTimelineTemplate[] = [];
     selectableDiscordGuilds: DiscordGuild[] = [];
     selectableDiscordRoles: DiscordRole[] = [];
 
@@ -102,6 +111,7 @@ export class ScreenComponent implements OnInit, OnChanges {
         if (this.editMode()) {
             this.createSelectableTemplates();
             this.createSelectableUsers();
+            this.createSelectableTimelineTemplates();
             this.selectableLoops.push(<selectableLoop>{code: true, 'name': 'endless'});
             this.selectableLoops.push(<selectableLoop>{code: false, 'name': 'just repeat'});
         }
@@ -202,7 +212,7 @@ export class ScreenComponent implements OnInit, OnChanges {
     createSelectableTemplates() {
         let st: selectableTemplate[] = [];
         for (let k of this.screenTemplates().keys()) {
-            st.push(<selectableTemplate>{code: k, name: this.screenTemplates().get(k)!.name, desc: this.screenTemplates().get(k)!.desc})
+            st.push(<selectableTemplate>{code: k, name: this.screenTemplates().get(k)!.name, desc: this.screenTemplates().get(k)!.desc});
         }
         this.selectableTemplates = st;
     }
@@ -210,9 +220,18 @@ export class ScreenComponent implements OnInit, OnChanges {
     createSelectableUsers() {
         let su: selectableUser[] = [];
         for (let k of this.users().keys()) {
-            su.push(<selectableUser>{code: k, name: this.users().get(k)!.login})
+            su.push(<selectableUser>{code: k, name: this.users().get(k)!.login});
         }
         this.selectableUsers = su;
+    }
+
+    createSelectableTimelineTemplates() {
+        let stt: selectableTimelineTemplate[] = [];
+        stt.push(<selectableTimelineTemplate>{code: '', name: '--none--'});
+        for (let k of this.timelineTemplates().keys()) {
+            stt.push(<selectableTimelineTemplate>{code: k, name: this.timelineTemplates().get(k)!.desc});
+        }
+        this.selectableTimelineTemplates = stt;
     }
 
     editClose() {

@@ -5,7 +5,7 @@ from noapiframe.endpoints import SettingEndpointBase, LoginEndpointBase
 from elements import Setting, Session, ScreenTemplate, Screen, GameAbbr
 from elements import ChallongeTournament, ChallongeParticipant, ChallongeMatch, DiscordGuild, DiscordRole
 from endpoints import UserEndpoint, TimelineTemplateEndpoint, PresetEndpoint, KioskEndpoint, TimelineEndpoint, MediaEndpoint
-from endpoints import AnnouncementsEndpoint, PlayercountsEndpoint, TASEndpoint
+from endpoints import AnnouncementsEndpoint, PlayercountsEndpoint, TASEndpoint, PresentationEndpoint
 from endpoints.metrics import start_metrics_exporter
 from helpers.versioning import run as versioning_run
 from helpers.wss import start_server as start_wss_server
@@ -34,6 +34,7 @@ class API():
         self.challongeparticipant = ChallongeParticipantEndpoint()
         self.discordguild = DiscordGuildEndpoint()
         self.discordrole = DiscordRoleEndpoint()
+        self.presentation = PresentationEndpoint()
 
 
 class SettingEndpoint(SettingEndpointBase):

@@ -3,6 +3,7 @@ cherrypy
 cherrypy-cors
 discord.py
 noapiframe @ git+https://github.com/nils-ost/noAPIframe.git
+pdf2image
 pychallonge @ git+https://github.com/nils-ost/pychallonge.git
 pymongo
 requests

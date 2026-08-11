@@ -11,4 +11,5 @@ export interface Timeline {
     displayed?: boolean;
     default?: boolean;
     preset?: boolean;
+    presentation: boolean;
 }
