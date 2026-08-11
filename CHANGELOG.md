@@ -11,6 +11,7 @@
 
 ### Fixes/Improvements
 
+  * Timelines now support a compact display mode in the Presenter interface for better overview during presentations
   * The duration of video media is now determined to be displayed on Screen element
 
 ## v1.1.0
