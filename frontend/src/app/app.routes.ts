@@ -6,6 +6,7 @@ import { AdminScreenComponent } from './components/admin/admin-screen/admin-scre
 import { StreamerScreenComponent } from './components/streamer/streamer-screen/streamer-screen.component';
 import { LogoutComponent } from './components/admin/logout/logout.component';
 import { PresenterScreenComponent } from './components/presenter/presenter-screen/presenter-screen.component';
+import { ParticipantInterfaceComponent } from './components/participant/participant-interface/participant-interface.component';
 
 export const routes: Routes = [
     { path: 'display', component: DisplayComponent },
@@ -14,5 +15,6 @@ export const routes: Routes = [
     { path: 'admin', component: AdminScreenComponent },
     { path: 'streamer', component: StreamerScreenComponent },
     { path: 'present', component: PresenterScreenComponent},
+    { path: 'participant', component: ParticipantInterfaceComponent },
     { path: '**', component: DisplayComponent }
 ];
