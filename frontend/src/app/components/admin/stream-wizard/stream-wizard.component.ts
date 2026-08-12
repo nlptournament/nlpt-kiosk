@@ -173,7 +173,7 @@ export class StreamWizardComponent implements OnInit {
             });
         }
         else {
-            screen = <Screen>{desc: this.commonDesc, key: screenTemplate.key, template_id: screenTemplate.id, user_id: this.selectedUser, variables: {stream: media_id}};
+            screen = <Screen>{desc: this.commonDesc, header: this.commonDesc, key: screenTemplate.key, template_id: screenTemplate.id, user_id: this.selectedUser, variables: {stream: media_id}};
             this.screenService.createScreen(screen).subscribe({
                 next: (result: any) => {
                     this.saveTimelineTemplate(result["created"]);

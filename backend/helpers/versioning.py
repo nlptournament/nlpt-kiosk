@@ -152,6 +152,24 @@ def run():
     # Add something like:
     # if versions_lt(db_version, '0.2'):
 
+    if versions_lt(db_version, '1.2.0'):
+        from elements import ScreenTemplate
+        from noapiframe import docDB
+        from_db = docDB.search_one('ScreenTemplate', {'name': 'Stream'})
+        if from_db is not None:
+            st = ScreenTemplate()
+            st._attr = from_db
+            if 'header_pos' not in st['variables_def']:
+                header_pos = {'type': 'str',
+                              'default': 'top-left',
+                              'desc': 'position of header overlay (top-left, top-center, top-right, bottom-left, bottom-center, bottom-right)'}
+                st['variables_def']['header_pos'] = header_pos
+                st.save()
+            if 'header_size' not in st['variables_def']:
+                header_size = {'type': 'int', 'default': 4, 'desc': 'relative size of overlayed header (values from 1 - 7 allowed)'}
+                st['variables_def']['header_size'] = header_size
+                st.save()
+
     db_defaults()
 
     Setting.set('version', current_version)
@@ -259,7 +277,11 @@ def system_screentemplates():
     # Stream
     if ScreenTemplate.count({'name': 'Stream'}) == 0:
         vardef = dict({
-            'stream': {'type': 'media3', 'desc': 'Media element to be played'}
+            'stream': {'type': 'media3', 'desc': 'Media element to be played'},
+            'header_pos': {'type': 'str',
+                           'default': 'top-left',
+                           'desc': 'position of header overlay (top-left, top-center, top-right, bottom-left, bottom-center, bottom-right)'},
+            'header_size': {'type': int, 'default': 4, 'desc': 'relative size of overlayed header (values from 1 - 7 allowed)'}
         })
         ScreenTemplate({
             'key': 'stream-player', 'name': 'Stream',
