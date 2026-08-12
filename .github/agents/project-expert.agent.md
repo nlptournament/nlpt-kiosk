@@ -119,7 +119,7 @@ Current version: v1.1.0, Repository owner: nils-ost
 | `challonge.py` | Challonge API fetcher running in daemon Process. Polls every 10 seconds for tournaments with challonge screen templates. Functions: fetch_tournament(), fetch_matches(), fetch_participant(). Includes mock data generator. |
 | `discord.py` | Discord bot worker in daemon Process using discord.py. Captures member presence updates (on_presence_update). Stores guilds, roles, members with current game. Debug command via DM: debug. |
 | `prometheus_connect.py` | Custom Prometheus API client (stripped to avoid matplotlib dependency for ARM builds). Methods: check_prometheus_connection(), custom_query(). Retry logic with backoff. |
-| `versioning.py` | Database migration system. Compares DB version vs software version. Creates default admin user (admin/password) if none exists. Seeds 14+ ScreenTemplates on first install (Plain Text, Background Image, Countdown, Announcements, Player Counts, TAS, Video, Stream, Challonge variants, Jump-to Timeline). Functions: versions_eq(), versions_lt(), versions_gt(), versions_lte(), versions_gte(). |
+| `versioning.py` | Database migration system. Compares DB version vs software version. Creates default admin user (admin/password) if none exists. Seeds 14+ ScreenTemplates on first install (Plain Text, Background Image, Countdown, Announcements, Player Counts, TAS, Video, Stream, Challonge variants, Jump-to Timeline). Includes v1.2.0 migration that adds `header_pos` and `header_size` variables to existing Stream ScreenTemplates for header overlay feature. Functions: versions_eq(), versions_lt(), versions_gt(), versions_lte(), versions_gte(). |
 | `version.py` | Contains current version string. |
 
 ### Startup Sequence (`backend/main.py`)
@@ -209,7 +209,7 @@ providePrimeNG({ theme: Aura, cssLayer: { name: 'primeng', order: 'tailwind-base
 | `challonge-parallel-tournaments/` | challonge-parallel-tournaments | Two parallel tournament brackets |
 | `challonge-round-completion/` | challonge-round-completion | Single tournament round progress |
 | `player-counts/` | — | Multi-source player counts (Prometheus/Discord) |
-| `stream-player/` | — | Stream video player |
+| `stream-player/` | stream-player | Stream video player with optional text header overlay via videojs-overlay plugin. Uses `header`, `header_pos`, and `header_size` template variables for positioning/sizing of overlayed text. Header position maps to Tailwind classes (e.g., 'top-left' → 'top-0 text-left'). |
 | `tas/` | — | TrackMania Stats wallboard |
 | `text/` | text | Plain text display |
 | `timer/` | countdown | Countdown timer to target timestamp |

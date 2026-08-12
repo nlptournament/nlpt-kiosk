@@ -8,11 +8,13 @@
   * Timelines can be used like presentations and be actively controlled by Presenter-Interface (see: [docs/presenter-interface.md](docs/presenter-interface.md) for more information)
   * Presentation Wizard to import PDFs as presentation TimelineTemplates, creating all required Media, Screens and TimelineTemplate with one click
   * New *Jump-to Timeline* Screen, that allows automatic Timeline switching on Kiosks (see: [docs/screens/jump-to-timeline.md](docs/screens/jump-to-timeline.md) for more info)
+  * Streams can display overlay text on top of the video stream via the header property
 
 ### Fixes/Improvements
 
   * Timelines now support a compact display mode in the Presenter interface for better overview during presentations
   * The duration of video media is now determined to be displayed on Screen element
+  * Stream ScreenTemplate now supports styled headers with configurable positioning and sizing variables
 
 ## v1.1.0
 
@@ -28,6 +30,10 @@
   * *User->Profile* dialog to change personal preferences
   * header of Screens can now be customized on per-Screen basis
   * setup guide for debian-trixie based Raspberry Pi OS Kiosks ([KioskPi](docs/install-kiosk-rpi-trixie.md)) - to be able to move away from bookworm-based Raspberry Pi OS
+
+  * Stream ScreenTemplate now supports styled headers with configurable positioning and sizing variables
+  * Streams can display overlay text on top of the video stream via the header property
+  * Dedicated Presenter-Screen UI for controlling presentations from the Admin-Interface
 
 ### Fixes/Improvements
 
