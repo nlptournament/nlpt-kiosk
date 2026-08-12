@@ -34,15 +34,17 @@ export class StreamPlayerComponent implements OnInit, OnChanges, OnDestroy {
             'plugins': {}
         }
         if (this.header() != '') {
+            // converting position-definition to tailwind instructions (e.g.: top-left gets top-0 text-left)
+            let header_pos: string = `${this.variables()['header_pos'].split('-')[0]}-0 text-${this.variables()['header_pos'].split('-')[1]}`;
+            // converting size-definition to tailwind instruction (e.g.: 4 gets text-7xl)
+            let header_size: string = `text-${Math.max(1, Math.min(7, this.variables()['header_size'])) + 3}xl`
             player_conf['plugins'] = {
                 overlay: {
                     overlays: [{
                         start: 'play',
                         end: 'pause',
-                        content: this.header,
-                        align: 'top',
-                        class: 'text-7xl font-orbitron ml-3 mr-3',
-                        showBackground: true
+                        content: this.header(),
+                        class: `font-orbitron ml-3 mr-3 mb-3 absolute z-10 ${header_size} ${header_pos} left-0 right-0 [text-shadow:_0_0_10px_rgba(0,0,0,0.8),0_2px_4px_rgba(0,0,0,0.6)]`
                     }]
                 }
             }

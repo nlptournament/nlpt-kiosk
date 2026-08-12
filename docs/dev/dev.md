@@ -49,3 +49,7 @@ Chromium startcommand for testing:
 ```
 chromium-browser http://localhost:4200/?name=testkiosk1 --no-first-run --autoplay-policy=no-user-gesture-required --user-data-dir="/tmp/chrome-dev-data" --disable-web-security
 ```
+
+## Testing Stream
+
+A Stream for testing can be found here: `https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8` (it's the Big Buck Bunny)
