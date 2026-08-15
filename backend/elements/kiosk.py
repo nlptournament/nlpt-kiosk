@@ -14,6 +14,8 @@ added_by_id : str | None
     if it is None the Kiosk is not yet accepted by an admin.
 common : bool (default: False)
     if True Kiosk is available to all Users, if False only available to owner and admins.
+participant : bool (default: False)
+    if True Kiosk is listed in the Participant Interface for public access.
 timeline_id : str | None
     Timeline, that is currently displayed on Kiosk. If it is None the related displaying device is showing nothing.
 default_timeline_id : str | None
@@ -31,6 +33,7 @@ apply_timelinetemplate(template_id : str) : bool
         desc=ElementBase.addAttr(type=str, default='', notnone=True),
         added_by_id=ElementBase.addAttr(type=str, default=None, fk='User'),
         common=ElementBase.addAttr(type=bool, default=True, notnone=True),
+        participant=ElementBase.addAttr(type=bool, default=False, notnone=True),
         timeline_id=ElementBase.addAttr(type=str, default=None, fk='Timeline'),
         default_timeline_id=ElementBase.addAttr(type=str, default=None, fk='Timeline')
     )

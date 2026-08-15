@@ -12,9 +12,9 @@ class MediaEndpoint(ElementEndpointBase):
     _element = Media
     _owner_attr = 'user_id'
     _other_attr = 'common'
-    _other_readable = list(['id', 'desc', 'src_type', 'src', 'type', 'user_id', 'common'])
+    _other_readable = list(['id', 'desc', 'src_type', 'src', 'type', 'user_id', 'common', 'active'])
     _other_createable = list(['desc', 'src_type', 'src', 'type', 'user_id', 'common'])
-    _all_readable = list(['id', 'src_type', 'src', 'type'])
+    _all_readable = list(['id', 'src_type', 'src', 'type', 'active'])
 
     @cherrypy.expose()
     def s3(self, element_id=None, upload=None):

@@ -11,10 +11,10 @@ class KioskEndpoint(ElementEndpointBase):
     _element = Kiosk
     _owner_attr = 'added_by_id'
     _other_attr = 'common'
-    _other_readable = list(['id', 'name', 'desc', 'added_by_id', 'common', 'timeline_id', 'default_timeline_id'])
-    _other_createable = list(['name', 'desc', 'added_by_id', 'common', 'timeline_id', 'default_timeline_id'])
-    _other_updateable = list(['timeline_id'])
-    _all_readable = list(['id', 'name', 'desc', 'timeline_id'])
+    _other_readable = list(['id', 'name', 'desc', 'added_by_id', 'common', 'participant', 'timeline_id', 'default_timeline_id'])
+    _other_createable = list(['name', 'desc', 'added_by_id', 'common', 'participant', 'timeline_id', 'default_timeline_id'])
+    _other_updateable = list(['timeline_id', 'participant'])
+    _all_readable = list(['id', 'name', 'desc', 'participant', 'timeline_id'])
     _all_createable = list(['name'])
 
     @cherrypy.expose()

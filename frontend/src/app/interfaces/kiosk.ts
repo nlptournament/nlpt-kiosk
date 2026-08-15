@@ -4,6 +4,7 @@ export interface Kiosk {
     desc: string;
     added_by_id?: string | null;
     common?: boolean;
+    participant: boolean;
     timeline_id: string | null;
     default_timeline_id?: string | null;
 }

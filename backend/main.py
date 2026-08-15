@@ -11,6 +11,7 @@ from helpers.versioning import run as versioning_run
 from helpers.wss import start_server as start_wss_server
 from helpers.challonge import start_fetcher as start_challonge_fetcher
 from helpers.discord import start_worker as start_discord_worker
+from helpers.stream_health import start_stream_health_worker
 
 
 class API():
@@ -134,5 +135,6 @@ if __name__ == '__main__':
     start_wss_server()
     start_challonge_fetcher()
     start_discord_worker()
+    start_stream_health_worker()
     start_metrics_exporter()
     cherrypy.quickstart(API(), '/', conf)

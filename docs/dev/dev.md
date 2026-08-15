@@ -2,8 +2,7 @@
 
 ## Development Environment Setup
 
-Folgende Schritte nutze ich für mein Dev-Setup auf Ubuntu, funktioniert genauso in einer Ubuntu WSL2 unter Windows.  
-Muss aber unter Umständen für andere Umgebungen adaptiert werden.
+The following steps outline the development setup on Ubuntu and also work in an Ubuntu WSL2 environment on Windows. Adjustments may be needed for other distributions or environments.
 
 ```
 sudo apt update; sudo apt install -y python3 virtualenv direnv curl
@@ -30,11 +29,11 @@ sudo docker buildx inspect --bootstrap
 
 ## Styling of Screens
 
-Ein paar Worte zu Tailwind: Ich habe, wie du sehen wirst, in der `tailwind.config.js` alle Werte, die Abstände oder Größen definieren, auf eine **vw** Basis umgeschrieben. Dies soll dafür sorgen, dass ein Screen immer gleich aussieht solange er eine 16:9 Auflösung hat. Die Auflösung der Beamer ist derzeit noch nicht bekannt und sie können unter Umständen auch unterschiedliche Auflösungen haben. Achso: Und um die nervigen Scrollbars zu verhindern, habe ich auf allen Screens soweit, den vertikalen Overflow verboten, das auch bitte beibehalten.  
-Du musst also darauf achten, dass dein Browser eine 16:9 Auflösung darstellt, wenn du die Elemente ausrichtest, damit zum schluss alles passt. Solltest du außerdem weitere Abstände oder Größen benötigen, so bitte ich dich auch diese in der config mit einem vw Wert zu definieren.
+The `tailwind.config.js` uses **vw** units for all spacing and size values. This ensures screens maintain consistent proportions on 16:9 displays, since projector resolutions may vary. Vertical overflow is disabled across all screens to prevent scrollbars — please keep this behavior when making changes.  
+When aligning elements, ensure your browser viewport has a 16:9 aspect ratio so everything renders correctly. If you need additional spacing or size values, define them using vw units in the config.
 
 > [!NOTE]
-> Bei einer Browser-Breite von 2560px entsprechen alle Größen wieder ihren ursprünglichen rem Werten.
+> At a browser width of 2560px, all vw values correspond to their original rem equivalents.
 
 ## Chromium Infos
 

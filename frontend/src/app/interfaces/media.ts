@@ -6,6 +6,7 @@ export interface Media {
     type: MediaType;
     user_id?: string;
     common?: boolean;
+    active: boolean;
 }
 
 export enum MediaSrcType {
