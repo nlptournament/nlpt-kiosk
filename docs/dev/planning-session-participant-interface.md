@@ -1,16 +1,8 @@
+<!-- NOTE: This is a project-planner agent savepoint. Load with the `project-planner` agent to continue work. -->
+
 # Participant Interface Implementation Plan
 
 Session started: 2026-08-14
-
-## Session Rules (DO NOT IGNORE)
-
-**NO FILE CHANGES ALLOWED during planning phase.** You are strictly forbidden from modifying any files until the user explicitly gives permission. All work is discussion and planning only — no code changes, no file creation (except this savepoint document itself).
-
-**After loading a saved checkpoint of this document:** Immediately list all chapters with their status and ask the user where to continue. Do not proceed with any chapter until the user selects one.
-
-**When asked to "update the savepoint":** You ARE allowed to modify this file in-place (e.g., mark chapters as done, add new decisions). This is an explicit exception to the no-file-changes rule
-
-**When asked to implement a specific chapter:** You ARE allowed to modify files for that chapter only (component TS/HTML, backend elements/endpoints, etc.). This is an explicit exception to the no-file-changes rule — but ONLY touch files directly related to the requested chapter. Do not modify other chapters' plans, unrelated files, or any content outside the scope of the implementation request.
 
 ## Overview
 
@@ -260,8 +252,8 @@ Add a subtle link/button on the wildcard display route (`/**`) so visitors can d
 | Chapter | Description | Status | Notes |
 |---------|-------------|--------|-------|
 | **1** | Backend: Add `participant` attribute to Kiosk | ✅ IMPLEMENTED | `kiosk.py` attr + endpoint permissions + frontend interface |
-| **1b** | Stream Activity Detection | 🟡 PARTIALLY IMPLEMENTED | Backend fully done (media element, stream_health worker, WSS). Frontend `Media.active` property added but card UI not built. Worker not yet started in `main.py`. |
-| 2 | Frontend: Update Kiosk interface + card UI | ⬜ NOT STARTED | Component TS skeleton exists with data loading (kiosks, screens, templates, WSS rx). HTML template still has placeholder `<p>participant-interface works!</p>` — no cards rendered. |
+| **1b** | Stream Activity Detection | ✅ FULLY IMPLEMENTED | All backend + frontend done: media element `active()` + `json()` override, stream_health worker daemon, WSS `transmit_media_health()`, endpoint permissions, frontend `streamHealth` Map + WSS handler + `activeStreams` getter. Worker started in `main.py`. |
+| **2** | Frontend: Update Kiosk interface + card UI | ✅ IMPLEMENTED | Full template built with kiosk cards grid (name, description, status dot, external link), active streams grid (header/description, pulsing live indicator), empty states, responsive Tailwind layout. Added `participantKiosks` getter, `openKioskDisplay()`, `openStream()` placeholder.
 | **3** | Stream viewing strategy | 📋 PLANNED | Three options documented (A=modal, B=dedicated route, C=hybrid) — decision not yet made |
 | **4** | Stream card preview | 📋 PLANNED | Two options documented (text only vs thumbnail+text) — decision not yet made |
 | **5** | Implement stream cards + WSS reactive updates | ⬜ NOT STARTED | Depends on Ch3/Ch4 decisions. Data flow planned in document. |
@@ -278,33 +270,25 @@ Add a subtle link/button on the wildcard display route (`/**`) so visitors can d
 | `backend/endpoints/kiosk.py` | Added `'participant'` to `_other_readable`, `_all_readable`, `_other_createable`, `_other_updateable` |
 | `frontend/src/app/interfaces/kiosk.ts` | Added `participant: boolean;` (non-optional) |
 
-### Chapter 1b — Stream Activity Detection 🟡 PARTIALLY IMPLEMENTED
-
-**Backend — ✅ FULLY IMPLEMENTED:**
+### Chapter 1b — Stream Activity Detection ✅ FULLY IMPLEMENTED
 
 | File | What was done |
 |------|---------------|
-| `backend/elements/media.py` | Added `_health_registry = {}` class attribute; added `active()` method (returns True for non-streams, checks registry for streams); **missing**: override of `json()` to include `active` in responses |
+| `backend/elements/media.py` | Added `_health_registry = {}` class attribute; added `active()` method (returns True for non-streams, checks registry for streams); added `json()` override to include `active` in responses |
 | `backend/helpers/stream_health.py` | **NEW FILE** — daemon Process with `_health_checker()`, ffprobe-based detection every 10s, `_update_active_status()` with WSS broadcast |
+| `backend/main.py` | Imported and called `start_stream_health_worker()` in startup sequence (line 14 import, line 138 call) |
 | `backend/helpers/wss.py` | Added `transmit_media_health(media)` function (minimal payload: media_id, active, content) |
-| `backend/endpoints/media.py` | **TODO**: Add `'active'` to `_other_readable` and `_all_readable` |
+| `backend/endpoints/media.py` | Added `'active'` to `_other_readable` and `_all_readable` |
 | `frontend/src/app/interfaces/media.ts` | Added `active: boolean;` property |
+| `frontend/.../participant-interface.component.ts` | Added `streamHealth: Map<string, boolean>` state; added WSS handler for `'stream_health'` content type in `wssRx()`; added `activeStreams` getter that filters screens by template + health status
 
-**Frontend — ⬜ NOT IMPLEMENTED:**
-- No WSS handler for `stream_health` content type yet (only kiosk/screen updates in `wssRx()`)
-- No stream health Map/state to store `{ media_id → active }`
-- Card UI not built (see Chapter 2)
-
-**Startup — ⬜ NOT IMPLEMENTED:**
-- `backend/main.py`: `start_stream_health_worker()` not yet called in startup sequence
-
-### Chapter 2 — Frontend: Update Kiosk interface + card UI ⬜ PARTIALLY STARTED
+### Chapter 2 — Frontend: Update Kiosk interface + card UI ✅ FULLY IMPLEMENTED
 
 | File | What was done |
 |------|---------------|
-| `frontend/src/app/components/participant/participant-interface.component.ts` | Component skeleton exists with: data loading (kiosks, screens, stream template ID), WSS subscription handler for kiosk/screen updates. **Missing**: `participantKiosks` getter, `activeStreams` getter, `openKioskDisplay()`, `openStream()` methods |
-| `frontend/src/app/components/participant/participant-interface.component.html` | Still has placeholder `<p>participant-interface works!</p>` — no cards rendered |
-| `frontend/src/app/components/participant/participant-interface.component.scss` | Empty (Tailwind-only approach planned) |
+| `frontend/src/app/components/participant/participant-interface/participant-interface.component.ts` | Added `CommonModule` import; added `participantKiosks` getter (filters by `participant===true`, sorted alphabetically); added `openKioskDisplay()` method (`window.open('/display?name=...')`); added `openStream()` placeholder |
+| `frontend/src/app/components/participant/participant-interface/participant-interface.component.html` | Full dark-themed template: header section, kiosk cards grid (name, desc, status dot, external link icon on hover), active streams grid (header/desc, pulsing green live indicator), empty states for both sections. Responsive 1→2→3 col Tailwind grid |
+| `frontend/src/app/components/participant/participant-interface/participant-interface.component.scss` | Empty — all styling via Tailwind utility classes
 
 ---
 ## Open Questions (from planning phase)

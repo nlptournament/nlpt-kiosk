@@ -1,6 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Subscription } from 'rxjs';
+import { CommonModule } from '@angular/common';
 
 import { KioskService } from '../../../services/kiosk.service';
 import { ScreenService } from '../../../services/screen.service';
@@ -14,7 +15,7 @@ import { ScreenTemplate } from '../../../interfaces/screen-template';
 
 @Component({
     selector: 'participant-interface',
-    imports: [],
+    imports: [CommonModule],
     templateUrl: './participant-interface.component.html',
     styleUrl: './participant-interface.component.scss'
 })
@@ -22,6 +23,7 @@ export class ParticipantInterfaceComponent implements OnInit, OnDestroy {
     screens: Map<string, Screen> = new Map<string, Screen>;
     kiosks: Map<string, Kiosk> = new Map<string, Kiosk>;
     streamScreenTemplateId: string = '';
+    streamHealth: Map<string, boolean> = new Map<string, boolean>; // media_id -> active status (from WSS stream_health messages)
 
     wssSubscription: Subscription | undefined;
 
@@ -32,6 +34,33 @@ export class ParticipantInterfaceComponent implements OnInit, OnDestroy {
         private screenTemplateService: ScreenTemplateService,
         private websocketService: WebSocketService
     ) {}
+
+    get activeStreams(): Screen[] {
+        if (!this.streamScreenTemplateId) return [];
+        const result: Screen[] = [];
+        for (const screen of this.screens.values()) {
+            if (screen.template_id !== this.streamScreenTemplateId) continue;
+            // The stream-player template uses a 'stream' variable slot holding the media_id
+            const streamVar = screen.variables?.find((v: any) => v.key === 'stream');
+            if (!streamVar?.value) continue;
+            // Check health status — only include active streams
+            const isActive = this.streamHealth.get(streamVar.value) ?? false;
+            if (isActive) {
+                result.push(screen);
+            }
+        }
+        return result.sort((a, b) => (a.desc || '').localeCompare(b.desc || ''));
+    }
+
+    get participantKiosks(): Kiosk[] {
+        const result: Kiosk[] = [];
+        for (const kiosk of this.kiosks.values()) {
+            if (kiosk.participant === true) {
+                result.push(kiosk);
+            }
+        }
+        return result.sort((a, b) => a.name.localeCompare(b.name));
+    }
 
     ngOnInit(): void {
         this.wssSubscription = this.websocketService.getAdminMessages().subscribe((msg) => this.wssRx(msg));
@@ -61,6 +90,9 @@ export class ParticipantInterfaceComponent implements OnInit, OnDestroy {
                 else if (screen.id && this.screens.has(screen.id) && msg['content'] == 'delete') {
                     this.screens.delete(screen.id);
                 }
+            }
+            if (msg['content'] === 'stream_health' && msg['media_id']) {
+                this.streamHealth.set(msg['media_id'], msg['active']);
             }
         }
     }
@@ -109,6 +141,15 @@ export class ParticipantInterfaceComponent implements OnInit, OnDestroy {
                 this.errorHandler.handleError(err);
             }
         });
+    }
+
+    openKioskDisplay(name: string): void {
+        window.open(`/display?name=${encodeURIComponent(name)}`, '_blank');
+    }
+
+    openStream(screenId: string): void {
+        // Placeholder — Chapter 3 will implement the viewing strategy (modal or dedicated route)
+        console.log('openStream called for screen:', screenId);
     }
 
 }

@@ -1,1 +1,100 @@
-<p>participant-interface works!</p>
+<div class="min-h-screen bg-gray-900 text-white">
+    <!-- Header -->
+    <div class="border-b border-gray-700">
+        <div class="mx-auto max-w-6xl px-4 py-8">
+            <h1 class="text-4xl font-bold tracking-tight">NLPT Kiosk</h1>
+            <p class="mt-2 text-lg text-gray-400">Select a kiosk to view the live display, or browse active streams.</p>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="mx-auto max-w-6xl px-4 py-8 space-y-12">
+
+        <!-- Available Kiosks Section -->
+        <section>
+            <h2 class="text-2xl font-semibold mb-4 flex items-center gap-2">
+                <i class="pi pi-desktop text-blue-400"></i>
+                Available Kiosks
+            </h2>
+
+            @if (participantKiosks.length === 0) {
+                <div class="text-gray-500 italic py-8 text-center bg-gray-800 rounded-lg">
+                    No kiosks are currently available for participants.
+                </div>
+            } @else {
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    @for (kiosk of participantKiosks; track kiosk.id) {
+                        <button
+                            (click)="openKioskDisplay(kiosk.name)"
+                            class="group relative bg-gray-800 hover:bg-gray-750 border border-gray-700 hover:border-blue-500 rounded-lg p-5 text-left transition-all duration-200 shadow-md hover:shadow-lg"
+                        >
+                            <div class="flex items-start justify-between">
+                                <div class="flex-1 min-w-0">
+                                    <h3 class="text-xl font-semibold truncate group-hover:text-blue-400 transition-colors">
+                                        {{ kiosk.name }}
+                                    </h3>
+                                    @if (kiosk.desc) {
+                                        <p class="mt-2 text-sm text-gray-400 line-clamp-2">{{ kiosk.desc }}</p>
+                                    }
+                                </div>
+                                <!-- Status indicator dot -->
+                                <span class="ml-3 mt-1">
+                                    @if (kiosk.timeline_id) {
+                                        <span class="inline-block w-3 h-3 rounded-full bg-green-500 shadow-sm" title="Active"></span>
+                                    } @else {
+                                        <span class="inline-block w-3 h-3 rounded-full bg-gray-600" title="Idle"></span>
+                                    }
+                                </span>
+                            </div>
+                            <!-- External link icon on hover -->
+                            <div class="absolute top-4 right-12 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <i class="pi pi-external-link text-gray-500"></i>
+                            </div>
+                        </button>
+                    }
+                </div>
+            }
+        </section>
+
+        <!-- Available Streams Section -->
+        <section>
+            <h2 class="text-2xl font-semibold mb-4 flex items-center gap-2">
+                <i class="pi pi-play-circle text-red-400"></i>
+                Active Streams
+            </h2>
+
+            @if (activeStreams.length === 0) {
+                <div class="text-gray-500 italic py-8 text-center bg-gray-800 rounded-lg">
+                    No active streams available at this time.
+                </div>
+            } @else {
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    @for (screen of activeStreams; track screen.id) {
+                        <button
+                            (click)="openStream(screen.id || '')"
+                            class="group bg-gray-800 hover:bg-gray-750 border border-gray-700 hover:border-red-500 rounded-lg p-5 text-left transition-all duration-200 shadow-md hover:shadow-lg"
+                        >
+                            <div class="flex items-start justify-between">
+                                <div class="flex-1 min-w-0">
+                                    @if (screen.header) {
+                                        <h3 class="text-xl font-semibold truncate group-hover:text-red-400 transition-colors">
+                                            {{ screen.header }}
+                                        </h3>
+                                    }
+                                    @if (screen.desc) {
+                                        <p class="mt-2 text-sm text-gray-400 line-clamp-2">{{ screen.desc }}</p>
+                                    }
+                                </div>
+                                <!-- Active indicator dot -->
+                                <span class="ml-3 mt-1">
+                                    <span class="inline-block w-3 h-3 rounded-full bg-green-500 shadow-sm animate-pulse" title="Live"></span>
+                                </span>
+                            </div>
+                        </button>
+                    }
+                </div>
+            }
+        </section>
+
+    </div>
+</div>
