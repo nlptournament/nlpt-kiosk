@@ -1,16 +1,16 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Subscription } from 'rxjs';
+import { Subscription, timer } from 'rxjs';
 import { CommonModule } from '@angular/common';
 
 import { KioskService } from '../../../services/kiosk.service';
 import { ScreenService } from '../../../services/screen.service';
+import { ScreenTemplateService } from '../../../services/screen-template.service';
 import { WebSocketService } from '../../../services/web-socket.service';
 import { ErrorHandlerService } from '../../../services/error-handler.service';
 
 import { Kiosk } from '../../../interfaces/kiosk';
 import { Screen } from '../../../interfaces/screen';
-import { ScreenTemplateService } from '../../../services/screen-template.service';
 import { ScreenTemplate } from '../../../interfaces/screen-template';
 
 @Component({
@@ -24,8 +24,11 @@ export class ParticipantInterfaceComponent implements OnInit, OnDestroy {
     kiosks: Map<string, Kiosk> = new Map<string, Kiosk>;
     streamScreenTemplateId: string = '';
     streamHealth: Map<string, boolean> = new Map<string, boolean>; // media_id -> active status (from WSS stream_health messages)
+    waitForStreamsCountdown: number = 10;
 
     wssSubscription: Subscription | undefined;
+    refreshCountdownTimer = timer(1000, 1000);
+    refreshCountdownTimerSubscription: Subscription | undefined;
 
     constructor(
         private errorHandler: ErrorHandlerService,
@@ -40,11 +43,7 @@ export class ParticipantInterfaceComponent implements OnInit, OnDestroy {
         const result: Screen[] = [];
         for (const screen of this.screens.values()) {
             if (screen.template_id !== this.streamScreenTemplateId) continue;
-            // The stream-player template uses a 'stream' variable slot holding the media_id
-            const streamVar = screen.variables?.find((v: any) => v.key === 'stream');
-            if (!streamVar?.value) continue;
-            // Check health status — only include active streams
-            const isActive = this.streamHealth.get(streamVar.value) ?? false;
+            const isActive = this.streamHealth.get(screen.variables['stream']) ?? false;
             if (isActive) {
                 result.push(screen);
             }
@@ -67,10 +66,16 @@ export class ParticipantInterfaceComponent implements OnInit, OnDestroy {
         this.refreshKiosks();
         this.refreshScreens();
         this.fetchStreamScreenTemplateId();
+        this.refreshCountdownTimerSubscription = this.refreshCountdownTimer.subscribe(() => this.updateCountdown());
     }
 
     ngOnDestroy(): void {
         this.wssSubscription?.unsubscribe();
+    }
+
+    updateCountdown() {
+        if (this.waitForStreamsCountdown <= 0) this.refreshCountdownTimerSubscription?.unsubscribe();
+        else this.waitForStreamsCountdown = this.waitForStreamsCountdown - 1;
     }
 
     wssRx(msg: any) {

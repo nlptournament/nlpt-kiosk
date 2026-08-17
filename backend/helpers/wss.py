@@ -196,9 +196,9 @@ def transmit_media_update(media):
     com_rx_queue.put({'what': 'send', 'target': 'owner', 'owner_id': media['user_id'], 'msg': json.dumps(result)})
 
 
-def transmit_media_health(media):
+def transmit_media_health(media, active=False):
     """Broadcast stream health status (active flag only) to ALL connected clients."""
-    result = {'media_id': media['_id'], 'active': media.active(), 'content': 'stream_health'}
+    result = {'media_id': media['_id'], 'active': active, 'content': 'stream_health'}
     com_rx_queue.put({'what': 'send', 'target': 'all', 'msg': json.dumps(result)})
 
 

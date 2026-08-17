@@ -121,7 +121,8 @@ export class DisplayComponent implements OnInit, OnDestroy {
         if (this.timeline) {
             this.timeline.current_pos = pos;
             this.timeline.kiosk_id = this.kiosk.id;
-            this.timelineService.setCurrentPos(this.timeline).subscribe(() => {});
+            if (!this.kiosk.participant)
+                this.timelineService.setCurrentPos(this.timeline).subscribe(() => {});
         }
     }
 

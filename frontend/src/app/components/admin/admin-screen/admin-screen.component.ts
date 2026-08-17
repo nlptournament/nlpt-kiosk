@@ -242,7 +242,7 @@ export class AdminScreenComponent implements OnInit, OnDestroy {
                         label: 'Create Kiosk',
                         icon: 'pi pi-building-columns',
                         command: () => {
-                            this.dummyKiosk = <Kiosk>{'name': this.currentUser.login + "'s Kiosk", 'added_by_id': this.currentUser.id, 'common': false};
+                            this.dummyKiosk = <Kiosk>{'name': this.currentUser.login + "'s Kiosk", 'added_by_id': this.currentUser.id, 'common': false, 'participant': false};
                         }
                     },
                     {

@@ -22,7 +22,7 @@ import { TooltipModule } from 'primeng/tooltip';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ErrorHandlerService } from '../../../services/error-handler.service';
 
-interface selectableCommon {
+interface selectableBool {
     code: boolean,
     name: string
 }
@@ -63,7 +63,8 @@ export class KioskComponent implements OnInit {
     editActive: boolean = false;
     timelinesExpanded: boolean = false;
     defaultTimelineExpanded: boolean = false;
-    selectableCommons: selectableCommon[] = [];
+    selectableCommons: selectableBool[] = [];
+    selectableParticipants: selectableBool[] = [];
     selectableUsers: selectableUser[] = [];
     selectableTimelineTemplates: selectableTimelineTemplate[] = [];
     timelineCreateActive: boolean = false;
@@ -85,8 +86,10 @@ export class KioskComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        this.selectableCommons.push(<selectableCommon>{code: true, 'name': 'available2everyone'});
-        this.selectableCommons.push(<selectableCommon>{code: false, 'name': 'just4owner'});
+        this.selectableCommons.push(<selectableBool>{code: true, 'name': 'available2everyone'});
+        this.selectableCommons.push(<selectableBool>{code: false, 'name': 'just4owner'});
+        this.selectableParticipants.push(<selectableBool>{code: true, 'name': 'available4participants'});
+        this.selectableParticipants.push(<selectableBool>{code: false, 'name': 'internalUseOnly'});
         if (this.kiosk().id) this.selfUri = window.location.origin + '?name=' + this.kiosk().name;
         if(this.editMode()) this.editOpen();
     }

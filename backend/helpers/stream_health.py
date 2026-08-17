@@ -28,14 +28,14 @@ def _health_checker():
 
 def _check_stream(media):
     """Check if a stream is actively producing data using ffprobe."""
+    from helpers.wss import transmit_media_health
     url = media['src']
     try:
         result = subprocess.run(
             [
                 'ffprobe',
                 '-v', 'error',
-                '-select_streams', 'v:0',
-                '-show_entries', 'stream=nb_frames',
+                '-show_format',
                 '-of', 'json',
                 url,
             ],
@@ -46,31 +46,19 @@ def _check_stream(media):
 
         if result.returncode != 0:
             # ffprobe failed → stream is inactive
-            _update_active_status(media, False)
+            transmit_media_health(media, False)
             return
 
         import json as json_lib
         data = json_lib.loads(result.stdout)
-        streams = data.get('streams', [])
 
-        # Active if has frames (live stream actively producing)
-        active = any(s.get('nb_frames', 0) > 0 for s in streams)
-        _update_active_status(media, active)
+        # Active if has steams
+        active = data.get('format', {}).get('nb_streams', 0) > 0
+        transmit_media_health(media, active)
 
     except subprocess.TimeoutExpired:
         # Timeout → stream is inactive
-        _update_active_status(media, False)
+        transmit_media_health(media, False)
     except Exception as e:
         print(f'error checking stream {media["_id"]}: {e}')
-        _update_active_status(media, False)
-
-
-def _update_active_status(media, active):
-    """Update media health status in global registry and broadcast via WSS if changed."""
-    from helpers.wss import transmit_media_health
-
-    current_active = Media._health_registry.get(media['_id'], None)
-
-    if current_active != active:
-        Media._health_registry[media['_id']] = active
-        transmit_media_health(media)
+        transmit_media_health(media, False)

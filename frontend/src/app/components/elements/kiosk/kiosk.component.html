@@ -21,6 +21,7 @@
         <div class="flex flex-row items-center gap-1">
             <i class="pi pi-circle-off !text-1xl" pTooltip="only visible to owner" showDelay="300" tooltipPosition="right" *ngIf="!kiosk().common"></i>
             <i class="pi pi-circle-on !text-1xl" pTooltip="visible to anyone" showDelay="300" tooltipPosition="right" *ngIf="kiosk().common"></i>
+            <i class="pi pi-globe !text-1xl" pTooltip="listed on Participants-Interface" showDelay="300" tooltipPosition="right" *ngIf="kiosk().participant"></i>
             <div class="flex flex-row">
                 <div *ngIf="kiosk().desc == ''">{{ kiosk().name }}</div>
                 <div class="text-highlight" *ngIf="kiosk().desc != ''">{{ kiosk().desc }}</div>
@@ -141,6 +142,8 @@
             </p-iftalabel>
 
             <p-selectbutton [options]="selectableCommons" inputId="common" [(ngModel)]="kiosk().common" optionLabel="name" optionValue="code" class="mb-2" />
+
+            <p-selectbutton [options]="selectableParticipants" inputId="common" [(ngModel)]="kiosk().participant" optionLabel="name" optionValue="code" class="mb-2" />
 
             <div class="w-full flex justify-between">
                 <p-button label="Delete" severity="danger" (onClick)="kioskDelete()" *ngIf="kiosk().id" />

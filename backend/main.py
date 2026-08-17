@@ -57,6 +57,7 @@ class ScreenTemplateEndpoint(ElementEndpointBase):
     _session_cls = Session
     _element = ScreenTemplate
     _other_readable = list(['id', 'key', 'name', 'desc', 'endless', 'duration', 'variables_def'])
+    _all_readable = list(['id', 'key', 'name'])
     _ro_attr = list(['key', 'name', 'desc', 'endless', 'duration', 'variables_def'])
 
 
@@ -68,7 +69,7 @@ class ScreenEndpoint(ElementEndpointBase):
         'id', 'desc', 'template_id', 'user_id', 'header', 'duration', 'till', 'repeat', 'loop', 'variables', 'locked', 'displayed', 'default', 'key'
     ]
     _other_createable = list(['desc', 'template_id', 'user_id', 'header', 'duration', 'till', 'repeat', 'loop', 'variables'])
-    _all_readable = list(['id', 'header', 'duration', 'till', 'repeat', 'loop', 'variables', 'key'])
+    _all_readable = list(['id', 'desc', 'template_id', 'header', 'duration', 'till', 'repeat', 'loop', 'variables', 'key'])
 
 
 class GameAbbrEndpoint(ElementEndpointBase):

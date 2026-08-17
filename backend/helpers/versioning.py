@@ -281,7 +281,7 @@ def system_screentemplates():
             'header_pos': {'type': 'str',
                            'default': 'top-left',
                            'desc': 'position of header overlay (top-left, top-center, top-right, bottom-left, bottom-center, bottom-right)'},
-            'header_size': {'type': int, 'default': 4, 'desc': 'relative size of overlayed header (values from 1 - 7 allowed)'}
+            'header_size': {'type': 'int', 'default': 4, 'desc': 'relative size of overlayed header (values from 1 - 7 allowed)'}
         })
         ScreenTemplate({
             'key': 'stream-player', 'name': 'Stream',

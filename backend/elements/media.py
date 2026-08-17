@@ -89,15 +89,12 @@ common : bool (default: True)
                 return False
         return False
 
-    # Global registry of stream health statuses (media_id -> active)
-    _health_registry = {}
-
     def active(self):
-        """Returns True unless type is 3 (Stream). For streams, returns cached health status if available, otherwise False."""
+        """Returns True unless type is 3 (Stream). For streams returns False, the actual value is determined in stream_health"""
         if self['type'] != 3:
             return True
-        # For streams: check global health registry
-        return Media._health_registry.get(self['_id'], False)
+        # For streams: always return False
+        return False
 
     def json(self):
         result = super().json()

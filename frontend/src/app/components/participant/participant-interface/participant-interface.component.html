@@ -63,11 +63,17 @@
                 Active Streams
             </h2>
 
-            @if (activeStreams.length === 0) {
+            @if (activeStreams.length === 0 && waitForStreamsCountdown === 0) {
                 <div class="text-gray-500 italic py-8 text-center bg-gray-800 rounded-lg">
                     No active streams available at this time.
                 </div>
-            } @else {
+            }
+            @else if (activeStreams.length === 0 && waitForStreamsCountdown > 0) {
+                <div class="text-gray-500 italic py-8 text-center bg-gray-800 rounded-lg">
+                    Searching for active Streams. This takes up to {{ waitForStreamsCountdown }} seconds.
+                </div>
+            }
+            @else {
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                     @for (screen of activeStreams; track screen.id) {
                         <button
@@ -76,13 +82,13 @@
                         >
                             <div class="flex items-start justify-between">
                                 <div class="flex-1 min-w-0">
-                                    @if (screen.header) {
+                                    @if (screen.desc) {
                                         <h3 class="text-xl font-semibold truncate group-hover:text-red-400 transition-colors">
-                                            {{ screen.header }}
+                                            {{ screen.desc }}
                                         </h3>
                                     }
-                                    @if (screen.desc) {
-                                        <p class="mt-2 text-sm text-gray-400 line-clamp-2">{{ screen.desc }}</p>
+                                    @if (screen.header) {
+                                        <p class="mt-2 text-sm text-gray-400 line-clamp-2">{{ screen.header }}</p>
                                     }
                                 </div>
                                 <!-- Active indicator dot -->
