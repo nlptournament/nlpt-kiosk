@@ -214,25 +214,13 @@ Decide what stream cards display.
 
 ---
 
-## Chapter 5: Implement Stream Cards + WSS Reactive Updates ⬜ NOT STARTED
+## Chapter 5: Implement Stream Cards + WSS Reactive Updates ✅ SUPERSERVED BY CH2+CH3
 
-Build the stream card section, wire up the chosen viewing strategy (Ch3), and integrate WebSocket updates.
+All functionality from this chapter was implemented in Chapters 2 and 3:
+- **Ch2** built the stream cards HTML template with reactive WSS updates (stream health Map, `activeStreams` getter)
+- **Ch3** wired `openStream()` to the dedicated route viewer (`/participant/stream/:screenId`)
 
-### Data Flow
-```
-User visits /participant
-    │
-    ├─► HTTP GET /kiosk/ → filter kiosks with participant=true
-    │   └─► Display as kiosk cards
-    │       └─► Click → window.open('/display?name={name}')
-    │
-    ├─► HTTP GET /screen/ → find displayed screens using stream-player template
-    │   └─► Cross-reference with participant kiosks (via WSS or client-side join)
-    │   └─► Display as stream cards
-    │       └─► Click → navigate to chosen viewing strategy route/modal
-    │
-    └─► WSS admin feed → reactive updates when screens/kiosks change
-```
+The data flow diagram below is outdated — everything works end-to-end.
 
 ---
 
@@ -253,12 +241,11 @@ Add a subtle link/button on the wildcard display route (`/**`) so visitors can d
 |---------|-------------|--------|-------|
 | **1** | Backend: Add `participant` attribute to Kiosk | ✅ IMPLEMENTED | `kiosk.py` attr + endpoint permissions + frontend interface |
 | **1b** | Stream Activity Detection | ✅ FULLY IMPLEMENTED | All backend + frontend done: media element `active()` + `json()` override, stream_health worker daemon, WSS `transmit_media_health()`, endpoint permissions, frontend `streamHealth` Map + WSS handler + `activeStreams` getter. Worker started in `main.py`. |
-| **2** | Frontend: Update Kiosk interface + card UI | ✅ IMPLEMENTED | Full template built with kiosk cards grid (name, description, status dot, external link), active streams grid (header/description, pulsing live indicator), empty states, responsive Tailwind layout. Added `participantKiosks` getter, `openKioskDisplay()`, `openStream()` placeholder.
-| **3** | Stream viewing strategy | 📋 PLANNED | Three options documented (A=modal, B=dedicated route, C=hybrid) — decision not yet made |
-| **4** | Stream card preview | 📋 PLANNED | Two options documented (text only vs thumbnail+text) — decision not yet made |
-| **5** | Implement stream cards + WSS reactive updates | ⬜ NOT STARTED | Depends on Ch3/Ch4 decisions. Data flow planned in document. |
-| 6 | Optional: Discoverability link from default display | 📋 PLANNED | Idea documented, no implementation started |
-
+| **2** | Frontend: Update Kiosk interface + card UI | ✅ IMPLEMENTED | Full template built with kiosk cards grid (name, description, status dot, external link), active streams grid (header/description, pulsing live indicator), empty states, responsive Tailwind layout. Added `participantKiosks` getter, `openKioskDisplay()`, `openStream()` placeholder. |
+| **3** | Stream Viewing Strategy (Option B) | ✅ IMPLEMENTED | Dedicated route at `/participant/stream/:screenId`. Added `showControls` input to StreamPlayerComponent (defaulting to false). StreamViewerComponent fetches screen by ID, shows player with controls enabled, handles 404 error state. `openStream()` updated to open new tab. |
+| **4** | Stream card preview | 📋 PLANNED | Two options documented (text only vs thumbnail+text) — decision not yet made. Cards currently show text only (Screen header/desc). |
+| **5** | Implement stream cards + WSS reactive updates | ✅ SUPERSERVED BY CH2+CH3 | Stream cards HTML built in Ch2; `openStream()` wired to dedicated route in Ch3. Data flow diagram below is outdated — all functionality is implemented. |
+| **6** | Optional: Discoverability link from default display | 📋 PLANNED | Idea documented, no implementation started |
 ---
 ## Implementation Details
 
@@ -290,8 +277,18 @@ Add a subtle link/button on the wildcard display route (`/**`) so visitors can d
 | `frontend/src/app/components/participant/participant-interface/participant-interface.component.html` | Full dark-themed template: header section, kiosk cards grid (name, desc, status dot, external link icon on hover), active streams grid (header/desc, pulsing green live indicator), empty states for both sections. Responsive 1→2→3 col Tailwind grid |
 | `frontend/src/app/components/participant/participant-interface/participant-interface.component.scss` | Empty — all styling via Tailwind utility classes
 
+### Chapter 3 — Stream Viewing Strategy (Option B: Dedicated Route) ✅ FULLY IMPLEMENTED
+
+| File | What was done |
+|------|---------------|
+| `frontend/src/app/components/screens/stream-player/stream-player.component.ts` | Added `showControls = input(false)` input; passed `{ controls: this.showControls() }` to videojs config — allows showing control-bar for participant viewing while keeping display mode hidden |
+| `frontend/src/app/components/participant/stream-viewer/stream-viewer.component.ts` | Full implementation: reads `screenId` from route params via `ActivatedRoute`, fetches screen via `ScreenService.getScreen()`, handles 404/error states, imports `StreamPlayerComponent` + `RouterModule` |
+| `frontend/src/app/components/participant/stream-viewer/stream-viewer.component.html` | Error state template ("Stream Not Found" + back link) and stream player template with `[showControls]="true"` |
+| `frontend/src/app/components/participant/stream-viewer/stream-viewer.component.scss` | Empty — all styling via Tailwind utility classes |
+| `frontend/src/app/app.routes.ts` | Added route: `{ path: 'participant/stream/:screenId', component: StreamViewerComponent }` before wildcard |
+| `frontend/src/app/components/participant/participant-interface/participant-interface.component.ts` | Updated `openStream()` to call `window.open('/participant/stream/' + screenId, '_blank')` instead of placeholder
+
 ---
 ## Open Questions (from planning phase)
 
-1. **Chapter 3:** Which viewing strategy? (A=modal, B=dedicated route, C=hybrid)
-2. **Chapter 4:** Stream card preview style? (text only vs thumbnail+text)
+1. **Chapter 4:** Stream card preview style? (text only vs thumbnail+text) — cards currently show text only (Screen header/desc), no extra API calls needed

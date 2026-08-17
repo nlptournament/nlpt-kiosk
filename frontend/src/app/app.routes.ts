@@ -7,6 +7,7 @@ import { StreamerScreenComponent } from './components/streamer/streamer-screen/s
 import { LogoutComponent } from './components/admin/logout/logout.component';
 import { PresenterScreenComponent } from './components/presenter/presenter-screen/presenter-screen.component';
 import { ParticipantInterfaceComponent } from './components/participant/participant-interface/participant-interface.component';
+import { StreamViewerComponent } from './components/participant/stream-viewer/stream-viewer.component';
 
 export const routes: Routes = [
     { path: 'display', component: DisplayComponent },
@@ -16,5 +17,6 @@ export const routes: Routes = [
     { path: 'streamer', component: StreamerScreenComponent },
     { path: 'present', component: PresenterScreenComponent},
     { path: 'participant', component: ParticipantInterfaceComponent },
+    { path: 'participant/stream/:screenId', component: StreamViewerComponent },
     { path: '**', component: DisplayComponent }
 ];

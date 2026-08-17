@@ -148,8 +148,7 @@ export class ParticipantInterfaceComponent implements OnInit, OnDestroy {
     }
 
     openStream(screenId: string): void {
-        // Placeholder — Chapter 3 will implement the viewing strategy (modal or dedicated route)
-        console.log('openStream called for screen:', screenId);
+        window.open(`/participant/stream/${screenId}`, '_blank');
     }
 
 }

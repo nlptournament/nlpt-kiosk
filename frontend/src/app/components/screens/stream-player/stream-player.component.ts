@@ -20,6 +20,7 @@ export class StreamPlayerComponent implements OnInit, OnChanges, OnDestroy {
     isActive = input.required<boolean>();
     header = input.required<string>();
     variables = input.required<any>();
+    showControls = input(false);
 
     media_id: string = '';
 
@@ -31,6 +32,7 @@ export class StreamPlayerComponent implements OnInit, OnChanges, OnDestroy {
         let player_conf = {
             'width': window.screen.width,
             'preload': 'auto',
+            'controls': this.showControls(),
             'plugins': {}
         }
         if (this.header() != '') {
