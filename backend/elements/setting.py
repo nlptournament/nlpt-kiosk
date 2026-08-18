@@ -5,6 +5,7 @@ class Setting(SettingBase):
     _defaults = {
         'version':               {'order': 0,  'type': 'str',  'value': None,       'desc': 'Running version of NLPT-Kiosk-Controller'},
         'new_kiosks':            {'order': 1,  'type': 'bool', 'value': True,       'desc': 'enables registration of new Kiosks on Controller'},
+        'participant_interface': {'order': 2,  'type': 'bool', 'value': False,      'desc': 'enables the use of the Participant-Interface in the frontend'},
         'server_port':           {'order': 10, 'type': 'int',  'value': 8000,       'desc': 'Port the backend should be listening on'},
         'metrics_enabled':       {'order': 11, 'type': 'bool', 'value': False,      'desc': 'Whether to start the Metrics-Endpoint or not'},
         'metrics_port':          {'order': 12, 'type': 'int',  'value': 8001,       'desc': 'Port that should be used for Metrics-Endpoint'},

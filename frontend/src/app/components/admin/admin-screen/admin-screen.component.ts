@@ -12,6 +12,7 @@ import { TimelineTemplate } from '../../../interfaces/timeline-template';
 import { Timeline } from '../../../interfaces/timeline';
 import { Preset } from '../../../interfaces/preset';
 import { Media } from '../../../interfaces/media';
+import { Setting } from '../../../interfaces/setting';
 
 import { KioskService } from '../../../services/kiosk.service';
 import { UserService } from '../../../services/user.service';
@@ -21,6 +22,7 @@ import { TimelineService } from '../../../services/timeline.service';
 import { TimelineTemplateService } from '../../../services/timeline-template.service';
 import { PresetService } from '../../../services/preset.service';
 import { MediaService } from '../../../services/media.service';
+import { SettingService } from '../../../services/setting.service';
 import { ErrorHandlerService } from '../../../services/error-handler.service';
 import { WebSocketService } from '../../../services/web-socket.service';
 
@@ -81,6 +83,7 @@ export class AdminScreenComponent implements OnInit, OnDestroy {
     selectedPresetTimelines: Map<string, string[]> = new Map<string, string[]>;
     dummyKiosk: Kiosk | undefined;
     showHiddenKiosks: boolean = false;
+    participantsInterfaceEnabled: boolean = false;  // just stores value of Setting participant_interface to be used in populateMenu
 
     constructor(
         private errorHandler: ErrorHandlerService,
@@ -93,6 +96,7 @@ export class AdminScreenComponent implements OnInit, OnDestroy {
         private timelineService: TimelineService,
         private presetService: PresetService,
         private mediaService: MediaService,
+        private settingService: SettingService,
         private websocketService: WebSocketService,
         private confirmationService: ConfirmationService
     ) { }
@@ -108,6 +112,7 @@ export class AdminScreenComponent implements OnInit, OnDestroy {
         this.refreshTimelines();
         this.refreshPresets();
         this.refreshMedia();
+        this.refreshSettings();
     }
 
     ngOnDestroy(): void {
@@ -233,6 +238,14 @@ export class AdminScreenComponent implements OnInit, OnDestroy {
                         visible: this.currentUser?.admin || this.currentUser?.presenter,
                         command: () => {
                             this.router.navigate(['/present']);
+                        }
+                    },
+                    {
+                        label: 'Participant Interface',
+                        icon: 'pi pi-globe',
+                        visible: this.participantsInterfaceEnabled,
+                        command: () => {
+                            this.router.navigate(['/participant']);
                         }
                     },
                     {
@@ -508,6 +521,18 @@ export class AdminScreenComponent implements OnInit, OnDestroy {
                     this.errorHandler.handleError(err);
                 }
             });
+    }
+
+    refreshSettings() {
+        this.settingService.getSetting('participant_interface').subscribe({
+            next: (participant_interface: Setting) => {
+                this.participantsInterfaceEnabled = participant_interface.value;
+                this.populateMenu();
+            },
+            error: (err: HttpErrorResponse) => {
+                this.errorHandler.handleError(err);
+            }
+        });
     }
 
     timelinesSelected(event: KioskTlSelection) {

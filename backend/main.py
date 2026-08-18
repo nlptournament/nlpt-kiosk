@@ -41,10 +41,10 @@ class API():
 class SettingEndpoint(SettingEndpointBase):
     _setting_cls = Setting
     _session_cls = Session
-    _all_readable = ['version', 'wss_port']
+    _all_readable = ['version', 'wss_port', 'participant_interface']
     _admin_writeable = [
         'server_port', 'new_kiosks', 'wss_port', 'metrics_enabled', 'metrics_port', 's3_host', 's3_port', 's3_access_key', 's3_access_secret',
-        'anno_src_uri', 'anno_img_user_id', 'pc_prometheus_uri', 'discord_bot_token',
+        'anno_src_uri', 'anno_img_user_id', 'pc_prometheus_uri', 'discord_bot_token', 'participant_interface',
         'tas_uri', 'challonge_user', 'challonge_key', 'challonge_img_user_id', 'mock_anno', 'mock_pc', 'mock_pc_discord', 'mock_tas', 'mock_chal'
     ]
 

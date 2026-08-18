@@ -1,14 +1,17 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription, timer } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
+import { Router } from '@angular/router';
 
 import { Kiosk } from '../../interfaces/kiosk';
 import { Timeline } from '../../interfaces/timeline';
 import { Screen } from '../../interfaces/screen';
+import { Setting } from '../../interfaces/setting';
 
 import { KioskService } from '../../services/kiosk.service';
 import { TimelineService } from '../../services/timeline.service';
 import { ScreenService } from '../../services/screen.service';
+import { SettingService } from '../../services/setting.service';
 import { WebSocketService } from '../../services/web-socket.service';
 import { ErrorHandlerService } from '../../services/error-handler.service';
 
@@ -56,6 +59,8 @@ export class DisplayComponent implements OnInit, OnDestroy {
         private kioskService: KioskService,
         private timelineService: TimelineService,
         private screenService: ScreenService,
+        private settingService: SettingService,
+        private router: Router,
         private errorHandler: ErrorHandlerService
     ) { }
 
@@ -79,7 +84,17 @@ export class DisplayComponent implements OnInit, OnDestroy {
                         if (err.status === 405) this.showNoNewKiosks = true;
                     }
                 });
-        else this.showMissingName = true;
+        else {
+            this.settingService.getSetting('participant_interface').subscribe({
+                next: (participant_interface: Setting) => {
+                    if (participant_interface.value) this.router.navigate(['/participant']);
+                    else this.showMissingName = true;
+                },
+                error: (err: HttpErrorResponse) => {
+                    this.errorHandler.handleError(err);
+                }
+            });
+        }
     }
 
     ngOnDestroy(): void {

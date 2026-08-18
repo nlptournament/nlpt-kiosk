@@ -15,14 +15,16 @@ def start_stream_health_worker():
 
 
 def _health_checker():
+    from elements import Setting
     while True:
-        try:
-            for media in Media.all():
-                # Only check web URL streams (type=3, src_type=0)
-                if media['type'] == 3 and media['src_type'] == 0:
-                    _check_stream(media)
-        except Exception as e:
-            print(f'error on stream health check: {e}')
+        if Setting.value('participant_interface'):
+            try:
+                for media in Media.all():
+                    # Only check web URL streams (type=3, src_type=0)
+                    if media['type'] == 3 and media['src_type'] == 0:
+                        _check_stream(media)
+            except Exception as e:
+                print(f'error on stream health check: {e}')
         time.sleep(10)
 
 

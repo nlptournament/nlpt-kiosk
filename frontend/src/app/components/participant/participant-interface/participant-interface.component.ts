@@ -2,16 +2,19 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Subscription, timer } from 'rxjs';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 
 import { KioskService } from '../../../services/kiosk.service';
 import { ScreenService } from '../../../services/screen.service';
 import { ScreenTemplateService } from '../../../services/screen-template.service';
+import { SettingService } from '../../../services/setting.service';
 import { WebSocketService } from '../../../services/web-socket.service';
 import { ErrorHandlerService } from '../../../services/error-handler.service';
 
 import { Kiosk } from '../../../interfaces/kiosk';
 import { Screen } from '../../../interfaces/screen';
 import { ScreenTemplate } from '../../../interfaces/screen-template';
+import { Setting } from '../../../interfaces/setting';
 
 @Component({
     selector: 'participant-interface',
@@ -35,6 +38,8 @@ export class ParticipantInterfaceComponent implements OnInit, OnDestroy {
         private kioskService: KioskService,
         private screenService: ScreenService,
         private screenTemplateService: ScreenTemplateService,
+        private settingService: SettingService,
+        private router: Router,
         private websocketService: WebSocketService
     ) {}
 
@@ -62,15 +67,26 @@ export class ParticipantInterfaceComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit(): void {
-        this.wssSubscription = this.websocketService.getAdminMessages().subscribe((msg) => this.wssRx(msg));
-        this.refreshKiosks();
-        this.refreshScreens();
-        this.fetchStreamScreenTemplateId();
-        this.refreshCountdownTimerSubscription = this.refreshCountdownTimer.subscribe(() => this.updateCountdown());
+        this.settingService.getSetting('participant_interface').subscribe({
+            next: (participant_interface: Setting) => {
+                if (participant_interface.value) {
+                    this.wssSubscription = this.websocketService.getAdminMessages().subscribe((msg) => this.wssRx(msg));
+                    this.refreshKiosks();
+                    this.refreshScreens();
+                    this.fetchStreamScreenTemplateId();
+                    this.refreshCountdownTimerSubscription = this.refreshCountdownTimer.subscribe(() => this.updateCountdown());
+                }
+                else this.router.navigate(['/admin']);
+            },
+            error: (err: HttpErrorResponse) => {
+                this.errorHandler.handleError(err);
+            }
+        });
     }
 
     ngOnDestroy(): void {
         this.wssSubscription?.unsubscribe();
+        this.refreshCountdownTimerSubscription?.unsubscribe();
     }
 
     updateCountdown() {
