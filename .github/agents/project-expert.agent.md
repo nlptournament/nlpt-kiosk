@@ -27,7 +27,7 @@ Current version: v1.1.0, Repository owner: nils-ost
 ```
 
 ### Key Infrastructure (docker-compose.yml — 6 services)
-- **backend**: CherryPy API server + metrics exporter (ports 8765, 8001)
+- **backend**: CherryPy API server + metrics exporter + stream health worker daemon (ports 8765, 8001)
 - **frontend**: Angular app served by Nginx
 - **haproxy**: Reverse proxy, SSL termination, request caching (ports 80, 443, 8404)
 - **mongodb**: mongo:4.4 — document database
@@ -72,15 +72,15 @@ Current version: v1.1.0, Repository owner: nils-ost
 | Class | Description | Key Attributes/Methods |
 |-------|-------------|----------------------|
 | `Session` | Auth session with cookie name `NLPT-Kiosk-Controller`, references User class | Validates against User MD5 hash |
-| `Setting` | Key-value settings store with 20+ configurable values (S3, Discord, Challonge, Prometheus, mock flags) | `_setting_cls=Setting`, admin-writable attrs include: server_port, new_kiosks, wss_port, metrics_enabled, s3_host/port/key/secret, anno_src_uri, pc_prometheus_uri, discord_bot_token, tas_uri, challonge_user/key/img_user_id, mock_anno/pc/tas/chal |
+| `Setting` | Key-value settings store with 20+ configurable values (S3, Discord, Challonge, Prometheus, mock flags) | `_setting_cls=Setting`, admin-writable attrs include: server_port, new_kiosks, participant_interface, wss_port, metrics_enabled, s3_host/port/key/secret, anno_src_uri, pc_prometheus_uri, discord_bot_token, tas_uri, challonge_user/key/img_user_id, mock_anno/pc/tas/chal |
 | `User` | Auth user with admin/streamer/presenter flags, prefer_single_shot, hidden_elements | Cascading delete logic on deletion |
 | `ScreenTemplate` | Template definition for screens with typed variables (str, text, int, ts, float, bool, media0-3, discordguild, discordrole, tt) | Validated on save; `_ro_attr=['key','name','desc','endless','duration','variables_def']` |
 | `Screen` | Instance of a ScreenTemplate with variables, duration, repeat/loop settings | State methods: `locked()`, `displayed()`, `default()` |
 | `TimelineTemplate` | Reusable blueprint containing ordered list of screen IDs. Can be applied to multiple kiosks. | `presentation` flag for WSS events, `import_pdf(pdf_media, prefix, png_width)` — converts a PDF (Media type=4) into Screens using the "Background Image" template; creates Media elements (type=0) and Screen instances per page |
 | `Timeline` | Instance linked to a Kiosk, contains ordered screen IDs with position tracking (start_pos, current_pos) | Supports single_shot auto-delete; state methods: `locked()`, `displayed()`, `default()`, `preset()`; **jump-to**: `check_for_jump()` — when `current_pos % 2 == 1` and the screen at that position has template key 'jump-to', either applies default timeline or a specified TimelineTemplate |
-| `Kiosk` | Represents a display device. Unique by name. Has timeline_id and default_timeline_id. | Methods: `apply_default()`, `apply_timelinetemplate(template_id, require_default=False)`, `id_by_name()` |
+| `Kiosk` | Represents a display device. Unique by name. Has timeline_id and default_timeline_id. | Attributes include: `participant` (bool, default False — when True kiosk is listed in Participant Interface). Methods: `apply_default()`, `apply_timelinetemplate(template_id)`, `id_by_name()` |
 | `Preset` | Collection of timelines that can be duplicated and applied quickly to kiosks. | Owned by User, common flag for shared presets |
-| `Media` | Container for images (static/animated), videos, streams, other. src_type: 0=web URL, 1=S3 storage. type: 0=image, 1=animated, 2=video, 3=stream, 4=other. Uses ffprobe to determine video duration. | S3 upload/download via MinIO |
+| `Media` | Container for images (static/animated), videos, streams, other. src_type: 0=web URL, 1=S3 storage. type: 0=image, 1=animated, 2=video, 3=stream, 4=other. Uses ffprobe to determine video duration. | Computed `active()` method — returns True for non-streams; returns False for streams (actual health status is determined by the stream_health worker and broadcast via WSS). Overrides `json()` to include `active` in responses. S3 upload/download via MinIO |
 | `GameAbbr` | Game name abbreviation translator with translate() and translation_map() class methods | CRUD for game abbreviations |
 | `ChallongeTournament` | Cached tournament data from Challonge API. States: 0=unknown, 1=pending, 2=underway, 3=complete. | Tracks available/completed rounds |
 | `ChallongeParticipant` | Tournament participant with portrait image (stored as Media). Has fetch_portrait() method. | CRUD — mostly read-only from API |
@@ -94,12 +94,12 @@ Current version: v1.1.0, Repository owner: nils-ost
 | Endpoint Class | Element Class | Custom Methods | Description |
 |---------------|---------------|----------------|-------------|
 | `UserEndpoint` | User | hide_add(), hide_del() | User management with hidden elements feature |
-| `KioskEndpoint` | Kiosk | my_id(), apply_default(), apply_timelinetemplate(), synced_apply(), synced_apply_default() | Kiosk registration, timeline application, synchronized multi-kiosk operations |
+| `KioskEndpoint` | Kiosk | my_id(), apply_default(), apply_timelinetemplate(), synced_apply(), synced_apply_default() | Kiosk registration, timeline application, synchronized multi-kiosk operations. `_other_readable` includes `participant`; `_all_readable` includes `participant`; `_other_createable` includes `participant`; `_other_updateable` includes `participant` |
 | `TimelineEndpoint` | Timeline | currentPos() — also calls `check_for_jump()` on the timeline after position update | Timeline position tracking for kiosk clients |
 | `TimelineTemplateEndpoint` | TimelineTemplate | (inherited), `update_timelines()`, `import_pdf()` — converts a PDF Media into Screens using the "Background Image" template; requires admin or owner access |
 | `ScreenTemplateEndpoint` | ScreenTemplate | (inherited) | CRUD — read-only for key/name/desc/endless/duration/variables_def |
 | `ScreenEndpoint` | Screen | (inherited) | CRUD with owner-based access control via user_id |
-| `MediaEndpoint` | Media | s3() | Media upload/download with 100MB limit, direct S3 proxy |
+| `MediaEndpoint` | Media | s3() | Media upload/download with 100MB limit, direct S3 proxy. `_other_readable` and `_all_readable` include `active` (computed stream health status) |
 | `PresetEndpoint` | Preset | (inherited) | CRUD for presets |
 | `GameAbbrEndpoint` | GameAbbr | (inherited) | CRUD game abbreviations |
 | `AnnouncementsEndpoint` | — | — | NLPT.online announcements feed |
@@ -113,12 +113,13 @@ Current version: v1.1.0, Repository owner: nils-ost
 
 | File | Description |
 |------|-------------|
-| `wss.py` | WebSocket server using websockets library. Two processes: _websocket_process() handles connections, _connection_process() manages auth/routing. Transmits updates for all element types to targeted audiences (all, kiosks, users, admins, owner). Uses AsyncProcessQueue for cross-process communication. |
+| `wss.py` | WebSocket server using websockets library. Two processes: _websocket_process() handles connections, _connection_process() manages auth/routing. Transmits updates for all element types to targeted audiences (all, kiosks, users, admins, owner). Uses AsyncProcessQueue for cross-process communication. New function `transmit_media_health(media, active)` — broadcasts minimal stream health payload `{media_id, active, content: 'stream_health'}` to ALL connected clients (not just owner) |
 | `asyncprocessqueue.py` | Custom async-compatible multiprocessing Queue wrapper using Manager().Queue() with ThreadPoolExecutor for coroutine integration. |
 | `s3.py` | S3 storage operations via boto3. Connects to MinIO. Functions: media_exists(), media_get(), media_upload(), media_delete(), media_get_internal_url(). Bucket: nkc-media. Public download policy configured. |
 | `challonge.py` | Challonge API fetcher running in daemon Process. Polls every 10 seconds for tournaments with challonge screen templates. Functions: fetch_tournament(), fetch_matches(), fetch_participant(). Includes mock data generator. |
 | `discord.py` | Discord bot worker in daemon Process using discord.py. Captures member presence updates (on_presence_update). Stores guilds, roles, members with current game. Debug command via DM: debug. |
 | `prometheus_connect.py` | Custom Prometheus API client (stripped to avoid matplotlib dependency for ARM builds). Methods: check_prometheus_connection(), custom_query(). Retry logic with backoff. |
+| `stream_health.py` | **NEW** — Stream health detection daemon Process using ffprobe. Polls every 10 seconds all Media elements where type=3 and src_type=0 (web URL streams). `_health_checker()` calls `_check_stream(media)` which runs ffprobe with 5s timeout; if successful with nb_streams > 0 → active, otherwise inactive. Calls `transmit_media_health(media, active)` to broadcast minimal payload `{media_id, active, content: 'stream_health'}` to ALL connected clients via WSS. Worker only runs when Setting `participant_interface` is True. |
 | `versioning.py` | Database migration system. Compares DB version vs software version. Creates default admin user (admin/password) if none exists. Seeds 14+ ScreenTemplates on first install (Plain Text, Background Image, Countdown, Announcements, Player Counts, TAS, Video, Stream, Challonge variants, Jump-to Timeline). Includes v1.2.0 migration that adds `header_pos` and `header_size` variables to existing Stream ScreenTemplates for header overlay feature. Functions: versions_eq(), versions_lt(), versions_gt(), versions_lte(), versions_gte(). |
 | `version.py` | Contains current version string. |
 
@@ -126,7 +127,7 @@ Current version: v1.1.0, Repository owner: nils-ost
 1. `docDB.wait_for_connection()` — waits for MongoDB connection
 2. CherryPy config: engine.autoreload.on=False, server.socket_host='0.0.0.0', port from Setting
 3. CORS enabled with Access-Control-Allow-Origin: 'http://localhost:4200/' and credentials true
-4. Background services started in order: versioning_run(), start_wss_server(), start_challonge_fetcher(), start_discord_worker(), start_metrics_exporter()
+4. Background services started in order: versioning_run(), start_wss_server(), start_challonge_fetcher(), start_discord_worker(), start_stream_health_worker(), start_metrics_exporter()
 5. `cherrypy.quickstart(API(), '/', conf)` — launches the app
 
 ### Backend Dependencies (`backend/requirements.txt`)
@@ -160,12 +161,14 @@ providePrimeNG({ theme: Aura, cssLayer: { name: 'primeng', order: 'tailwind-base
 
 | Route | Component | Purpose |
 |-------|-----------|---------|
-| `/display` | DisplayComponent | Kiosk client display view (public) |
+| `/display` | DisplayComponent | Kiosk client display view (public). Auto-reroutes to `/participant` if Setting `participant_interface` is enabled and no kiosk name provided. |
 | `/login` | LoginComponent | Login screen |
 | `/logout` | LogoutComponent | Logout handler |
-| `/admin` | AdminScreenComponent | Full admin dashboard |
+| `/admin` | AdminScreenComponent | Full admin dashboard. Menubar includes Participant Interface shortcut (visible when `participant_interface` setting is True). |
 | `/streamer` | StreamerScreenComponent | Streamer-focused interface for stream control |
 | `/present` | PresenterScreenComponent | Presentation control interface |
+| `/participant` | ParticipantInterfaceComponent | **NEW** — Public-facing UI for unauthorized users to browse available kiosks and streams. Shows kiosk cards grid + active streams grid with WSS-reactive health indicators. |
+| `/participant/stream/:screenId` | StreamViewerComponent | **NEW** — Dedicated stream viewer page opened in new tab from participant interface. Shows StreamPlayerComponent with controls enabled. |
 | `/**` (wildcard) | DisplayComponent | Default fallback to display view |
 
 ### Frontend Components Structure
@@ -209,7 +212,7 @@ providePrimeNG({ theme: Aura, cssLayer: { name: 'primeng', order: 'tailwind-base
 | `challonge-parallel-tournaments/` | challonge-parallel-tournaments | Two parallel tournament brackets |
 | `challonge-round-completion/` | challonge-round-completion | Single tournament round progress |
 | `player-counts/` | — | Multi-source player counts (Prometheus/Discord) |
-| `stream-player/` | stream-player | Stream video player with optional text header overlay via videojs-overlay plugin. Uses `header`, `header_pos`, and `header_size` template variables for positioning/sizing of overlayed text. Header position maps to Tailwind classes (e.g., 'top-left' → 'top-0 text-left'). |
+| `stream-player/` | stream-player | Stream video player with optional text header overlay via videojs-overlay plugin. Uses `header`, `header_pos`, and `header_size` template variables for positioning/sizing of overlayed text. Header position maps to Tailwind classes (e.g., 'top-left' → 'top-0 text-left'). New input: `showControls = input(false)` — when true, enables video.js control-bar for participant viewing while keeping display mode hidden. |
 | `tas/` | — | TrackMania Stats wallboard |
 | `text/` | text | Plain text display |
 | `timer/` | countdown | Countdown timer to target timestamp |
@@ -220,6 +223,10 @@ providePrimeNG({ theme: Aura, cssLayer: { name: 'primeng', order: 'tailwind-base
 
 #### `components/presenter/`
 - `presenter-screen/` — Presentation control — execute presentation timelines
+
+#### `components/participant/`
+- `participant-interface/` — Public-facing UI for LAN party participants. Shows two sections: (1) Available Kiosks grid with status dots and external link icons, (2) Active Streams grid with pulsing green live indicators. Filters kiosks by `participant===true`, filters streams by template + WSS health status. Uses `streamHealth` Map for reactive stream health updates. Auto-checks `participant_interface` setting — navigates to `/admin` if disabled.
+- `stream-viewer/` — Dedicated stream viewer opened in new tab from participant interface. Fetches screen by route param, shows StreamPlayerComponent with `[showControls]=true`. Handles 404 error state.
 
 ### Frontend Services (`frontend/src/app/services/`)
 
@@ -245,7 +252,7 @@ providePrimeNG({ theme: Aura, cssLayer: { name: 'primeng', order: 'tailwind-base
 | `timeline-template.service.ts` | `/timelinetemplate/` | CRUD templates, update timelines |
 | `timeline.service.ts` | `/timeline/` | CRUD, currentPos() tracking |
 | `user.service.ts` | `/user/` | CRUD, hide_add(), hide_del() |
-| `web-socket.service.ts` | WebSocket (environment.wssUrl) | sendMessage(), getKioskMessages(), getAdminMessages(), closeConnection() — uses RxJS WebSocketSubject, cookie-based auth via NLPT-Kiosk-Controller cookie |
+| `web-socket.service.ts` | WebSocket (environment.wssUrl) | sendMessage(), getKioskMessages(), getAdminMessages(), closeConnection() — uses RxJS WebSocketSubject, cookie-based auth via NLPT-Kiosk-Controller cookie. Frontend handles new `'stream_health'` content type messages from WSS containing `{media_id, active}` for reactive stream health updates. |
 
 ### TypeScript Interfaces (`frontend/src/app/interfaces/`)
 
@@ -253,7 +260,7 @@ All interfaces mirror backend elements:
 
 ```typescript
 // kiosk.ts
-interface Kiosk { id, name, desc, added_by_id?, common?, timeline_id, default_timeline_id? }
+interface Kiosk { id, name, desc, added_by_id?, common?, participant: boolean, timeline_id, default_timeline_id? }
 interface KioskTlSelection { kiosk_id, next?, preset: string[] }
 
 // screen.ts
@@ -263,8 +270,9 @@ interface Screen { id, desc, template_id, user_id, header, duration, till, repea
 interface Timeline { id, template_id, kiosk_id, screen_ids[], start_pos, current_pos, start_time, single_shot, locked, displayed, default, preset, presentation }
 
 // media.ts
-interface Media { id, desc, src_type, src, type, user_id, common }
+interface Media { id, desc, src_type, src, type, user_id, common, active: boolean }
 // src_type: 0=web URL, 1=S3 storage | type: 0=image, 1=animated, 2=video, 3=stream, 4=other
+// active: computed stream health status (True for non-streams; from WSS stream_health messages for streams)
 
 // user.ts
 interface User { id, login, admin, streamer, presenter, prefer_single_shot, hidden_elements[] }
@@ -334,11 +342,11 @@ User has roles: admin | streamer | presenter
 - **Screen**: Concrete instance of a template with actual variable values, duration, repeat/loop settings. Has state methods: locked(), displayed(), default().
 - **TimelineTemplate**: Reusable blueprint containing ordered list of screen IDs. Can be applied to multiple kiosks. Has presentation flag for WSS events.
 - **Timeline**: Instance linked to a Kiosk with position tracking (start_pos, current_pos). Supports single_shot auto-delete. State methods: locked(), displayed(), default(), preset().
-- **Kiosk**: Physical display device, unique by name. Has timeline_id (currently displayed) and default_timeline_id. Methods: apply_default(), apply_timelinetemplate(), id_by_name().
+- **Kiosk**: Physical display device, unique by name. Has `participant` flag (bool, default False — when True kiosk is listed in Participant Interface). Has timeline_id (currently displayed) and default_timeline_id. Methods: apply_default(), apply_timelinetemplate(), id_by_name().
 - **Preset**: Collection of timelines for quick bulk application to kiosks. Owned by User, common flag for shared presets.
 
 ## Backend Startup Order (critical for debugging)
-1. MongoDB connection wait → 2. CherryPy config → 3. CORS setup → 4. versioning_run() → 5. WSS server → 6. Challonge fetcher → 7. Discord worker → 8. Metrics exporter → 9. cherrypy.quickstart()
+1. MongoDB connection wait → 2. CherryPy config → 3. CORS setup → 4. versioning_run() → 5. WSS server → 6. Challonge fetcher → 7. Discord worker → 8. Stream health worker → 9. Metrics exporter → 10. cherrypy.quickstart()
 
 ## Key Files Reference
 - Backend entry: `backend/main.py`

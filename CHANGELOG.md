@@ -9,12 +9,14 @@
   * Presentation Wizard to import PDFs as presentation TimelineTemplates, creating all required Media, Screens and TimelineTemplate with one click
   * New *Jump-to Timeline* Screen, that allows automatic Timeline switching on Kiosks (see: [docs/screens/jump-to-timeline.md](docs/screens/jump-to-timeline.md) for more info)
   * Streams can display overlay text on top of the video stream via the header property
+  * Participant Interface — A new public-facing UI (`/participant`) where LAN party attendees can browse available kiosks and active streams without logging in. Includes a dedicated stream-viewer page (`/participant/stream/:screenId`). Controlled by new `participant_interface` setting, with per-kiosk `participant` flag
 
 ### Fixes/Improvements
 
   * Timelines now support a compact display mode in the Presenter interface for better overview during presentations
   * The duration of video media is now determined to be displayed on Screen element
   * Stream ScreenTemplate now supports styled headers with configurable positioning and sizing variables
+  * Stream Health Detection — Background worker using ffprobe polls stream URLs every 10 seconds, broadcasting live `active`/`inactive` status via WSS to all connected clients for reactive health indicators
 
 ## v1.1.0
 
