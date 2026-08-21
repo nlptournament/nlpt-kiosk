@@ -7,11 +7,13 @@
   * [generic Kiosk-Client](./install-kiosk-generic.md) *using some generic hardware as a Kiosk*
   * [automated install with ansible](./install-with-ansible.md) *let Ansible do consistent configuration*
 
-## Tutorials
+## Tutorials/Interfaces
 
   * [first steps](./first-steps.md)
+  * [Discord Bot Setup](./discord-bot-setup.md)
   * [Streamer Interface](./streamer-interface.md)
   * [Presenter Interface](./presenter-interface.md)
+  * [Participant Interface](./participant-interface.md)
 
 ## ScreenTemplates
 

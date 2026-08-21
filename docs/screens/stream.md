@@ -1,20 +1,35 @@
 # Screen showing a Stream
 
-This Screen displays a Video-Stream in full-screen mode. It will never issue a end-signal, you have to work with the Screens *Duration* or *Till* attributes, or just change the Timeline by hand.
+This Screen displays a live Video-Stream in fullscreen mode using the video.js player with HLS/DASH support. It will never issue an end-signal automatically — you must work with the Screen's *Duration* or *Till* attributes, or change the Timeline manually to stop it.
 
-In general this Screen is able to work with every Media alement of type Stream, that has valid *HLS-URL* or *DASH-URL* configured as it's *generic web URL* (*internal S3 storage* will not work for obvious reasons). But for NLPT we built our own local streaming-server (that is fully compatiple with this Screen), to be able to send OBS capture streams to this local server and show them on Kiosks, take a look at [nlpt-rtmp-server](https://github.com/nlptournament/nlpt-rtmp-server) if you are interested in a similar setup.
+The screen supports **text header overlay** on top of the stream using the `videojs-overlay` plugin. The header text is provided via the shared `header` input (configured in the Screen instance), and its position/size are controlled by template variables.
 
-For this Screen to be utalized, the browser of Kiosks needs to have some safety measures been disabled. At least auto-playback of videos have to be allowed, otherwise the Screen gets stuck. Also CORS should to be disabled in the browser, otherwise the Kiosk might not able to read the stream, if the corresponding server does not send sufficient CORS data itself. For more information on how to achieve this, see the section about Chromium in [generic Kiosk-Client](../install-kiosk-generic.md).
+This Screen works with any Media element of type *Stream* that has a valid **HLS URL** or **DASH URL** as its generic web URL (*internal S3 storage will not work for obvious reasons*). For NLPT, we built our own local streaming server ([nlpt-rtmp-server](https://github.com/nlptournament/nlpt-rtmp-server)) that is fully compatible with this Screen — it accepts OBS capture streams and makes them available on Kiosks.
 
-> [!NOTE]
-> if you are using Raspberry Pis for the Kiosks, and followed the setup guide in this Dokumentation ([KioskPi](../install-kiosk-rpi-trixie.md)), the required settings are already made.
+For this Screen to work properly, the browser on Kiosks needs certain safety measures disabled:
+- Auto-playback of videos must be allowed (otherwise the Screen gets stuck)
+- CORS should be disabled in the browser (otherwise the Kiosk may not read the stream if the server doesn't send sufficient CORS headers)
+
+See [generic Kiosk-Client](../install-kiosk-generic.md) for Chromium configuration details.
+
+> [!NOTE]  
+> If you are using Raspberry Pis for the Kiosks and followed the setup guide ([KioskPi](../install-kiosk-rpi-trixie.md)), the required settings are already applied.
 
 # specific variables
 
-| variable | description                  |
-| -------- | ---------------------------- |
-| stream   | Media element of type stream |
+| Variable | Type | Default | Description                  |
+| -------- | ---- | ------- | ---------------------------- |
+| `stream` | media3 | *(required)* | Media element of type Stream to be played |
+| `header_pos` | str | `'top-left'` | Position of the header overlay. Options: `top-left`, `top-center`, `top-right`, `bottom-left`, `bottom-center`, `bottom-right` |
+| `header_size` | int | `4` | Relative size of the overlayed header (values 1–7 allowed; mapped to Tailwind text sizes) |
 
-# Stream Wizard
+## Header Overlay
 
-To ease things a bit up, regarding steam setup, the Admin-Interface has the *Stream Wizard*. This came to live, when implementing the [Streamer-Interface](../streamer-interface.md), as it was quiet annoying to set up a Media, Screen and TimelineTemplate element for each stream. The *Stream Wizard* steamlines this, just give it the information about the stream-URL and which user owns the stream, and all requiered elements are created for you. Just give it a try ;)
+The header text is provided via the Screen's `header` variable (shared across all screen types). The position and size are controlled by the template variables above:
+
+- **Position** (`header_pos`) — maps to CSS classes, e.g. `top-left` → `top-0 text-left`
+- **Size** (`header_size`) — maps to Tailwind text sizes, e.g. value 4 → `text-7xl` (offset by +3)
+
+## Stream Wizard
+
+The Admin-Interface includes a *Stream Wizard* that streamlines the setup of streams. Instead of manually creating Media, Screen, and TimelineTemplate elements for each stream, just provide the stream URL and which user owns it — all required elements are created automatically. This wizard was introduced alongside the [Streamer-Interface](../streamer-interface.md).

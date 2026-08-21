@@ -122,7 +122,7 @@ If you have some kind of rotation, and multiple Kiosks in the same room, you can
 
 And now it's up to you, explore the Admin-Interface and create your own awsome Kiosk Timelines.
 
-If you like to learn more about the different ScreenTemplates and how to use them, go: [here](screens/discord-playercount.md)
+If you like to learn more about the different ScreenTemplates and how to use them, go: [here](screens/README.md)
 
 > [!NOTE]
 > remember to disable **mock_anno** in the Settings, as you are now done with this tutorial

@@ -55,22 +55,21 @@ As an startpoint you can do the [basics tutorial](docs/first-steps.md) to get us
 
 As mentioned above Screens are the representation of WHAT is displayed from WHERE and HOW, to cover the different use-cases the following ScreenTemplates are available:
 
-  * **[Plain Text](docs/screens/plain-text.md)** *Just displays some text on the Screen*
-  * **[Background Image](docs/screens/background-image.md)** *Image Media displayed in background, with the option to display text on top*
-  * **[Countdown](docs/screens/countdown.md)** *Counts down the seconds to a target time*
-  * **Announcements** *displays nlpt.online announcements*
-  * **Player Counts - Multi** *shows the number of players playing the same game, allows multiple sources*
-  * **Player Counts - Prometheus** *shows the number of players currently active on game-servers*
-  * **[Player Counts - Discord](docs/screens/discord-playercount.md)** *shows the number of players playing the same game within Discord guild*
-  * **TrackMania Stats** *a reduced form of the TrackMania TimeAttackServer wallboard*
-  * **[Video](docs/screens/video.md)** *Video (Media) is played fullscreen*
-  * **[Stream](docs/screens/stream.md)** *Stream (Media) is played fullscreen*
-  * **Challonge Round Completion** *Shows the pairs and their completion of the current round in a challonge tournament*
-  * **Challonge Parallel Tournament** *Shows the pairs and their completion of the current round in two parallel executed Tournaments*
-  * **[Jump-to Timeline](docs/screens/jump-to-timeline.md)** *When Screen is activated the corresponding Kiosk is switching to the defined Timeline*
+  * **[Plain Text](docs/screens/plain-text.md)** — Displays text with configurable color and size
+  * **[Background Image](docs/screens/background-image.md)** — Image Media in background with optional text overlay
+  * **[Countdown](docs/screens/countdown.md)** — Counts down the seconds to a target timestamp
+  * **[Announcements](docs/screens/announcements.md)** — Displays announcements from nlpt.online
+  * **[Player Counts](docs/screens/player-counts.md)** — Shows player counts from Prometheus and/or Discord sources (Multi, Prometheus-only, or Discord-only variants)
+  * **[TrackMania Stats](docs/screens/tas.md)** — TrackMania TimeAttackServer wallboard with challenge and global ranks
+  * **[Video](docs/screens/video.md)** — Video Media played fullscreen with loop/repeat support
+  * **[Stream](docs/screens/stream.md)** — Stream (HLS/DASH) played fullscreen with optional text header overlay
+  * **[Challonge Round Completion](docs/screens/challonge-round-completion.md)** — Shows pairs and their completion status for the current round in a Challonge tournament
+  * **[Challonge Parallel Tournaments](docs/screens/challonge-parallel-tournaments.md)** — Displays two parallel tournaments side by side with round progress
+  * **[Jump-to Timeline](docs/screens/jump-to-timeline.md)** — Switches the Kiosk to a different Timeline (default or specified)
 
 ## The User-Interfaces
 
   * [Admin-Interface](docs/first-steps.md)
   * [Streamer-Interface](docs/streamer-interface.md)
   * [Presenter-Interface](docs/presenter-interface.md)
+  * [Participant-Interface](docs/participant-interface.md)

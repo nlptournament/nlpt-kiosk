@@ -1,19 +1,27 @@
-# Screen for jumping between Timelines
+# Screen for Jumping Between Timelines
 
-Screen, when activated, switches the active Timeline of calling Kiosk either to the default Timeline of Kiosk or a predifined Timeline.
+When activated, this Screen switches the active Timeline of the calling Kiosk either to the Kiosk's default Timeline or to a predefined TimelineTemplate.
+
+This is useful for scheduled events — e.g., switching all kiosks from a loop of promotional content to a tournament-specific timeline at a specific time.
 
 # specific variables
 
-| variable    | description                                                                             |
-| ----------- | --------------------------------------------------------------------------------------- |
-| use_default | if True the default Timeline is used as jump-target                                     |
-| timeline    | id of a TimelineTemplate used as jump-target, only considered if *use_default* is False |
+| Variable    | Type | Default | Description                                                                             |
+| ----------- | ---- | ------- | --------------------------------------------------------------------------------------- |
+| `use_default` | bool | `false` | If True, the Kiosk's default Timeline is used as the jump target                       |
+| `timeline`  | tt   | `''` | ID of a TimelineTemplate to use as jump target; only considered if *use_default* is False |
 
-# technical information
+## How It Works
 
-The variable *timeline* is meant to hold an id of a TimelineTemplate. When a jump-to Screen is activated, that references a TimelineTemplate, a single-shot Timeline is created from this Template, and activated on the Kiosk calling the jump-to Screen. This ensures, that a jump-to Screen is usable on multiple Kiosks.
+The `timeline` variable holds an ID of a **TimelineTemplate** (not a Timeline instance). When a jump-to Screen is activated and references a TimelineTemplate:
 
-It is possible to stall a jump-to Screen, the corresponding Kiosk just show a black Screen if one of the following configuration combinations exists:
+1. A single-shot Timeline is created from the referenced Template
+2. The new Timeline is activated on the Kiosk that displays this Screen
+3. This ensures the jump-to Screen works correctly across multiple Kiosks simultaneously
 
-  * the Screen has *use_default* set to True but the Kiosk dows not have a default Timelne defined
-  * the Screen has *use_default* set to False, but also the variable *timeline* is empty or has an invalid TimelineTemplate id configured
+## Stall Behavior
+
+The jump-to Screen can be "stalled" — the corresponding Kiosk shows a black screen in any of these configurations:
+
+- `use_default` is True but the Kiosk does **not** have a default Timeline defined
+- `use_default` is False, and the `timeline` variable is empty or contains an invalid TimelineTemplate ID
