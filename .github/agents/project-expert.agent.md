@@ -5,69 +5,11 @@ tools: [read, edit, search, execute, agent, web, todo]
 
 You are a general-purpose expert AI assistant with deep knowledge of the NLPT-Kiosk project. You can handle ANY task — coding, debugging, refactoring, adding features, writing tests, reviewing code, explaining concepts, or anything else the user needs. You have comprehensive understanding of this entire codebase and its architecture.
 
-## Project Overview
+> **Shared context**: General project overview, architecture, conventions, and domain model are in `.github/copilot-instructions.md`. This file contains deep reference details for backend elements, endpoints, helpers, frontend components/services/interfaces, and workflow-specific knowledge.
 
-**NLPT-Kiosk-Controller** is a system for remotely controlling multiple kiosks (projectors/TVs) to display synchronized information during LAN Parties. It consists of:
-- A **KioskController server** that manages all clients and provides the admin UI
-- Multiple **Kiosk Clients** (typically Raspberry Pis) that display content in fullscreen
+## Deep Reference: Backend Elements (`backend/elements/`)
 
-Current version: v1.1.0, Repository owner: nils-ost
-
-## Architecture Summary
-
-```
-┌─────────────┐     ┌──────────┐     ┌──────────┐
-│  HAProxy    │────▶│ Frontend │────▶│ Backend  │
-│  (port 80/443)│   │ Nginx+Angular│ │ CherryPy │
-└─────────────┘     └──────────┘     └──────────┘
-                                           │    │
-                                    ┌──────┴────┴──────┐
-                                    │  MongoDB │ MinIO │
-                                    └──────────────────┘
-```
-
-### Key Infrastructure (docker-compose.yml — 6 services)
-- **backend**: CherryPy API server + metrics exporter + stream health worker daemon (ports 8765, 8001)
-- **frontend**: Angular app served by Nginx
-- **haproxy**: Reverse proxy, SSL termination, request caching (ports 80, 443, 8404)
-- **mongodb**: mongo:4.4 — document database
-- **minio**: S3-compatible object storage (bucket: nkc-media)
-- **timeserver**: NTP time synchronization
-
-### Environment Variables
-| Variable | Default | Used By |
-|---|---|---|
-| `TZ` | Europe/Berlin | All services |
-| `NKC_VERSION` | latest | backend, frontend, haproxy images |
-| `BIND_IP` | 0.0.0.0 | Ports binding |
-| `MONITORING_IP` | 0.0.0.0 | Monitoring ports |
-| `MINIO_PW` | password | MinIO root password |
-
-## Backend Details
-
-### Framework: CherryPy (NOT FastAPI/Flask)
-- Entry point: `backend/main.py` — runs on port configurable via Setting
-- CORS configured for `http://localhost:4200/` with credentials enabled
-- Custom ORM framework: **noapiframe** (`git+https://github.com/nils-ost/noAPIframe.git`)
-- Database: MongoDB 4.4 (via noapiframe's `docDB`)
-
-### API Patterns & Conventions
-- RESTful endpoints using CherryPy's `@cherrypy.expose()` decorator
-- JSON request/response with `@cherrypy.tools.json_in()` / `@cherrypy.tools.json_out()`
-- Error responses: `{'error': 'description'}` with HTTP status codes (400, 401, 403, 404, 405, 500)
-- ElementEndpointBase provides standard CRUD: GET (read), POST (create), PATCH (update), DELETE
-- Custom methods exposed as sub-paths (e.g., `/kiosk/my_id/{name}/`, `/kiosk/apply_default/{id}/`)
-
-### Authentication Mechanism
-- **Cookie-based** session authentication
-- Cookie name: `NLPT-Kiosk-Controller`
-- Password hashed with MD5(session_id + password) using `ts-md5` (backend) / `ts-md5` (frontend)
-- Session validation via `Session.validate_base()`
-- Role-based access: `admin`, `streamer`, `presenter` flags on User
-- Owner-based access control via `_owner_attr` (e.g., `user_id`)
-- Public vs private resources via `_other_attr` (e.g., `common` flag)
-
-### Backend Elements (`backend/elements/`) — All inherit from noapiframe base classes
+All inherit from noapiframe base classes. See `.github/copilot-instructions.md` for domain model overview.
 
 | Class | Description | Key Attributes/Methods |
 |-------|-------------|----------------------|
@@ -113,25 +55,18 @@ Current version: v1.1.0, Repository owner: nils-ost
 
 | File | Description |
 |------|-------------|
-| `wss.py` | WebSocket server using websockets library. Two processes: _websocket_process() handles connections, _connection_process() manages auth/routing. Transmits updates for all element types to targeted audiences (all, kiosks, users, admins, owner). Uses AsyncProcessQueue for cross-process communication. New function `transmit_media_health(media, active)` — broadcasts minimal stream health payload `{media_id, active, content: 'stream_health'}` to ALL connected clients (not just owner) |
-| `asyncprocessqueue.py` | Custom async-compatible multiprocessing Queue wrapper using Manager().Queue() with ThreadPoolExecutor for coroutine integration. |
-| `s3.py` | S3 storage operations via boto3. Connects to MinIO. Functions: media_exists(), media_get(), media_upload(), media_delete(), media_get_internal_url(). Bucket: nkc-media. Public download policy configured. |
-| `challonge.py` | Challonge API fetcher running in daemon Process. Polls every 10 seconds for tournaments with challonge screen templates. Functions: fetch_tournament(), fetch_matches(), fetch_participant(). Includes mock data generator. |
-| `discord.py` | Discord bot worker in daemon Process using discord.py. Captures member presence updates (on_presence_update). Stores guilds, roles, members with current game. Debug command via DM: debug. |
-| `prometheus_connect.py` | Custom Prometheus API client (stripped to avoid matplotlib dependency for ARM builds). Methods: check_prometheus_connection(), custom_query(). Retry logic with backoff. |
-| `stream_health.py` | **NEW** — Stream health detection daemon Process using ffprobe. Polls every 10 seconds all Media elements where type=3 and src_type=0 (web URL streams). `_health_checker()` calls `_check_stream(media)` which runs ffprobe with 5s timeout; if successful with nb_streams > 0 → active, otherwise inactive. Calls `transmit_media_health(media, active)` to broadcast minimal payload `{media_id, active, content: 'stream_health'}` to ALL connected clients via WSS. Worker only runs when Setting `participant_interface` is True. |
-| `versioning.py` | Database migration system. Compares DB version vs software version. Creates default admin user (admin/password) if none exists. Seeds 14+ ScreenTemplates on first install (Plain Text, Background Image, Countdown, Announcements, Player Counts, TAS, Video, Stream, Challonge variants, Jump-to Timeline). Includes v1.2.0 migration that adds `header_pos` and `header_size` variables to existing Stream ScreenTemplates for header overlay feature. Functions: versions_eq(), versions_lt(), versions_gt(), versions_lte(), versions_gte(). |
-| `version.py` | Contains current version string. |
-
-### Startup Sequence (`backend/main.py`)
-1. `docDB.wait_for_connection()` — waits for MongoDB connection
-2. CherryPy config: engine.autoreload.on=False, server.socket_host='0.0.0.0', port from Setting
-3. CORS enabled with Access-Control-Allow-Origin: 'http://localhost:4200/' and credentials true
-4. Background services started in order: versioning_run(), start_wss_server(), start_challonge_fetcher(), start_discord_worker(), start_stream_health_worker(), start_metrics_exporter()
-5. `cherrypy.quickstart(API(), '/', conf)` — launches the app
+| `wss.py` | WebSocket server using websockets library. Two processes: _websocket_process() handles connections, _connection_process() manages auth/routing. Transmits updates for all element types to targeted audiences (all, kiosks, users, admins, owner). Uses AsyncProcessQueue for cross-process communication. Function `transmit_media_health(media, active)` — broadcasts minimal stream health payload `{media_id, active, content: 'stream_health'}` to ALL connected clients |
+| `asyncprocessqueue.py` | Custom async-compatible multiprocessing Queue wrapper using Manager().Queue() with ThreadPoolExecutor for coroutine integration |
+| `s3.py` | S3 storage operations via boto3. Connects to MinIO. Functions: media_exists(), media_get(), media_upload(), media_delete(), media_get_internal_url(). Bucket: nkc-media |
+| `challonge.py` | Challonge API fetcher running in daemon Process. Polls every 10 seconds for tournaments with challonge screen templates. Functions: fetch_tournament(), fetch_matches(), fetch_participant() |
+| `discord.py` | Discord bot worker in daemon Process using discord.py. Captures member presence updates (on_presence_update). Stores guilds, roles, members with current game |
+| `prometheus_connect.py` | Custom Prometheus API client (stripped to avoid matplotlib dependency for ARM builds) |
+| `stream_health.py` | Stream health detection daemon Process using ffprobe. Polls every 10 seconds all Media elements where type=3 and src_type=0 (web URL streams). Calls `transmit_media_health(media, active)` via WSS |
+| `versioning.py` | Database migration system. Creates default admin user if none exists. Seeds 14+ ScreenTemplates on first install. Includes v1.2.0 migration adding `header_pos` and `header_size` variables to Stream ScreenTemplates |
+| `version.py` | Contains current version string |
 
 ### Backend Dependencies (`backend/requirements.txt`)
-- boto3, cherrypy, cherrypy-cors, discord.py, noapiframe (git), pdf2image, pychallonge (git), pymongo, requests, websockets
+boto3, cherrypy, cherrypy-cors, discord.py, noapiframe (git), pdf2image, pychallonge (git), pymongo, requests, websockets
 
 ## Frontend Details
 
@@ -147,15 +82,6 @@ Current version: v1.1.0, Repository owner: nils-ost
 - **FontAwesome** icons via @fortawesome/angular-fontawesome ^1.0.0 and free-solid-svg-icons ^6.7.2
 - Animations: provideAnimationsAsync() (Angular CDK)
 - Video player: video.js ^8.23.3
-
-### App Configuration (`frontend/src/app/app.config.ts`)
-```typescript
-provideZoneChangeDetection({ eventCoalescing: true }),
-provideHttpClient(),  // credentials enabled on all API calls
-provideRouter(routes),
-provideAnimationsAsync(),
-providePrimeNG({ theme: Aura, cssLayer: { name: 'primeng', order: 'tailwind-base, primeng, tailwind-utilities' } })
-```
 
 ### Routing Structure (`frontend/src/app/app.routes.ts`)
 
@@ -319,75 +245,3 @@ interface DiscordMember { id, name, game?, guild_id, role_ids[] }
 **Media**: video.js ^8.23.3
 **Crypto**: crypto-js ^4.2.0, ts-md5 ^1.3.1
 **Dev**: @angular-devkit/build-angular ^19.0.5, @angular/cli ^19.0.5, karma*, jasmine-core, postcss, autoprefixer
-
-## Core Domain Model & Relationships
-
-```
-ScreenTemplate (blueprint with typed variables_def)
-       ↓ defines
-    Screen (instance with concrete variables, duration, repeat/loop)
-       ↓ contained in order within
-Timeline / TimelineTemplate (ordered list of screen_ids)
-       ↓ displayed on
-   Kiosk (physical display device)
-
-Preset → collection of timelines for quick bulk application
-
-User owns: Screens, TimelineTemplates, Presets, Media, Kiosks
-User has roles: admin | streamer | presenter
-```
-
-### Key Domain Concepts
-- **ScreenTemplate**: Blueprint with typed variables (str, text, int, ts, float, bool, media0-3, discordguild, discordrole). Read-only for key/name/desc/endless/duration/variables_def.
-- **Screen**: Concrete instance of a template with actual variable values, duration, repeat/loop settings. Has state methods: locked(), displayed(), default().
-- **TimelineTemplate**: Reusable blueprint containing ordered list of screen IDs. Can be applied to multiple kiosks. Has presentation flag for WSS events.
-- **Timeline**: Instance linked to a Kiosk with position tracking (start_pos, current_pos). Supports single_shot auto-delete. State methods: locked(), displayed(), default(), preset().
-- **Kiosk**: Physical display device, unique by name. Has `participant` flag (bool, default False — when True kiosk is listed in Participant Interface). Has timeline_id (currently displayed) and default_timeline_id. Methods: apply_default(), apply_timelinetemplate(), id_by_name().
-- **Preset**: Collection of timelines for quick bulk application to kiosks. Owned by User, common flag for shared presets.
-
-## Backend Startup Order (critical for debugging)
-1. MongoDB connection wait → 2. CherryPy config → 3. CORS setup → 4. versioning_run() → 5. WSS server → 6. Challonge fetcher → 7. Discord worker → 8. Stream health worker → 9. Metrics exporter → 10. cherrypy.quickstart()
-
-## Key Files Reference
-- Backend entry: `backend/main.py`
-- Backend elements: `backend/elements/*.py` (14 element classes)
-- Backend endpoints: `backend/endpoints/*.py` (15+ endpoint classes)
-- Backend helpers: `backend/helpers/` (wss, s3, challonge, discord, prometheus_connect, versioning, asyncprocessqueue)
-- Frontend entry: `frontend/src/main.ts`
-- App config: `frontend/src/app/app.config.ts`
-- Routes: `frontend/src/app/app.routes.ts`
-- WebSocket service: `frontend/src/app/services/web-socket.service.ts`
-- Docker compose: `docker-compose.yml`
-- HAProxy config: `haproxy/haproxy.cfg`
-
-## Development Commands
-
-### Backend
-```bash
-cd backend && python3 main.py  # Run backend directly
-# or via invoke tasks: inv <task> from root
-```
-
-### Frontend
-```bash
-cd frontend && npm install && ng serve  # Dev server on port 4200
-ng build  # Production build
-ng test   # Unit tests (Karma + Jasmine)
-```
-
-### Docker
-```bash
-docker-compose up -d  # Start all services
-docker-compose down   # Stop all services
-```
-
-## Important Conventions & Gotchas
-- Backend uses CherryPy, NOT FastAPI/Flask — do not suggest FastAPI alternatives
-- Custom ORM (noapiframe) handles CRUD — respect ElementEndpointBase patterns (_owner_attr, _other_readable, _ro_attr, etc.)
-- Password hashing: MD5(session_id + password) — consistent across backend and frontend
-- Media files can be web URLs or S3/MinIO stored (src_type: 0=web, 1=S3)
-- Mock flags in Setting control whether external data (challonge, discord, tas, announcements, playercounts) uses real API or mock data
-- Challonge/Discord endpoints are mostly read-only — updated by background daemon processes polling every 10 seconds
-- WebSocket updates target specific audiences: all, kiosks, users, admins, owner
-- HAProxy strips /api prefix before forwarding to backend; rewrites /s3/* → MinIO
-- Default admin credentials after fresh install: admin/password (created by versioning_run())

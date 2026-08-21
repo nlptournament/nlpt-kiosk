@@ -106,15 +106,17 @@ Session started: <YYYY-MM-DD>
 
 ## Project Context Loading
 
-**Always load and internalize the full project-expert agent context before starting any planning or implementation work.** This ensures you have complete knowledge of:
+**Always load and internalize the project knowledge before starting any planning or implementation work.** This ensures you have complete understanding of:
 - Backend architecture (CherryPy elements, endpoints, helpers)
 - Frontend architecture (Angular 19 components, services, interfaces)
 - Docker infrastructure, database schema, API patterns
 - Coding conventions and gotchas
 
-Load from: `.github/agents/project-expert.agent.md`
+Load from BOTH files:
+- `.github/copilot-instructions.md` — shared context (architecture overview, tech stack, conventions, domain model summary)
+- `.github/agents/project-expert.agent.md` — deep reference (element tables, endpoint methods, helper details, interfaces)
 
-When the user asks you to update project-expert (e.g., after adding new elements/endpoints), do so in addition to your planning work. Keep both agents' knowledge current.
+When the user asks you to update project knowledge after adding new elements/endpoints, coordinate with git-sync-agent or update both files yourself. Keep shared context concise and expert reference detailed.
 
 ## Chapter Status Categories
 
