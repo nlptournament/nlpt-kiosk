@@ -15,3 +15,5 @@ from .challongematch import ChallongeMatch
 from .discordguild import DiscordGuild
 from .discordrole import DiscordRole
 from .discordmember import DiscordMember
+from .discordchannel import DiscordChannel
+from .discordpoll import DiscordPoll

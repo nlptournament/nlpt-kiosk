@@ -1,7 +1,7 @@
 import discord
 from multiprocessing import Process
 from noapiframe import docDB
-from elements import DiscordGuild, DiscordRole, DiscordMember, Setting
+from elements import DiscordGuild, DiscordRole, DiscordMember, DiscordChannel, DiscordPoll, Setting
 
 discord_process = None
 
@@ -35,12 +35,30 @@ def _discord_process():
 
             member.save()
 
+    def capture_poll(poll):
+        p = DiscordPoll({
+            '_id': str(poll.message.id),
+            'channel_id': str(poll.message.channel.id),
+            'question': poll.question,
+            'options': list([a.text for a in poll.answers]),
+            'active': not poll.is_finalized()})
+        if poll.expires_at:
+            p['till_ts'] = int(poll.expires_at.timestamp())
+        p.save()
+
+    async def capture_channel_polls(channel):
+        async for message in channel.history(limit=100):
+            if message.poll:
+                capture_poll(message.poll)
+
     @client.event
     async def on_ready():
         print(f'We have logged in as {client.user}')
         docDB.clear('DiscordMember')
         docDB.clear('DiscordRole')
         docDB.clear('DiscordGuild')
+        docDB.clear('DiscordChannel')
+        docDB.clear('DiscordPoll')
 
         for guild in client.guilds:
             g = DiscordGuild({'_id': str(guild.id), 'name': guild.name})
@@ -52,6 +70,12 @@ def _discord_process():
 
             for member in guild.members:
                 capture_member(member)
+
+            for channel in guild.channels:
+                if isinstance(channel, discord.channel.TextChannel):
+                    c = DiscordChannel({'_id': str(channel.id), 'name': channel.name, 'guild_id': str(guild.id)})
+                    c.save()
+                    await capture_channel_polls(channel)
 
     @client.event
     async def on_message(message):
@@ -69,6 +93,12 @@ def _discord_process():
                 await message.channel.send('\n'.join(result))
             else:
                 await message.channel.send("Hi! I'm a bot collecting activities about played games, for displaying them on our Kiosk-projectors.")
+
+        elif message.poll:
+            capture_poll(message.poll)
+
+        elif isinstance(message.type, discord.MessageType.poll_result):
+            await capture_channel_polls(message.channel)
 
     # on_presence_update is called when member status or member activity changes
     @client.event
