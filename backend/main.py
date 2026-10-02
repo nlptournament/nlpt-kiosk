@@ -3,9 +3,9 @@ import cherrypy_cors
 from noapiframe import docDB, ElementEndpointBase
 from noapiframe.endpoints import SettingEndpointBase, LoginEndpointBase
 from elements import Setting, Session, ScreenTemplate, Screen, GameAbbr
-from elements import ChallongeTournament, ChallongeParticipant, ChallongeMatch, DiscordGuild, DiscordRole
+from elements import ChallongeTournament, ChallongeParticipant, ChallongeMatch, DiscordGuild, DiscordRole, DiscordChannel
 from endpoints import UserEndpoint, TimelineTemplateEndpoint, PresetEndpoint, KioskEndpoint, TimelineEndpoint, MediaEndpoint
-from endpoints import AnnouncementsEndpoint, PlayercountsEndpoint, TASEndpoint, PresentationEndpoint
+from endpoints import AnnouncementsEndpoint, PlayercountsEndpoint, TASEndpoint, PresentationEndpoint, DiscordPollEndpoint
 from endpoints.metrics import start_metrics_exporter
 from helpers.versioning import run as versioning_run
 from helpers.wss import start_server as start_wss_server
@@ -35,6 +35,8 @@ class API():
         self.challongeparticipant = ChallongeParticipantEndpoint()
         self.discordguild = DiscordGuildEndpoint()
         self.discordrole = DiscordRoleEndpoint()
+        self.discordchannel = DiscordChannelEndpoint()
+        self.discordpoll = DiscordPollEndpoint()
         self.presentation = PresentationEndpoint()
 
 
@@ -45,7 +47,7 @@ class SettingEndpoint(SettingEndpointBase):
     _admin_writeable = [
         'server_port', 'new_kiosks', 'wss_port', 'metrics_enabled', 'metrics_port', 's3_host', 's3_port', 's3_access_key', 's3_access_secret',
         'anno_src_uri', 'anno_img_user_id', 'pc_prometheus_uri', 'discord_bot_token', 'participant_interface',
-        'tas_uri', 'challonge_user', 'challonge_key', 'challonge_img_user_id', 'mock_anno', 'mock_pc', 'mock_pc_discord', 'mock_tas', 'mock_chal'
+        'tas_uri', 'challonge_user', 'challonge_key', 'challonge_img_user_id', 'mock_anno', 'mock_pc', 'mock_discord', 'mock_tas', 'mock_chal'
     ]
 
 
@@ -115,6 +117,13 @@ class DiscordGuildEndpoint(ElementEndpointBase):
 class DiscordRoleEndpoint(ElementEndpointBase):
     _session_cls = Session
     _element = DiscordRole
+    _other_readable = list(['id', 'name', 'guild_id'])
+    _ro_attr = list(['name', 'guild_id'])
+
+
+class DiscordChannelEndpoint(ElementEndpointBase):
+    _session_cls = Session
+    _element = DiscordChannel
     _other_readable = list(['id', 'name', 'guild_id'])
     _ro_attr = list(['name', 'guild_id'])
 

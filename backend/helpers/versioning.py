@@ -153,8 +153,11 @@ def run():
     # if versions_lt(db_version, '0.2'):
 
     if versions_lt(db_version, '1.2.0'):
-        from elements import ScreenTemplate
+        from elements import ScreenTemplate, Setting
         from noapiframe import docDB
+        # Delete mock_pc_discord Setting
+        Setting.get('mock_pc_discord').delete()
+        # Update Stream ScreenTemplate
         from_db = docDB.search_one('ScreenTemplate', {'name': 'Stream'})
         if from_db is not None:
             st = ScreenTemplate()
@@ -169,6 +172,21 @@ def run():
                 header_size = {'type': 'int', 'default': 4, 'desc': 'relative size of overlayed header (values from 1 - 7 allowed)'}
                 st['variables_def']['header_size'] = header_size
                 st.save()
+        # Update Announcements ScreenTemplate
+        from_db = docDB.search_one('ScreenTemplate', {'name': 'Announcements'})
+        if from_db is not None:
+            st = ScreenTemplate()
+            st._attr = from_db
+            st['variables_def'] = dict({
+                'src_nlpt': {'type': 'bool', 'default': True, 'desc': 'enable pulling from nlpt.online'},
+                'src_discordpolls': {'type': 'bool', 'default': False, 'desc': 'enable to show DiscordPolls'},
+                'type_default': {'type': 'bool', 'default': True, 'desc': 'show Announcements with default layout'},
+                'type_danger': {'type': 'bool', 'default': True, 'desc': 'show Announcements with danger layout'},
+                'type_ffa': {'type': 'bool', 'default': True, 'desc': 'show Announcements with ffa layout'},
+                'discord_guild': {'type': 'discordguild', 'default': '', 'desc': 'Only polls from this guild are shown'},
+                'discord_channel': {'type': 'discordchannels', 'default': [], 'desc': 'Only polls from this channels are shown'},
+            })
+            st.save()
 
     db_defaults()
 
@@ -223,10 +241,19 @@ def system_screentemplates():
             'endless': False, 'duration': None, 'variables_def': vardef}).save()
     # Announcements
     if ScreenTemplate.count({'name': 'Announcements'}) == 0:
+        vardef = dict({
+            'src_nlpt': {'type': 'bool', 'default': True, 'desc': 'enable pulling from nlpt.online'},
+            'src_discordpolls': {'type': 'bool', 'default': False, 'desc': 'enable to show DiscordPolls'},
+            'type_default': {'type': 'bool', 'default': True, 'desc': 'show Announcements with default layout'},
+            'type_danger': {'type': 'bool', 'default': True, 'desc': 'show Announcements with danger layout'},
+            'type_ffa': {'type': 'bool', 'default': True, 'desc': 'show Announcements with ffa layout'},
+            'discord_guild': {'type': 'discordguild', 'default': '', 'desc': 'Only polls from this guild are shown'},
+            'discord_channel': {'type': 'discordchannels', 'default': [], 'desc': 'Only polls from this channels are shown'},
+        })
         ScreenTemplate({
             'key': 'announcements', 'name': 'Announcements',
             'desc': 'displays nlpt.online announcements',
-            'endless': True, 'duration': None}).save()
+            'endless': True, 'duration': None, 'variables_def': vardef}).save()
     # Player Counts - Multi
     if ScreenTemplate.count({'name': 'Player Counts - Multi'}) == 0:
         vardef = dict({
