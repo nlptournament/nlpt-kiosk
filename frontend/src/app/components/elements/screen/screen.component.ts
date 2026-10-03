@@ -9,7 +9,7 @@ import { ScreenTemplate } from '../../../interfaces/screen-template';
 import { User } from '../../../interfaces/user';
 import { Media } from '../../../interfaces/media';
 import { TimelineTemplate } from '../../../interfaces/timeline-template';
-import { DiscordGuild, DiscordRole } from '../../../interfaces/discord';
+import { DiscordGuild, DiscordRole, DiscordChannel } from '../../../interfaces/discord';
 
 import { CommonModule } from '@angular/common';
 import { Dialog } from 'primeng/dialog';
@@ -18,6 +18,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { IftaLabelModule } from 'primeng/iftalabel';
 import { ButtonModule } from 'primeng/button';
 import { SelectModule } from 'primeng/select';
+import { MultiSelectModule } from 'primeng/multiselect';
 import { TooltipModule } from 'primeng/tooltip';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { SelectButtonModule } from 'primeng/selectbutton';
@@ -67,9 +68,23 @@ export class DiscordFindObjectPipe implements PipeTransform {
   }
 }
 
+@Pipe({name: 'discordChannelsTranslate', })
+export class DiscordChannelsTranslatePipe implements PipeTransform {
+  transform(arr: DiscordChannel[], ids: string[]): string {
+      let result: string[] = [];
+      for (let id of ids) {
+        let c = arr.find(o => {
+          return o.id === id;
+        });
+        if (c) result.push(c.name)
+      }
+      return result.join(', ');
+  }
+}
+
 @Component({
   selector: 'element-screen',
-  imports: [CommonModule, Dialog, FormsModule, InputTextModule, IftaLabelModule, ButtonModule, SelectModule, TooltipModule, InputNumberModule, SelectButtonModule, ToggleSwitchModule, DatePickerModule, TextareaModule, DiscordFindObjectPipe],
+  imports: [CommonModule, Dialog, FormsModule, InputTextModule, IftaLabelModule, ButtonModule, SelectModule, MultiSelectModule, TooltipModule, InputNumberModule, SelectButtonModule, ToggleSwitchModule, DatePickerModule, TextareaModule, DiscordFindObjectPipe, DiscordChannelsTranslatePipe],
   templateUrl: './screen.component.html',
   styleUrl: './screen.component.scss'
 })
@@ -99,6 +114,7 @@ export class ScreenComponent implements OnInit, OnChanges {
     selectableTimelineTemplates: selectableTimelineTemplate[] = [];
     selectableDiscordGuilds: DiscordGuild[] = [];
     selectableDiscordRoles: DiscordRole[] = [];
+    selectableDiscordChannels: DiscordChannel[] = [];
 
     constructor(
         private screenService: ScreenService,
@@ -135,6 +151,10 @@ export class ScreenComponent implements OnInit, OnChanges {
                 error: () => {}
             });
     }
+    discordGuildChanged(guild_id: string | undefined) {
+        this.refreshDiscordRoles(guild_id);
+        this.refreshDiscordChannels(guild_id);
+    }
 
     refreshDiscordRoles(guild_id: string | undefined) {
         let emptyRole: DiscordRole = {'id': '', 'name': '--dont filter--', 'guild_id': ''};
@@ -154,6 +174,23 @@ export class ScreenComponent implements OnInit, OnChanges {
                 error: () => {}
             });
         }
+    }
+
+    refreshDiscordChannels(guild_id: string | undefined) {
+        this.discordService.getDiscordChannels().subscribe({
+            next: (channels: DiscordChannel[]) => {
+                if (guild_id == undefined || guild_id == "") {
+                    this.selectableDiscordChannels = channels;
+                }
+                else {
+                    this.selectableDiscordChannels = [];
+                    for (let channel of channels) {
+                        if (channel.guild_id == guild_id) this.selectableDiscordChannels.push(channel);
+                    }
+                }
+            },
+            error: () => {}
+        });
     }
 
     extractVariables() {
@@ -185,6 +222,7 @@ export class ScreenComponent implements OnInit, OnChanges {
                 if (o.type == 'discordguild') {
                     this.refreshDiscordGuilds();
                     this.refreshDiscordRoles(o.val);
+                    this.refreshDiscordChannels(o.val);
                 }
                 v.set(key, o);
             }

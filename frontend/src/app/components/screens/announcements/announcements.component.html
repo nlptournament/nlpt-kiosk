@@ -7,7 +7,35 @@
 
     <div class="mx-auto w-screen flex flex-col">
         @for (anno of announcements; track anno.id) {
-            <div class="w-screen flex flex-row items-center justify-between p-10 bg-anno-{{anno.layout}}">
+            <div class="w-screen flex flex-row items-center justify-between p-10 bg-anno-{{anno.layout}}" *ngIf="anno.layout == 'danger'">
+                <div class="flex flex-col text-text">
+                    <div class="text-8xl font-orbitron mb-4" *ngIf="anno.title">{{ anno.title }}</div>
+                    <div class="text-6xl mb-1" *ngIf="anno.msg">{{ anno.msg }}</div>
+                    <div class="text-6xl" *ngIf="anno.display_time">Start in: {{ anno.display_time }}</div>
+                </div>
+                <div class="w-1/4 flex flex-col items-center" *ngIf="anno.img_url">
+                    <img class="h-anno-img object-scale-down" src="{{anno.img_url}}" />
+                </div>
+            </div>
+        }
+        @for (poll of polls; track poll.id) {
+            <div class="w-screen flex flex-row items-center justify-start pt-10 pb-10 pr-10 bg-anno-poll" *ngIf="poll.active">
+                <div class="w-1/5 flex flex-col items-center">
+                    <img class="h-anno-img object-scale-down" src="/discord_poll.svg" />
+                </div>
+                <div class="w-4/5 flex flex-col text-text">
+                    <div class="text-8xl font-orbitron mb-4" *ngIf="poll.question">{{ poll.question }}</div>
+                    <div class="flex text-6xl mb-1 flex-wrap justify-start" *ngIf="poll.options">
+                        @for (option of poll.options; track option) {
+                            <div class="w-1/4 flex justify-center">{{ option }}</div>
+                        }
+                    </div>
+                    <div class="text-6xl" *ngIf="poll.display_time">läuft noch: {{ poll.display_time }}</div>
+                </div>
+            </div>
+        }
+        @for (anno of announcements; track anno.id) {
+            <div class="w-screen flex flex-row items-center justify-between p-10 bg-anno-{{anno.layout}}" *ngIf="anno.layout != 'danger'">
                 <div class="flex flex-col text-text">
                     <div class="text-8xl font-orbitron mb-4" *ngIf="anno.title">{{ anno.title }}</div>
                     <div class="text-6xl mb-1" *ngIf="anno.msg">{{ anno.msg }}</div>

@@ -14,7 +14,7 @@
 @for (screenDP of screens.values(); track screenDP.screen.id) {
     <div class="mx-auto max-h-screen overflow-hidden w-fill flex flex-col h-screen items-center justify-center" [style.display]="screenDP.active ? 'flex' : 'none'">
         <screen-text [isActive]="screenDP.active" [header]="screenDP.screen.header" [variables]="screenDP.screen.variables" *ngIf="screenDP.screen.key == 'text'"></screen-text>
-        <screen-announcements [isActive]="screenDP.active" [header]="screenDP.screen.header" *ngIf="screenDP.screen.key == 'announcements'"></screen-announcements>
+        <screen-announcements [isActive]="screenDP.active" [header]="screenDP.screen.header" [variables]="screenDP.screen.variables" *ngIf="screenDP.screen.key == 'announcements'"></screen-announcements>
         <screen-background-image [isActive]="screenDP.active" [header]="screenDP.screen.header" [variables]="screenDP.screen.variables" *ngIf="screenDP.screen.key == 'background-image'"></screen-background-image>
         <screen-player-counts [isActive]="screenDP.active" [header]="screenDP.screen.header" [variables]="screenDP.screen.variables" *ngIf="screenDP.screen.key == 'player-counts'"></screen-player-counts>
         <screen-tas [isActive]="screenDP.active" [header]="screenDP.screen.header" *ngIf="screenDP.screen.key == 'tas'"></screen-tas>

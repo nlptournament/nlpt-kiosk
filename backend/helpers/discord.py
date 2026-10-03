@@ -202,7 +202,7 @@ def generate_mock_data():
         {'_id': '3', 'channel_id': '5', 'question': 'Etwas mit noch mehr Optionen',
          'options': ['Option1', 'Option2', 'Option3', 'Option4', 'Option5', 'Option6', 'Option7', 'Option8'], 'active': True, 'till_ts': None},
         {'_id': '4', 'channel_id': '5', 'question': 'Etwas mit vielen Optionen',
-         'options': ['Option1', 'Option2', 'Option3', 'Option4', 'Option5', 'Option6', 'Option7', 'Option8'], 'active': True, 'till_ts': till - 4},
+         'options': ['Option1', 'Option2', 'Option3', 'Option4', 'Option5', 'Option6'], 'active': True, 'till_ts': till - 4},
         {'_id': '5', 'channel_id': '6', 'question': 'Sollte nie gezeigt werden', 'options': ['ist', 'egal'], 'active': False, 'till_ts': till - (60 * 60)},
     ]
     for poll in polls:

@@ -184,7 +184,7 @@ def run():
                 'type_danger': {'type': 'bool', 'default': True, 'desc': 'show Announcements with danger layout'},
                 'type_ffa': {'type': 'bool', 'default': True, 'desc': 'show Announcements with ffa layout'},
                 'discord_guild': {'type': 'discordguild', 'default': '', 'desc': 'Only polls from this guild are shown'},
-                'discord_channel': {'type': 'discordchannels', 'default': [], 'desc': 'Only polls from this channels are shown'},
+                'discord_channels': {'type': 'discordchannels', 'default': [], 'desc': 'Only polls from this channels are shown'},
             })
             st.save()
 
@@ -248,7 +248,7 @@ def system_screentemplates():
             'type_danger': {'type': 'bool', 'default': True, 'desc': 'show Announcements with danger layout'},
             'type_ffa': {'type': 'bool', 'default': True, 'desc': 'show Announcements with ffa layout'},
             'discord_guild': {'type': 'discordguild', 'default': '', 'desc': 'Only polls from this guild are shown'},
-            'discord_channel': {'type': 'discordchannels', 'default': [], 'desc': 'Only polls from this channels are shown'},
+            'discord_channels': {'type': 'discordchannels', 'default': [], 'desc': 'Only polls from this channels are shown'},
         })
         ScreenTemplate({
             'key': 'announcements', 'name': 'Announcements',

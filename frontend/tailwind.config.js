@@ -21,6 +21,7 @@ module.exports = {
             'highlight-lila': '#D732E6',
             'red': '#ff0000',
             'green': '#00ff00',
+            'anno-poll': '#3a4d67',
             'anno-ffa': '#666666',
             'anno-default': '#111111',
             'anno-danger': '#7f1d1d',

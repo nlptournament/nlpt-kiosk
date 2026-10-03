@@ -8,7 +8,7 @@ class DiscordPollEndpoint(ElementEndpointBase):
     _session_cls = Session
     _element = DiscordPoll
     _other_readable = list(['id', 'question', 'options', 'channel_id', 'active', 'till_ts'])
-    _all_readable = list(['question', 'options', 'active', 'till_ts'])
+    _all_readable = list(['id', 'question', 'options', 'active', 'till_ts'])
     _ro_attr = list(['question', 'options', 'channel_id', 'active', 'till_ts'])
 
     @cherrypy.expose()
@@ -16,8 +16,8 @@ class DiscordPollEndpoint(ElementEndpointBase):
     @cherrypy.tools.json_out()
     def filter(self):
         if cherrypy.request.method == 'OPTIONS':
-            cherrypy.response.headers['Allow'] = 'OPTIONS, GET'
-            cherrypy_cors.preflight(allowed_methods=['GET'])
+            cherrypy.response.headers['Allow'] = 'OPTIONS, POST'
+            cherrypy_cors.preflight(allowed_methods=['POST'])
             return
 
         is_authorized = False
@@ -38,8 +38,8 @@ class DiscordPollEndpoint(ElementEndpointBase):
         if is_authorized and not is_admin:
             is_other = True
 
-        # GET
-        if cherrypy.request.method == 'GET':
+        # POST
+        if cherrypy.request.method == 'POST':
             from elements import DiscordGuild, DiscordChannel
             if self._all_readable is None and (not is_authorized or (is_other and self._other_readable is None)):
                 cherrypy.response.status = 403
@@ -51,6 +51,8 @@ class DiscordPollEndpoint(ElementEndpointBase):
 
             only_active = attr.get('only_active', True)
             guild_id = attr.get('guild_id')
+            if guild_id == '':
+                guild_id = None
             channel_ids = attr.get('channel_ids')
             if channel_ids is None or not isinstance(channel_ids, list) or len(channel_ids) == 0:
                 channel_ids = None
@@ -74,7 +76,7 @@ class DiscordPollEndpoint(ElementEndpointBase):
                     stages.append({'$match': {'channel.guild_id': guild_id}})
 
             result = list()
-            for el in docDB.coll(self._element.__class__.__name__).aggregate(stages):
+            for el in docDB.coll('DiscordPoll').aggregate(stages):
                 el = self._element(el)
                 is_owner = False
                 is_other = False
@@ -97,6 +99,6 @@ class DiscordPollEndpoint(ElementEndpointBase):
             return result
 
         else:
-            cherrypy.response.headers['Allow'] = 'OPTIONS, GET'
+            cherrypy.response.headers['Allow'] = 'OPTIONS, POST'
             cherrypy.response.status = 405
             return {'error': 'method not allowed'}
