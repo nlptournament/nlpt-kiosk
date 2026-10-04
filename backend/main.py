@@ -1,5 +1,6 @@
 import cherrypy
 import cherrypy_cors
+import logging
 from noapiframe import docDB, ElementEndpointBase
 from noapiframe.endpoints import SettingEndpointBase, LoginEndpointBase
 from elements import Setting, Session, ScreenTemplate, Screen, GameAbbr
@@ -12,6 +13,9 @@ from helpers.wss import start_server as start_wss_server
 from helpers.challonge import start_fetcher as start_challonge_fetcher
 from helpers.discord import start_worker as start_discord_worker
 from helpers.stream_health import start_stream_health_worker
+
+
+logging.basicConfig(format='%(asctime)s [%(name)-20s] %(levelname)-8s %(message)s', datefmt='%Y-%m-%dT%H:%M:%S%z', level='INFO')
 
 
 class API():

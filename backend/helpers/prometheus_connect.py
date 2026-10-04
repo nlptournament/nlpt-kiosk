@@ -20,7 +20,6 @@ class PrometheusApiClientException(Exception):
 
 
 # set up logging
-
 _LOGGER = logging.getLogger(__name__)
 
 # In case of a connection failure try 2 more times

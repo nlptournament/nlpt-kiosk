@@ -1,9 +1,11 @@
 import discord
+import logging
 from multiprocessing import Process
 from noapiframe import docDB
 from elements import DiscordGuild, DiscordRole, DiscordMember, DiscordChannel, DiscordPoll, Setting
 
 discord_process = None
+_LOGGER = logging.getLogger(__name__)
 
 
 def _discord_process():
@@ -34,6 +36,7 @@ def _discord_process():
                     member['role_ids'].append(str(role.id))
 
             member.save()
+            _LOGGER.info(f'Captured member: {member}')
 
     def capture_poll(poll):
         p = DiscordPoll({
@@ -45,6 +48,7 @@ def _discord_process():
         if poll.expires_at:
             p['till_ts'] = int(poll.expires_at.timestamp())
         p.save()
+        _LOGGER.info(f'Captured poll: {p}')
 
     async def capture_channel_polls(channel):
         async for message in channel.history(limit=100):
@@ -53,7 +57,7 @@ def _discord_process():
 
     @client.event
     async def on_ready():
-        print(f'We have logged in as {client.user}')
+        _LOGGER.info(f'We have logged in as {client.user}')
         docDB.clear('DiscordMember')
         docDB.clear('DiscordRole')
         docDB.clear('DiscordGuild')
@@ -76,6 +80,7 @@ def _discord_process():
                     c = DiscordChannel({'_id': str(channel.id), 'name': channel.name, 'guild_id': str(guild.id)})
                     c.save()
                     await capture_channel_polls(channel)
+        _LOGGER.info('initial loading completed')
 
     @client.event
     async def on_message(message):
@@ -97,13 +102,29 @@ def _discord_process():
         elif message.poll:
             capture_poll(message.poll)
 
-        elif isinstance(message.type, discord.MessageType.poll_result):
+        elif str(message.type) == 'MessageType.poll_result':
             await capture_channel_polls(message.channel)
 
     # on_presence_update is called when member status or member activity changes
     @client.event
     async def on_presence_update(before, after):
         capture_member(after)
+
+    # gets called when a new channel is created
+    @client.event
+    async def on_guild_channel_create(channel):
+        if isinstance(channel, discord.channel.TextChannel):
+            c = DiscordChannel({'_id': str(channel.id), 'name': channel.name, 'guild_id': str(channel.guild.id)})
+            c.save()
+            _LOGGER.info(f'Channel created: {c}')
+
+    # gets called when a channel is deleted
+    @client.event
+    async def on_guild_channel_delete(channel):
+        c = DiscordChannel.get(str(channel.id))
+        if c['_id'] is not None:
+            c.delete()
+            _LOGGER.info(f'Channel deleted: {channel.id}')
 
     client.run(Setting.value('discord_bot_token'))
 

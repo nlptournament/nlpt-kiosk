@@ -17,5 +17,5 @@ guild_id : str
 
     def delete_post(self):
         from elements import DiscordPoll
-        for p in [DiscordPoll(p) for p in docDB.search_many('DiscordPoll', {'guild_id': self['_id']})]:
+        for p in [DiscordPoll(p) for p in docDB.search_many('DiscordPoll', {'channel_id': self['_id']})]:
             p.delete()
