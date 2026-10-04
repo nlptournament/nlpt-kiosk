@@ -58,7 +58,7 @@ As mentioned above Screens are the representation of WHAT is displayed from WHER
   * **[Plain Text](docs/screens/plain-text.md)** — Displays text with configurable color and size
   * **[Background Image](docs/screens/background-image.md)** — Image Media in background with optional text overlay
   * **[Countdown](docs/screens/countdown.md)** — Counts down the seconds to a target timestamp
-  * **[Announcements](docs/screens/announcements.md)** — Displays announcements from nlpt.online
+  * **[Announcements](docs/screens/announcements.md)** — Displays announcements from nlpt.online and/or Discord polls with configurable layout types
   * **[Player Counts](docs/screens/player-counts.md)** — Shows player counts from Prometheus and/or Discord sources (Multi, Prometheus-only, or Discord-only variants)
   * **[TrackMania Stats](docs/screens/tas.md)** — TrackMania TimeAttackServer wallboard with challenge and global ranks
   * **[Video](docs/screens/video.md)** — Video Media played fullscreen with loop/repeat support

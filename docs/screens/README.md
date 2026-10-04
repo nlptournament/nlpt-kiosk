@@ -9,7 +9,7 @@ The following templates are automatically created on fresh install:
 * **[Plain Text](./plain-text.md)** — Displays text with configurable color and size
 * **[Background Image](./background-image.md)** — Image Media displayed in background, with optional text overlay
 * **[Countdown](./countdown.md)** — Counts down the seconds to a target timestamp
-* **[Announcements](./announcements.md)** — Displays announcements from nlpt.online
+* **[Announcements](./announcements.md)** — Displays announcements from nlpt.online and/or Discord polls with configurable layout types (default, danger, ffa)
 * **[Player Counts](./player-counts.md)** — Shows player counts from Prometheus and/or Discord sources (available as Multi, Prometheus-only, or Discord-only variants)
 * **[TrackMania Stats](./tas.md)** — TrackMania TimeAttackServer wallboard with challenge and global ranks
 * **[Video](./video.md)** — Video Media played fullscreen with loop/repeat support
