@@ -27,29 +27,32 @@ All inherit from noapiframe base classes. See `.github/copilot-instructions.md` 
 | `ChallongeTournament` | Cached tournament data from Challonge API. States: 0=unknown, 1=pending, 2=underway, 3=complete. | Tracks available/completed rounds |
 | `ChallongeParticipant` | Tournament participant with portrait image (stored as Media). Has fetch_portrait() method. | CRUD — mostly read-only from API |
 | `ChallongeMatch` | Match data linking two participants with winner tracking. States: 0=unknown, 1=pending, 2=open, 3=complete. | CRUD — mostly read-only from API |
-| `DiscordGuild` | Cached Discord guild name. Cascading delete to members/roles. | Read-only (name is _ro_attr) |
+| `DiscordGuild` | Cached Discord guild name. Cascading delete to members/roles/channels/polls. | Read-only (name is _ro_attr) |
 | `DiscordMember` | Cached member with current game (from Discord presence), role IDs. Class method: all_for_guild(). | Read-only from bot updates |
 | `DiscordRole` | Cached Discord role name and guild association. | Read-only (name, guild_id are _ro_attr) |
+| `DiscordChannel` | Cached minimalized representation of a Discord Channel with `name` and `guild_id`. |  |
+| `DiscordPoll` | Cached minimalized representation of a Discord Poll. |  |
 
 ### Backend Endpoints (`backend/endpoints/`) — All inherit from noapiframe base classes
 
 | Endpoint Class | Element Class | Custom Methods | Description |
 |---------------|---------------|----------------|-------------|
 | `UserEndpoint` | User | hide_add(), hide_del() | User management with hidden elements feature |
-| `KioskEndpoint` | Kiosk | my_id(), apply_default(), apply_timelinetemplate(), synced_apply(), synced_apply_default() | Kiosk registration, timeline application, synchronized multi-kiosk operations. `_other_readable` includes `participant`; `_all_readable` includes `participant`; `_other_createable` includes `participant`; `_other_updateable` includes `participant` |
+| `KioskEndpoint` | Kiosk | my_id(), apply_default(), apply_timelinetemplate(), synced_apply(), synced_apply_default() | Kiosk registration, timeline application, synchronized multi-kiosk operations. |
 | `TimelineEndpoint` | Timeline | currentPos() — also calls `check_for_jump()` on the timeline after position update | Timeline position tracking for kiosk clients |
 | `TimelineTemplateEndpoint` | TimelineTemplate | (inherited), `update_timelines()`, `import_pdf()` — converts a PDF Media into Screens using the "Background Image" template; requires admin or owner access |
-| `ScreenTemplateEndpoint` | ScreenTemplate | (inherited) | CRUD — read-only for key/name/desc/endless/duration/variables_def |
-| `ScreenEndpoint` | Screen | (inherited) | CRUD with owner-based access control via user_id |
-| `MediaEndpoint` | Media | s3() | Media upload/download with 100MB limit, direct S3 proxy. `_other_readable` and `_all_readable` include `active` (computed stream health status) |
+| `ScreenTemplateEndpoint` | ScreenTemplate | (inherited) | CRUD — read-only for key/name/desc/endless/duration/variables_def. |
+| `ScreenEndpoint` | Screen | (inherited) | CRUD with owner-based access control via user_id. |
+| `MediaEndpoint` | Media | s3() | Media upload/download with 100MB limit, direct S3 proxy. |
 | `PresetEndpoint` | Preset | (inherited) | CRUD for presets |
 | `GameAbbrEndpoint` | GameAbbr | (inherited) | CRUD game abbreviations |
 | `AnnouncementsEndpoint` | — | — | NLPT.online announcements feed |
-| `PlayercountsEndpoint` | — | discord_mock_data() | Player count data from Prometheus/Discord |
+| `PlayercountsEndpoint` | — | discord_counts() | Player count data from Discord members. |
 | `TASEndpoint` | — | — | TrackMania Stats server data |
 | `PresentationEndpoint` | — | — | Presentation timeline control via WSS |
+| `DiscordPollEndpoint` | DiscordPoll | filter() |
 | Challonge endpoints (3) | Tournament/Participant/Match | (inherited) | CRUD with mock_chal flag controlling mutability |
-| Discord endpoints (2) | Guild/Role | (inherited) | Read-only from bot updates |
+| Discord endpoints (3) | Guild/Role/Channel | (inherited) | Read-only from bot updates. |
 
 ### Backend Helpers (`backend/helpers/`)
 
@@ -59,10 +62,11 @@ All inherit from noapiframe base classes. See `.github/copilot-instructions.md` 
 | `asyncprocessqueue.py` | Custom async-compatible multiprocessing Queue wrapper using Manager().Queue() with ThreadPoolExecutor for coroutine integration |
 | `s3.py` | S3 storage operations via boto3. Connects to MinIO. Functions: media_exists(), media_get(), media_upload(), media_delete(), media_get_internal_url(). Bucket: nkc-media |
 | `challonge.py` | Challonge API fetcher running in daemon Process. Polls every 10 seconds for tournaments with challonge screen templates. Functions: fetch_tournament(), fetch_matches(), fetch_participant() |
-| `discord.py` | Discord bot worker in daemon Process using discord.py. Captures member presence updates (on_presence_update). Stores guilds, roles, members with current game |
-| `prometheus_connect.py` | Custom Prometheus API client (stripped to avoid matplotlib dependency for ARM builds) |
-| `stream_health.py` | Stream health detection daemon Process using ffprobe. Polls every 10 seconds all Media elements where type=3 and src_type=0 (web URL streams). Calls `transmit_media_health(media, active)` via WSS |
-| `versioning.py` | Database migration system. Creates default admin user if none exists. Seeds 14+ ScreenTemplates on first install. Includes v1.2.0 migration adding `header_pos` and `header_size` variables to Stream ScreenTemplates |
+| `discord.py` | Discord bot worker in daemon Process using discord.py. Captures member presence updates (on_presence_update), stores guilds/roles/members with current game. Captures Discord polls. |
+| `prometheus_connect.py` | Custom Prometheus API client (stripped to avoid matplotlib dependency for ARM builds). Removed 1 unused import line. |
+| `stream_health.py` | Stream health detection daemon Process using ffprobe. Polls every 10 seconds all Media elements where type=3 and src_type=0 (web URL streams). Only runs when `participant_interface` setting is enabled. |
+| `versioning.py` | Database migration system. Creates default admin user if none exists. Seeds 14+ ScreenTemplates on first install. |
+| `wss.py` | WebSocket server using websockets library. Two processes: _websocket_process() handles connections, _connection_process() manages auth/routing. Transmits updates for all element types to targeted audiences (all, kiosks, users, admins, owner). Uses AsyncProcessQueue for cross-process communication. **New function**: `transmit_media_health(media, active)` — broadcasts minimal stream health payload `{media_id, active, content: 'stream_health'}` to ALL connected clients.
 | `version.py` | Contains current version string |
 
 ### Backend Dependencies (`backend/requirements.txt`)
@@ -162,7 +166,7 @@ boto3, cherrypy, cherrypy-cors, discord.py, noapiframe (git), pdf2image, pychall
 | `challonge-match.service.ts` | `/challongematch/` | CRUD matches |
 | `challonge-participant.service.ts` | `/challongeparticipant/` | CRUD participants |
 | `challonge-tournament.service.ts` | `/challongetournament/` | CRUD tournaments |
-| `discord.service.ts` | — | Discord guild/role operations |
+| `discord.service.ts` | — | Discord guild/role/channel/poll operations. |
 | `error-handler.service.ts` | — | HTTP error handling (global) |
 | `game-abbr.service.ts` | `/gameabbr/` | CRUD abbreviations, translate() |
 | `kiosk.service.ts` | `/kiosk/` | CRUD, my_id(), apply_default(), synced_apply(), synced_apply_default(), applyTimelineTemplate() |
@@ -208,7 +212,7 @@ interface Setting { id, value, order, type, desc }
 
 // screen-template.ts
 interface ScreenTemplate { id, key, name, desc, endless, duration, variables_def }
-// variables_def defines typed variable slots: str, text, int, ts, float, bool, media0-3, discordguild, discordrole
+// variables_def defines typed variable slots: str, text, int, ts, float, bool, media0-3, discordguild, discordrole, discordchannels
 
 // preset.ts
 interface Preset { id, desc, timeline_ids[], user_id, common }
@@ -227,6 +231,8 @@ interface ChallongeParticipant { id, tournament_id, name, portrait_id }
 interface DiscordGuild { id, name }
 interface DiscordRole { id, name, guild_id }
 interface DiscordMember { id, name, game?, guild_id, role_ids[] }
+interface DiscordChannel { id, guild_id, name }
+interface DiscordPoll { id, question, options[], channel_id?, active: boolean, till_ts: number|null, display_time: string|null }
 ```
 
 ### Frontend Patterns & Conventions
